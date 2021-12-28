@@ -25,15 +25,23 @@ namespace Purchase
         }
 
         public IConfiguration Configuration { get; }
+        public string MyPolicy { get; set; } = "_myPolicy";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            
             services.AddControllers();
             services.Configure<PurchaseStoreDatabaseSettings>(Configuration.GetSection("PurchaseStoreDatabase"));
             services.AddSingleton<VendorService>();
             services.AddSingleton<OrderService>();
+            services.AddCors(option => {
+                option.AddPolicy(name: MyPolicy, builder => {
+                    builder.WithOrigins("https://localhost:44336");
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyMethod();
+                });
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Purchase", Version = "v1" });
@@ -46,6 +54,7 @@ namespace Purchase
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(MyPolicy);
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Purchase v1"));
 
