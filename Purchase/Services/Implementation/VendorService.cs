@@ -30,6 +30,8 @@ namespace Purchase.Services.Implementation
 
         public async Task<Vendor> GetVendorByIdAsync(string id) =>
             await _vendorsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+        public Vendor GetVendorById(string id) => 
+            _vendorsCollection.Find(x =>x.Id == id).FirstOrDefault();
 
         public async Task<IEnumerable<Vendor>> GetVendorsAsync(string query) =>
             await _vendorsCollection.Find(_ => true).ToListAsync();
@@ -64,8 +66,13 @@ namespace Purchase.Services.Implementation
         public async Task RemoveOrderOnVendor(string orderId, Vendor vendor)
         {
             vendor.Orders.Remove(orderId);
-            var order = vendor.OrderList.First(o => o.Id == orderId);
-            vendor.OrderList.Remove(order);
+           
+            if(vendor.OrderList != null)
+            { 
+                var order = vendor.OrderList.First(o => o.Id == orderId);
+                vendor.OrderList.Remove(order);
+            }
+            
             await _vendorsCollection.ReplaceOneAsync(v => v.Id == vendor.Id, vendor);
 
         }

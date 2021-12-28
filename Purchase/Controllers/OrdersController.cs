@@ -73,6 +73,7 @@ namespace Purchase.Controllers
             {
                 await _orderService.UpdateOrderAsync(id, orderUpdated);
                 _logger.LogInformation($"Order Id: {orderUpdated.Id} modifie avec succes");
+                return Ok(orderUpdated);
             }
             catch(Exception ex)
             {

@@ -38,8 +38,12 @@ namespace Purchase.Services.Implementation
         public async Task<IEnumerable<Order>> GetOrdersAsync(string query) =>
             (await _ordersCollection.Find(_ => true).ToListAsync()).Where(o => o.Vendor.Name.Contains(query));
 
-        public async Task<IEnumerable<Order>> GetOrdersAsync() =>
-            await _ordersCollection.Find(_ => true).ToListAsync();
+        public async Task<IEnumerable<Order>> GetOrdersAsync()
+        {
+            var orders = await _ordersCollection.Find(_ => true).ToListAsync();
+            orders.ForEach(o => o.Vendor = _vendorService.GetVendorById(o.vendorId));
+            return orders;
+        }
 
         public async Task UpdateOrderAsync(string id, Order order) =>
             await _ordersCollection.ReplaceOneAsync(x => x.Id == id, order);
