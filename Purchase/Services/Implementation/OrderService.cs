@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Purchase.Models;
+using PurchaseShared.Models;
 using Purchase.Services.Contract;
+using Purchase.Models;
 
 namespace Purchase.Services.Implementation
 {

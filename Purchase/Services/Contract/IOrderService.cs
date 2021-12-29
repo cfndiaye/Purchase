@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Purchase.Models;
+using PurchaseShared.Models;
 
 namespace Purchase.Services.Contract
 {

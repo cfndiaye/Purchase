@@ -1,0 +1,102 @@
+﻿@page "/vendors"
+
+@inject HttpClient Client
+<h1>Fournisseurs</h1>
+@if(VendorList == null)
+{
+    
+    <div>
+        <img src="/img/spinning-loading.gif" alt="Chargement..."/>
+    </div>
+}
+else
+{
+    <div>
+        <EditForm Model=@MyModel OnValidSubmit=@OnSubmitSearchForm>
+            <div class="form-group">
+                <div class="input-group mb-3">
+                   
+                    <input type="text" id="vendorname" @bind-value="MyModel.VendorName" placeholder="Recherche..." class="form-control" />
+                    <div class="input-group-append">
+                        
+                            <button type="submit" class="btn btn-secondary">
+                            <i class="oi oi-magnifying-glass"></i>
+                            </button>
+                        
+                    </div>
+                    <span></span>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+    <hr />
+    @if(!string.IsNullOrWhiteSpace(Message))
+    {
+        <div class="alert alert-info">@Message</div>
+    }
+    <div>
+        <p>Liste des fournisseurs</p>
+    </div>
+    <div class="table-responsive scrollbar">
+        <table class="table table-hover table-striped overflow-hidden">
+            <thead class="">
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Email</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var vendor in VendorList)
+               {
+                   <tr class="align-middle">
+                       <td class="text-nowrap">@vendor.Id</td>
+                       <td class="text-nowrap">@vendor.Name</td>
+                       <td class="text-nowrap">@vendor.EmailId</td>
+                       <td><a href="#"><i class="oi oi-pencil"></i></a></td>
+                       <td><a href="#"><i class="oi oi-trash"></i></a></td>
+                   </tr>
+               }
+            </tbody>
+            <tfoot>
+                <span>Total ligne: @VendorList.Count()</span>
+                
+            </tfoot>
+        </table>
+    </div>
+}
+
+@code {
+    private List<Vendor> VendorList;
+    private SearchModel MyModel = new();
+    private string Message;
+    protected override async Task OnInitializedAsync()
+    {
+        VendorList = await Client.GetFromJsonAsync<List<Vendor>>("api/vendors/Get");
+    }
+
+    private async Task OnSubmitSearchForm()
+    {
+        if(!string.IsNullOrWhiteSpace(MyModel.VendorName))
+        VendorList = await Client.GetFromJsonAsync<List<Vendor>>($"api/vendors/GetByName/{MyModel.VendorName}");
+        if (VendorList == null)
+        {
+            Message = "Aucun résultat";
+        } 
+        else
+        {
+            Message = $"{VendorList.Count} résultat trouvés."; 
+        }
+        
+    }
+
+    public class SearchModel
+    {
+        [Required]
+        public string VendorName { get; set; } 
+
+    }
+
+}

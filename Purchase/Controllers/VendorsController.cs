@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using DnsClient.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Purchase.Models;
+using PurchaseShared.Models;
 using Purchase.Services.Contract;
 using Purchase.Services.Implementation;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -14,7 +14,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Purchase.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class VendorsController : ControllerBase
     {
         private readonly IVendorService _vendorService;
@@ -38,6 +38,14 @@ namespace Purchase.Controllers
         {
             var vendor = await _vendorService.GetVendorByIdAsync(id);
             if (vendor is null) return NotFound();
+            return vendor;
+        }
+
+        // GET api/values/5
+        [HttpGet("{vendorname}")]
+        public async Task<IEnumerable<Vendor>> GetByName(string vendorname)
+        {
+            var vendor = await _vendorService.GetVendorsAsync(vendorname);
             return vendor;
         }
 

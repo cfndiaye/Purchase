@@ -4,7 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace Purchase.Models
+namespace PurchaseShared.Models
 {
     public class Vendor
     {

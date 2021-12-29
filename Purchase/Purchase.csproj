@@ -28,4 +28,7 @@
     <Folder Include="Services\Contract\" />
     <Folder Include="Services\Implementation\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PurchaseShared\PurchaseShared.csproj" />
+  </ItemGroup>
 </Project>

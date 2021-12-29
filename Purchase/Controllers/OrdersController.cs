@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Purchase.Models;
+using PurchaseShared.Models;
 using Purchase.Services.Implementation;
 using System;
 using System.Collections.Generic;

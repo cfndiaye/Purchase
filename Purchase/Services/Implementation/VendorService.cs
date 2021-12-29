@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Purchase.Models;
+using PurchaseShared.Models;
 using Purchase.Services.Contract;
 
 namespace Purchase.Services.Implementation
@@ -33,8 +34,17 @@ namespace Purchase.Services.Implementation
         public Vendor GetVendorById(string id) => 
             _vendorsCollection.Find(x =>x.Id == id).FirstOrDefault();
 
-        public async Task<IEnumerable<Vendor>> GetVendorsAsync(string query) =>
-            await _vendorsCollection.Find(_ => true).ToListAsync();
+        public async Task<IEnumerable<Vendor>> GetVendorsAsync(string query)
+        {
+            if(!string.IsNullOrWhiteSpace(query))
+            {
+                return await _vendorsCollection.Find(v => v.Name.ToLower()
+                                                                .Contains(query.ToLower()))
+                                                                .ToListAsync();
+            }
+            return null;
+        }
+            
 
         public async Task<IEnumerable<Vendor>> GetVendorsAsync() =>
             await _vendorsCollection.Find(_ => true).ToListAsync();

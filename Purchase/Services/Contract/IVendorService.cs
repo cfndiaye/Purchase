@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Purchase.Models;
+using PurchaseShared.Models;
 
 namespace Purchase.Services.Contract
 {
@@ -9,6 +9,7 @@ namespace Purchase.Services.Contract
     {
         Task<IEnumerable<Vendor>> GetVendorsAsync(string query);
         Task<IEnumerable<Vendor>> GetVendorsAsync();
+      
         Task<Vendor> GetVendorByIdAsync(string id);
         Task AddVendorAsync(Vendor vendor);
         Task UpdateVendorAsync(string id, Vendor vendor);
