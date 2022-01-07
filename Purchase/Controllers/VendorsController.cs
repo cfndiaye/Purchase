@@ -26,10 +26,10 @@ namespace Purchase.Controllers
         }
         // GET: api/values
         [HttpGet]
-        public async Task<IEnumerable<Vendor>> Get()
+        public async Task<IActionResult> Get()
         {
             var vendors = await _vendorService.GetVendorsAsync();
-            return vendors;
+            return Ok(vendors);
         }
 
         // GET api/values/5
@@ -73,11 +73,11 @@ namespace Purchase.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, Vendor updatedVendor)
+        public async Task<IActionResult> Put(string id,[FromBody] Vendor updatedVendor)
         {
             var vendor = await _vendorService.GetVendorByIdAsync(id);
             if (vendor is null) return NotFound();
-            updatedVendor.Id = vendor.Id;
+            //updatedVendor.Id = vendor.Id;
 
             try
             {

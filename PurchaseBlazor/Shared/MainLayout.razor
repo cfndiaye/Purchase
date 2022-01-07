@@ -1,17 +1,44 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <div class="main">
-        <div class="top-row px-4">
-            <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-        </div>
-
-        <div class="content px-4">
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e)=> DrawerToggle())"/>
+        @_pageTitlePrincipal
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawerOpen">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">@_pageTitle</MudText>
+        </MudDrawerHeader>
+        <NavMenu/>
+    </MudDrawer>
+    <MudMainContent >
+        <MudContainer Fixed="true">
             @Body
-        </div>
-    </div>
-</div>
+        </MudContainer>
+        
+    </MudMainContent>
+</MudLayout>
+
+@code
+{
+    bool _drawerOpen = true;
+    string _pageTitle = "";
+    string _pageTitlePrincipal = "Purchase Manager";
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+        /*if (!_drawerOpen)
+        {
+            _pageTitle = "";
+            _pageTitlePrincipal = "Purchase Manager";
+        }
+        else
+        {
+            _pageTitle = "Purchase Manager";
+            _pageTitlePrincipal = "";
+        }*/
+    }
+}

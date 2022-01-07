@@ -6,26 +6,34 @@ using Newtonsoft.Json;
 
 namespace PurchaseShared.Models
 {
-    public class Vendor
-    {
-        
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        //[JsonProperty(PropertyName = "_id")]
-        public string Id { get; set; }
-        
-        [BsonElement("name")]
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
+  public class Vendor
+  {
 
-        [BsonElement("emailid")]
-        [JsonProperty(PropertyName = "emailid")]
-        public string EmailId { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    //[JsonProperty(PropertyName = "_id")]
+    public string Id { get; set; }
 
-        [BsonRepresentation(BsonType.ObjectId)]
-        public List<string> Orders { get; set; }
+    [BsonElement("name")]
+    [JsonProperty(PropertyName = "name")]
+    public string Name { get; set; }
 
-        [BsonIgnore]
-        public List<Order> OrderList { get; set; }
-    }
+    [BsonElement("emailid")]
+    [JsonProperty(PropertyName = "emailid")]
+    public string EmailId { get; set; }
+
+    [JsonProperty(PropertyName = "telephone")]
+    [BsonElement("telephone")]
+    public string Telephone { get; set; }
+
+    [JsonProperty(PropertyName = "comments")]
+    [BsonElement("comments")]
+    public string Comments { get; set; }
+
+    [BsonRepresentation(BsonType.ObjectId)]
+    public List<string> Orders { get; set; }
+
+    [BsonIgnore]
+    public List<Order> OrderList { get; set; }
+  }
 }

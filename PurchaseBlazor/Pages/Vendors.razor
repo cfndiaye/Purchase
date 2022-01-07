@@ -1,102 +1,274 @@
 ﻿@page "/vendors"
+@inject HttpClient _client
+<h1>Gestion des fournisseurs</h1>
+<MudPaper Class="mb-5 mt-5" Elevation="0">
+    <MudText Typo="Typo.body1">Les Fournisseurs agréés par ICS</MudText>
+</MudPaper>
+<MudSpacer></MudSpacer>
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudIcon Icon="@Icons.Material.Outlined.List"></MudIcon>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Inherit" OnClick="OpenAddMessageBox" />
+            <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" />
+        </CardHeaderActions>
+    </MudCardHeader>
 
-@inject HttpClient Client
-<h1>Fournisseurs</h1>
-@if(VendorList == null)
-{
+    <MudCardContent>
+        
+        @if (!string.IsNullOrWhiteSpace(_message))
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">@_message</MudAlert>
+        }
+
+        <MudTable Items="@_vendorList" Dense="true" Striped="true" Hover="true" Breakpoint="Breakpoint.Sm"
+                  @bind-SelectedItem="_selectedVendor"
+                  Filter="new Func<Vendor, bool>(FilterFuncInAction)"
+                  Loading="@_loading" LoadingProgressColor="Color.Info">
+            <ToolBarContent>
+                <MudText Inline="true" Typo="Typo.h6">Liste des fournisseurs</MudText>
+                <MudSpacer/>
+                <MudTextField @bind-Value="_searchTexte" Placeholder="Recherche..."
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search"
+                              IconSize="Size.Medium"
+                              Class="mt-0" />
+            </ToolBarContent>
+            <HeaderContent>
+
+                <MudTh>Nom</MudTh>
+                <MudTh>Email</MudTh>
+                <MudTh>Téléphone</MudTh>
+                <MudTh>Orders</MudTh>
+                <MudTh>Commentaires</MudTh>
+
+                <MudTh></MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+
+                <MudTd DataLabel="Nom">@context.Name</MudTd>
+                <MudTd DataLabel="E-mail">@context.EmailId</MudTd>
+                <MudTd DataLabel="Téléphone">@context.Telephone</MudTd>
+                <MudTd DataLabel="Orders">@context.Orders?.Count</MudTd>
+                <MudTd DataLabel="Commentaires">@context.Comments</MudTd>
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => OpenUpdateMessageBox(context)" aria-label="Modifier" Color="Color.Primary" />
+                </MudTd>
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="() => OpenDeleteMessageBox(context)" aria-label="Supprimer" Color="Color.Primary" />
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager/>
+            </PagerContent>
+        </MudTable>
+       
+        <MudText Inline="true" Class="align-self-center">@_selectedVendor?.Name</MudText>
+    </MudCardContent>
     
-    <div>
-        <img src="/img/spinning-loading.gif" alt="Chargement..."/>
-    </div>
-}
-else
-{
-    <div>
-        <EditForm Model=@MyModel OnValidSubmit=@OnSubmitSearchForm>
-            <div class="form-group">
-                <div class="input-group mb-3">
-                   
-                    <input type="text" id="vendorname" @bind-value="MyModel.VendorName" placeholder="Recherche..." class="form-control" />
-                    <div class="input-group-append">
+</MudCard>
+@*
+MessageBor for Add Vendor
+*@
+<MudMessageBox @ref="_addMessageBox" CancelText="Annuler">
+    <MessageContent>
+        <div style="max-width: 400px;">
+            <EditForm Model="_addVendor">
+                <DataAnnotationsValidator/>
+                <MudCard>
+                    <MudCardContent>
+                        <MudTextField Label="Nom" Helpertext="Min 3 caractères" For="@(() => _addVendor.Name)"
+                                      @bind-Value="_addVendor.Name"/>
+                        <MudTextField Label="E-mail" HelperText="Adresse e-mail" For="@(() => _addVendor.EmailId )"
+                                      @bind-Value="_addVendor.EmailId"/>
+                        <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420" 
+                                      For="@(() => _addVendor.Telephone)" @bind-Value="_addVendor.Telephone"/>
+                        <MudTextField Label="Commentaires" HelperText="fournisseur local" 
+                                      For="@(() => _addVendor.Comments)" @bind-Value="_addVendor.Comments"/>
+                    </MudCardContent>
+                                
+                </MudCard>
+            </EditForm>
+        </div>
+    </MessageContent>
+    <YesButton>
+        <MudButton OnClick="() => AddNewVendor(_addVendor)" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary">Ajouter</MudButton>
+    </YesButton>
+</MudMessageBox>
+@*
+MessageBox for update Vendor
+*@
+<MudMessageBox @ref="_updateMessageBox" Title=@($"Modification Vendor {_selectedVendor?.Name}") CancelText="Annuler">
+    <MessageContent>
+        <div style="max-width: 400px;">
+            <EditForm Model="_selectedVendor">
+                <DataAnnotationsValidator/>
+                <MudCard>
+                    <MudCardContent>
+                        <MudTextField Label="Nom" Helpertext="Min 3 caractères" For="@(() => _selectedVendor.Name)"
+                                      @bind-Value="_selectedVendor.Name"/>
+                        <MudTextField Label="E-mail" HelperText="Adresse e-mail" For="@(() => _selectedVendor.EmailId )"
+                                      @bind-Value="_selectedVendor.EmailId"/>
+                        <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420" 
+                                      For="@(() => _selectedVendor.Telephone)" @bind-Value="_selectedVendor.Telephone"/>
+                        <MudTextField Label="Commentaires" HelperText="fournisseur local" 
+                                      For="@(() => _selectedVendor.Comments)" @bind-Value="_selectedVendor.Comments"/>
+                    </MudCardContent>
+                    <MudCardActions>
                         
-                            <button type="submit" class="btn btn-secondary">
-                            <i class="oi oi-magnifying-glass"></i>
-                            </button>
-                        
-                    </div>
-                    <span></span>
-                </div>
-            </div>
-        </EditForm>
-    </div>
-    <hr />
-    @if(!string.IsNullOrWhiteSpace(Message))
-    {
-        <div class="alert alert-info">@Message</div>
-    }
-    <div>
-        <p>Liste des fournisseurs</p>
-    </div>
-    <div class="table-responsive scrollbar">
-        <table class="table table-hover table-striped overflow-hidden">
-            <thead class="">
-                <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Email</th>
-                    <th scope="col"></th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var vendor in VendorList)
-               {
-                   <tr class="align-middle">
-                       <td class="text-nowrap">@vendor.Id</td>
-                       <td class="text-nowrap">@vendor.Name</td>
-                       <td class="text-nowrap">@vendor.EmailId</td>
-                       <td><a href="#"><i class="oi oi-pencil"></i></a></td>
-                       <td><a href="#"><i class="oi oi-trash"></i></a></td>
-                   </tr>
-               }
-            </tbody>
-            <tfoot>
-                <span>Total ligne: @VendorList.Count()</span>
-                
-            </tfoot>
-        </table>
-    </div>
-}
+                    </MudCardActions>
+                </MudCard>
+            </EditForm>
+        </div>
+    </MessageContent>
+    <YesButton>
+        <MudButton OnClick="() => UpdateSelectedVendor(_selectedVendor)" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Check" Color="Color.Primary">Modifier</MudButton>
+    </YesButton>
+</MudMessageBox>
 
+@*
+MessageBox for delete vendor
+*@
+<MudMessageBox @ref="_deleteMessageBox" CancelText="Annuler">
+    
+    <MessageContent>
+        <div style="min-width: 400px; max-width: 400px;">
+            <MudText>Voulez-vous vraiment supprimer le fournisseur </MudText>
+        </div>
+    </MessageContent>
+    <YesButton>
+        <MudButton OnClick="() => DeleteSelectedVendor(_selectedVendor)" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Supprimer</MudButton>
+    </YesButton>
+</MudMessageBox>
 @code {
-    private List<Vendor> VendorList;
-    private SearchModel MyModel = new();
-    private string Message;
+    
+    private List<Vendor> _vendorList;
+  
+    private string _message;
+    private bool _loading;
+    private Task<List<Vendor>> _vendorsLoading;
+    private Task<HttpResponseMessage> _vendorLoading;
+
+    private MudMessageBox _updateMessageBox;
+    private MudMessageBox _addMessageBox;
+    private MudMessageBox _deleteMessageBox;
+    
+    private Vendor _selectedVendor;
+    private Vendor _addVendor;
+    private string _searchTexte = "";
+
     protected override async Task OnInitializedAsync()
     {
-        VendorList = await Client.GetFromJsonAsync<List<Vendor>>("api/vendors/Get");
+        _vendorList = new List<Vendor>();
+        _vendorsLoading = _client.GetFromJsonAsync<List<Vendor>>("api/vendors/Get");
+        _loading = !_vendorsLoading.IsCompleted;
+        _vendorList = await _vendorsLoading;
+        if (_vendorsLoading.IsCompleted)
+        {
+            _loading = false;
+        }
+
     }
 
-    private async Task OnSubmitSearchForm()
+
+    private bool FilterFuncInAction(Vendor vendor) => FilterFunc(vendor, _searchTexte);
+
+    private bool FilterFunc(Vendor vendor, string query)
     {
-        if(!string.IsNullOrWhiteSpace(MyModel.VendorName))
-        VendorList = await Client.GetFromJsonAsync<List<Vendor>>($"api/vendors/GetByName/{MyModel.VendorName}");
-        if (VendorList == null)
+        if (string.IsNullOrWhiteSpace(query.ToLower()))
+            return true;
+        if(vendor.Name != null)
+        if (vendor.Name.ToLower().Contains(query.ToLower()))
+            return true;
+        if(vendor.Comments != null)
+        if (vendor.Comments.ToLower().Contains(query.ToLower()))
+            return true;
+        return false;
+    }
+
+    private async Task AddNewVendor(Vendor vendor)
+    {
+        try
         {
-            Message = "Aucun résultat";
-        } 
+            _vendorLoading = _client.PostAsJsonAsync("api/vendors/Post", vendor);
+            _loading = !_vendorLoading.IsCompleted;
+
+            var statusMessage = await _vendorLoading;
+            _message = statusMessage.IsSuccessStatusCode ? "Fournisseur ajouté succés." : "Erreur lors de l'ajout";
+            _vendorList.Add(_addVendor);
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
+            _message = ex.Message;
+        }
+    }
+    
+    private  async Task  UpdateSelectedVendor(Vendor selectedvendor)
+    {
+        //_vendorLoading = _client.PostAsJsonAsync($"",selectedvendor);
+        _vendorLoading = _client.PutAsJsonAsync($"api/vendors/Put/{selectedvendor.Id}", selectedvendor);
+        _loading = !_vendorLoading.IsCompleted;
+       
+        var statusMessage  = await _vendorLoading;
+        _message = statusMessage.IsSuccessStatusCode ? "Fournisseur modifié avec succés." : "Erreur lors de la modification.";
+        _loading = false;
+    }
+
+    private async Task DeleteSelectedVendor(Vendor selectedVendor)
+    {
+        if (!(selectedVendor.Orders?.Count > 0))
+        {
+            try
+            {
+                _vendorLoading = _client.DeleteAsync($"api/vendors/Delete/{selectedVendor.Id}");
+                _loading = !_vendorLoading.IsCompleted;
+
+                var statusMessage = await _vendorLoading;
+                _message = statusMessage.IsSuccessStatusCode?"Fournisseur supprimé avec succés.":"Erreur lors de la suppression.";
+                _vendorList.Remove(selectedVendor);
+                _loading = false;
+            }
+            catch (Exception ex)
+            {
+                _message = ex.Message;
+            }
+        }
         else
         {
-            Message = $"{VendorList.Count} résultat trouvés."; 
+            _message = $"Le fournisseur {selectedVendor.Name} a des commandes, supprimer d'abord les commandes.";
         }
+    }
+
+    private async Task OpenAddMessageBox()
+    {
+        _addVendor = new Vendor();
+        _addMessageBox.Title = "Ajouter un fournisseur";
+        bool? result = await _addMessageBox.Show();
+        if (result == null) _message = "ajout annulé";
+        StateHasChanged();
+    }
+    private async Task OpenUpdateMessageBox(Vendor vendor)
+    {
+        _selectedVendor = vendor;
+        _updateMessageBox.Title = $"Modification fournisseur {vendor.Name}";
+        bool? result = await _updateMessageBox.Show();
+        _message = result == null ? "Annulé" : "Fournisseur Modifié";
+        StateHasChanged();
         
     }
 
-    public class SearchModel
+    private async Task OpenDeleteMessageBox(Vendor vendor)
     {
-        [Required]
-        public string VendorName { get; set; } 
-
+        _selectedVendor = vendor;
+        _deleteMessageBox.Title = $"Supprimer le fournisseur {_selectedVendor.Name}";
+        bool? result = await _deleteMessageBox.Show();
+        if (result == null) _message = "Suppression annulé.";
+        StateHasChanged();
     }
+    
 
 }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PurchaseShared.Models;
+using MudBlazor.Services;
 
 namespace PurchaseBlazor
 {
@@ -21,6 +22,7 @@ namespace PurchaseBlazor
 
             //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped(c => new HttpClient { BaseAddress = new Uri(SettingApp.ServerUrl) });
+            builder.Services.AddMudServices();
             await builder.Build().RunAsync();
         }
     }

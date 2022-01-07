@@ -1,42 +1,15 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">PurchaseBlazor</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿<MudNavMenu>
+    <MudNavLink Icon="@Icons.Filled.Dashboard" IconColor="Color.Inherit"  Href="/">Tableau de Bord</MudNavLink>
+    <MudNavLink Icon="@Icons.Filled.Calculate" IconColor="Color.Inherit" Href="/counter">Compteur</MudNavLink>
+    <MudNavLink Icon="@Icons.Filled.List" IconColor="Color.Inherit" Href="/vendors">Fournisseurs</MudNavLink>
+    <MudNavLink Icon="@Icons.Filled.Checklist" IconColor="Color.Inherit" Href="/orders">Commandes</MudNavLink>
+    <MudNavGroup Icon="@Icons.Filled.Settings" IconColor="Color.Inherit" Title="Settings" Expanded="true">
+        <MudNavLink Icon="@Icons.Filled.People" IconColor="Color.Inherit" Href="/users">Users</MudNavLink>
+        <MudNavLink Icon="@Icons.Filled.Security" IconColor="Color.Inherit" Href="/security">Security</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href="/about">About</MudNavLink>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="vendors">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fournisseurs
-            </NavLink>
-        </li>
-    </ul>
-</div>
+   
+</MudNavMenu>
 
-@code {
-    private bool collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
