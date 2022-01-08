@@ -20,8 +20,10 @@
         
         @if (!string.IsNullOrWhiteSpace(_message))
         {
-            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">@_message</MudAlert>
+            <MessageAlert CloseAlert="CloseAlert" Message="@_message" Severity="@_severity"></MessageAlert>
         }
+        
+         
 
         <MudTable Items="@_vendorList" Dense="true" Striped="true" Hover="true" Breakpoint="Breakpoint.Sm"
                   @bind-SelectedItem="_selectedVendor"
@@ -75,7 +77,7 @@ MessageBor for Add Vendor
 *@
 <MudMessageBox @ref="_addMessageBox" CancelText="Annuler">
     <MessageContent>
-        <div style="max-width: 400px;">
+        <div style="min-width: 400px; max-width: 400px;">
             <EditForm Model="_addVendor">
                 <DataAnnotationsValidator/>
                 <MudCard>
@@ -103,7 +105,7 @@ MessageBox for update Vendor
 *@
 <MudMessageBox @ref="_updateMessageBox" Title=@($"Modification Vendor {_selectedVendor?.Name}") CancelText="Annuler">
     <MessageContent>
-        <div style="max-width: 400px;">
+        <div style="min-width: 400px; max-width: 400px;">
             <EditForm Model="_selectedVendor">
                 <DataAnnotationsValidator/>
                 <MudCard>
@@ -147,7 +149,7 @@ MessageBox for delete vendor
     
     private List<Vendor> _vendorList;
   
-    private string _message;
+    private string _message="";
     private bool _loading;
     private Task<List<Vendor>> _vendorsLoading;
     private Task<HttpResponseMessage> _vendorLoading;
@@ -159,21 +161,35 @@ MessageBox for delete vendor
     private Vendor _selectedVendor;
     private Vendor _addVendor;
     private string _searchTexte = "";
+    private Severity _severity = Severity.Info;
 
     protected override async Task OnInitializedAsync()
     {
         _vendorList = new List<Vendor>();
-        _vendorsLoading = _client.GetFromJsonAsync<List<Vendor>>("api/vendors/Get");
-        _loading = !_vendorsLoading.IsCompleted;
-        _vendorList = await _vendorsLoading;
-        if (_vendorsLoading.IsCompleted)
+        _loading = true;
+        try
         {
+            _vendorsLoading = _client.GetFromJsonAsync<List<Vendor>>("api/vendors/Get");
+            _loading = !_vendorsLoading.IsCompleted;
+            _vendorList = await _vendorsLoading;
+            if (_vendorsLoading.IsCompleted)
+            {
+                _loading = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            _message = ex.Message;
+            _severity = Severity.Error;
             _loading = false;
         }
 
     }
 
-
+    public void CloseAlert()
+    {
+        _message = "";
+    }
     private bool FilterFuncInAction(Vendor vendor) => FilterFunc(vendor, _searchTexte);
 
     private bool FilterFunc(Vendor vendor, string query)
@@ -198,24 +214,34 @@ MessageBox for delete vendor
 
             var statusMessage = await _vendorLoading;
             _message = statusMessage.IsSuccessStatusCode ? "Fournisseur ajouté succés." : "Erreur lors de l'ajout";
+            _severity = Severity.Success;
             _vendorList.Add(_addVendor);
             _loading = false;
         }
         catch (Exception ex)
         {
             _message = ex.Message;
+            _severity = Severity.Error;
         }
     }
     
     private  async Task  UpdateSelectedVendor(Vendor selectedvendor)
     {
-        //_vendorLoading = _client.PostAsJsonAsync($"",selectedvendor);
-        _vendorLoading = _client.PutAsJsonAsync($"api/vendors/Put/{selectedvendor.Id}", selectedvendor);
-        _loading = !_vendorLoading.IsCompleted;
-       
-        var statusMessage  = await _vendorLoading;
-        _message = statusMessage.IsSuccessStatusCode ? "Fournisseur modifié avec succés." : "Erreur lors de la modification.";
-        _loading = false;
+        try
+        {
+            _vendorLoading = _client.PutAsJsonAsync($"api/vendors/Put/{selectedvendor.Id}", selectedvendor);
+            _loading = !_vendorLoading.IsCompleted;
+
+            var statusMessage = await _vendorLoading;
+            _message = statusMessage.IsSuccessStatusCode ? "Fournisseur modifié avec succés." : "Erreur lors de la modification.";
+            _severity = Severity.Success;
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
+            _message = ex.Message;
+            _severity = Severity.Error;
+        }
     }
 
     private async Task DeleteSelectedVendor(Vendor selectedVendor)
@@ -229,17 +255,20 @@ MessageBox for delete vendor
 
                 var statusMessage = await _vendorLoading;
                 _message = statusMessage.IsSuccessStatusCode?"Fournisseur supprimé avec succés.":"Erreur lors de la suppression.";
+                _severity = Severity.Success;
                 _vendorList.Remove(selectedVendor);
                 _loading = false;
             }
             catch (Exception ex)
             {
                 _message = ex.Message;
+                _severity = Severity.Error;
             }
         }
         else
         {
             _message = $"Le fournisseur {selectedVendor.Name} a des commandes, supprimer d'abord les commandes.";
+            _severity = Severity.Normal;
         }
     }
 

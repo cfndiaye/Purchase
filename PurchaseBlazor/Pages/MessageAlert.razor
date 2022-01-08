@@ -1,0 +1,18 @@
+<MudAlert Severity="@Severity" 
+          Variant="Variant.Outlined" 
+          CloseIconClicked="CloseAlert"  
+          ShowCloseIcon="true" Class="mt-2 mb-2"
+          >
+    @Message
+</MudAlert>
+
+@code {
+    [Parameter]
+    public string Message { get; set; }
+    [Parameter]
+    public Severity Severity { get; set; }
+    
+    [Parameter]
+    public EventCallback CloseAlert { get; set; }
+    
+}
