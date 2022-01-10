@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DnsClient.Internal;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PurchaseShared.Models;
@@ -19,11 +21,13 @@ namespace Purchase.Controllers
     {
         private readonly IVendorService _vendorService;
         private readonly ILogger _logger;
+
         public VendorsController(VendorService vendorService, ILogger<VendorsController> logger)
         {
             _vendorService = vendorService;
             _logger = logger;
         }
+
         // GET: api/values
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -57,7 +61,7 @@ namespace Purchase.Controllers
             {
                 try
                 {
-                   await _vendorService.AddVendorAsync(vendor);
+                    await _vendorService.AddVendorAsync(vendor);
                     _logger.LogInformation($"{vendor.Name} ajouté avec succés.");
                     return Ok(vendor);
                 }
@@ -73,7 +77,7 @@ namespace Purchase.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id,[FromBody] Vendor updatedVendor)
+        public async Task<IActionResult> Put(string id, [FromBody] Vendor updatedVendor)
         {
             var vendor = await _vendorService.GetVendorByIdAsync(id);
             if (vendor is null) return NotFound();
@@ -81,7 +85,7 @@ namespace Purchase.Controllers
 
             try
             {
-               await _vendorService.UpdateVendorAsync(id, updatedVendor);
+                await _vendorService.UpdateVendorAsync(id, updatedVendor);
                 _logger.LogInformation($"{updatedVendor.Id} modifié avec succés.");
             }
             catch (Exception ex)
@@ -104,12 +108,55 @@ namespace Purchase.Controllers
                 await _vendorService.DeleteVendorAsync(id);
                 _logger.LogInformation($" vendor id: {id} supprimé avec succés.");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
             }
 
             return Ok(id);
+        }
+
+        //upload vendor POST api/values
+        [HttpPost]
+        public async Task<IActionResult> UploadVendors(IFormFile file)
+        {
+            var vendors = new List<Vendor>();
+
+            using (var streamReader = new StreamReader((file.OpenReadStream())))
+            {
+                while (!streamReader.EndOfStream)
+                {
+                    var line = await streamReader.ReadLineAsync();
+                    string[] vendorLigne = line.Split(';');
+                    var vendor = new Vendor
+                    {
+                        Name = vendorLigne[0],
+                        EmailId = vendorLigne[1],
+                        Telephone = vendorLigne[3],
+                        Comments = vendorLigne[5]
+                    };
+                    vendors.Add(vendor);
+                }
+            }
+            if(vendors.Count > 0)
+                foreach (var vendor in vendors)
+                {
+                    try
+                    {
+                        await _vendorService.AddVendorAsync(vendor);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex.Message);
+                        
+                        return StatusCode(500, vendor);
+                        
+                    }
+                  
+                }
+
+
+            return Ok(vendors);
         }
     }
 }
