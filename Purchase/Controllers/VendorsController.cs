@@ -33,7 +33,8 @@ namespace Purchase.Controllers
         public async Task<IActionResult> Get()
         {
             var vendors = await _vendorService.GetVendorsAsync();
-            return Ok(vendors);
+            var vendorsOrdered = vendors.OrderBy(v => v.Name);
+            return Ok(vendorsOrdered);
         }
 
         // GET api/values/5

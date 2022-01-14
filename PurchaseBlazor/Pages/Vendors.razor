@@ -1,14 +1,19 @@
 ﻿@page "/vendors"
 @inject HttpClient _client
+
+
 <h1>Gestion des fournisseurs</h1>
 <MudPaper Class="mb-5 mt-5" Elevation="0">
-    <MudText Typo="Typo.body1">Les Fournisseurs agréés par ICS</MudText>
+    @* <MudText Typo="Typo.body1">Les Fournisseurs agréés par ICS</MudText> *@
 </MudPaper>
 <MudSpacer></MudSpacer>
 <MudCard>
     <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudIcon Icon="@Icons.Material.Outlined.List"></MudIcon>
+        </CardHeaderAvatar>
         <CardHeaderContent>
-            <MudIcon Icon="@Icons.Material.Outlined.List">Liste des fournisseurs</MudIcon>
+            <MudText Typo="Typo.body1">Les Fournisseurs agréés par ICS</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Inherit" OnClick="OpenAddMessageBox" />
@@ -25,14 +30,16 @@
         
          
 
-        <MudTable Items="@_vendorList" Dense="true" Striped="true" Hover="true" Breakpoint="Breakpoint.Sm"
+        <MudTable Items="@_vendorList" Dense="@_dense" Striped="true" Hover="true" Breakpoint="Breakpoint.Sm"
                   @bind-SelectedItem="_selectedVendor"
+                  @ref="_mudTable"
                   Filter="new Func<Vendor, bool>(FilterFuncInAction)"
+                  RowClassFunc="@SelectedRowClassFunc" T="Vendor"
                   Loading="@_loading" LoadingProgressColor="Color.Info">
             <ToolBarContent>
                 <MudText Inline="true" Typo="Typo.h6">Liste des fournisseurs</MudText>
                 <MudSpacer/>
-                <MudTextField @bind-Value="_searchTexte" Placeholder="Recherche..."
+                <MudTextField @bind-Value="_searchTexte"  Placeholder="Recherche..."
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Material.Filled.Search"
                               IconSize="Size.Medium"
@@ -57,18 +64,22 @@
                 <MudTd DataLabel="Orders">@context.Orders?.Count</MudTd>
                 <MudTd DataLabel="Commentaires">@context.Comments</MudTd>
                 <MudTd>
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => OpenUpdateMessageBox(context)" aria-label="Modifier" Color="Color.Primary" />
+                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Edit" OnClick="() => OpenUpdateMessageBox(context)" aria-label="Modifier" Color="Color.Inherit" />
                 </MudTd>
                 <MudTd>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="() => OpenDeleteMessageBox(context)" aria-label="Supprimer" Color="Color.Primary" />
+                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Delete" OnClick="() => OpenDeleteMessageBox(context)" aria-label="Supprimer" Color="Color.Inherit" />
                 </MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager/>
             </PagerContent>
         </MudTable>
-       
-        <MudText Inline="true" Class="align-self-center">@_selectedVendor?.Name</MudText>
+        
+        <MudPaper Class="mt-2">
+            <MudText Inline="true" Typo="Typo.h6" Class="align-self-center ml-2">@_selectedVendor?.Name</MudText>
+            
+        </MudPaper>
+        
     </MudCardContent>
     
 </MudCard>
@@ -162,6 +173,9 @@ MessageBox for delete vendor
     private Vendor _addVendor;
     private string _searchTexte = "";
     private Severity _severity = Severity.Info;
+    private  bool _dense = true;
+    private MudTable<Vendor> _mudTable;
+    private HashSet<Vendor> selectedItems = new HashSet<Vendor>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -176,6 +190,7 @@ MessageBox for delete vendor
             {
                 _loading = false;
             }
+            
         }
         catch (Exception ex)
         {
@@ -194,6 +209,8 @@ MessageBox for delete vendor
 
     private bool FilterFunc(Vendor vendor, string query)
     {
+        //remove the selected item
+        //_selectedVendor = null;
         if (string.IsNullOrWhiteSpace(query.ToLower()))
             return true;
         if(vendor.Name != null)
@@ -297,6 +314,16 @@ MessageBox for delete vendor
         bool? result = await _deleteMessageBox.Show();
         if (result == null) _message = "Suppression annulé.";
         StateHasChanged();
+    }
+
+    private string SelectedRowClassFunc(Vendor vendor, int i)
+    {
+        if (_mudTable.SelectedItem != null && _mudTable.SelectedItem.Equals(vendor))
+        {
+            
+            return "selected";
+        }
+        return string.Empty;
     }
     
 

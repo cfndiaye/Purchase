@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
@@ -11,15 +12,21 @@ namespace PurchaseShared.Models
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
-
+    
+    [Required]
     [JsonProperty(PropertyName = "agentname")]
     [BsonElement("agentname")]
     public string AgentName { get; set; }
+    
+    [JsonProperty(PropertyName = "noligne")]
+    [BsonElement("noligne")]
+    public int NoLigne { get; set; }
 
     [JsonProperty(PropertyName = "unitname")]
     [BsonElement("unitname")]
     public string UnitName { get; set; }
-
+  
+    [Required]
     [JsonProperty(PropertyName = "reqnumber")]
     [BsonElement("reqnumber")]
     public int ReqNumber { get; set; }
@@ -27,6 +34,16 @@ namespace PurchaseShared.Models
     [JsonProperty(PropertyName = "description")]
     [BsonElement("description")]
     public string Description { get; set; }
+    
+    [JsonProperty(PropertyName = "localisation")]
+    [BsonElement("localisation")]
+    public string Localisation { get; set; }
+    [JsonProperty(PropertyName = "type")]
+    [BsonElement("type")]
+    public string Type { get; set; }
+    [JsonProperty(PropertyName = "prdate")]
+    [BsonElement("prdate")]
+    public DateTime PrDate { get; set; }
 
     [JsonProperty(PropertyName = "approveddate")]
     [BsonElement("approveddate")]
@@ -50,7 +67,7 @@ namespace PurchaseShared.Models
 
     [BsonRepresentation(BsonType.ObjectId)]
     [JsonProperty(PropertyName = "vendor_id")]
-    public string vendorId { get; set; }
+    public string VendorId { get; set; }
     [BsonIgnore]
     [JsonProperty(PropertyName = "vendor")]
     public Vendor Vendor { get; set; }

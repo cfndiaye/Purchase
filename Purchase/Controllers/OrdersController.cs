@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Purchase.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class OrdersController : ControllerBase
     {
@@ -37,7 +37,7 @@ namespace Purchase.Controllers
         {
             var order = await _orderService.GetOrderByIdAsync(id);
             if (order is null) return NotFound();
-            order.Vendor = await _vendorService.GetVendorByIdAsync(order.vendorId);
+            order.Vendor = await _vendorService.GetVendorByIdAsync(order.VendorId);
             return Ok(order);
         }
 
@@ -51,7 +51,7 @@ namespace Purchase.Controllers
                 {
                     await _orderService.AddOrderAsync(order);
                     _logger.LogInformation($"order ID: {order.Id} ajoute avec succes");
-                    await _vendorService.UpdateVendorOrdersAsync(order.vendorId, order.Id);
+                    await _vendorService.UpdateVendorOrdersAsync(order.VendorId, order.Id);
                     return Ok(order);
                 }
                 catch(Exception ex)

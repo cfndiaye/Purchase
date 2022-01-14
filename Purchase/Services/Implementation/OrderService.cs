@@ -31,7 +31,7 @@ namespace Purchase.Services.Implementation
         public async Task<Order> GetOrderByIdAsync(string orderId)
         {
            var order = await _ordersCollection.Find(x => x.Id == orderId).FirstOrDefaultAsync();
-            var vendor = await _vendorService.GetVendorByIdAsync(order.vendorId);
+            var vendor = await _vendorService.GetVendorByIdAsync(order.VendorId);
             order.Vendor = vendor;
             return order;
         }
@@ -42,7 +42,7 @@ namespace Purchase.Services.Implementation
         public async Task<IEnumerable<Order>> GetOrdersAsync()
         {
             var orders = await _ordersCollection.Find(_ => true).ToListAsync();
-            orders.ForEach(o => o.Vendor = _vendorService.GetVendorById(o.vendorId));
+            orders.ForEach(o => o.Vendor = _vendorService.GetVendorById(o.VendorId));
             return orders;
         }
 
