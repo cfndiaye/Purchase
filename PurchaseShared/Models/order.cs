@@ -13,7 +13,7 @@ namespace PurchaseShared.Models
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
     
-    [Required]
+    [Required(ErrorMessage = "Le champ Nom Agent est requis")]
     [JsonProperty(PropertyName = "agentname")]
     [BsonElement("agentname")]
     public string AgentName { get; set; }
@@ -26,7 +26,7 @@ namespace PurchaseShared.Models
     [BsonElement("unitname")]
     public string UnitName { get; set; }
   
-    [Required]
+    [Required(ErrorMessage = "Le numéro de la DA est requis")]
     [JsonProperty(PropertyName = "reqnumber")]
     [BsonElement("reqnumber")]
     public int ReqNumber { get; set; }
@@ -60,12 +60,14 @@ namespace PurchaseShared.Models
     [JsonProperty(PropertyName = "datepo")]
     [BsonElement("datepo")]
     public DateTime DatePo { get; set; }
-
+    
+    [Required(ErrorMessage = "Le champ montant est requis"), Range(1.0, Double.MaxValue, ErrorMessage = "Valeur Minimum 1 requise")]
     [JsonProperty(PropertyName = "amount")]
     [BsonElement("amount")]
     public double Amount { get; set; }
 
     [BsonRepresentation(BsonType.ObjectId)]
+    [BsonElement("vendor_id")]
     [JsonProperty(PropertyName = "vendor_id")]
     public string VendorId { get; set; }
     [BsonIgnore]
