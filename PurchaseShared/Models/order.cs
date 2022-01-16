@@ -43,11 +43,11 @@ namespace PurchaseShared.Models
     public string Type { get; set; }
     [JsonProperty(PropertyName = "prdate")]
     [BsonElement("prdate")]
-    public DateTime PrDate { get; set; }
+    public DateTime? PrDate { get; set; }
 
     [JsonProperty(PropertyName = "approveddate")]
     [BsonElement("approveddate")]
-    public DateTime ApprovedDate { get; set; }
+    public DateTime? ApprovedDate { get; set; }
 
     [JsonProperty(PropertyName = "status")]
     [BsonElement("status")]
@@ -59,7 +59,7 @@ namespace PurchaseShared.Models
 
     [JsonProperty(PropertyName = "datepo")]
     [BsonElement("datepo")]
-    public DateTime DatePo { get; set; }
+    public DateTime? DatePo { get; set; }
     
     [Required(ErrorMessage = "Le champ montant est requis"), Range(1.0, Double.MaxValue, ErrorMessage = "Valeur Minimum 1 requise")]
     [JsonProperty(PropertyName = "amount")]
