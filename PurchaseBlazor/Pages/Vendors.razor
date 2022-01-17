@@ -1,6 +1,6 @@
 ﻿@page "/vendors"
 @inject HttpClient _client
-
+@*inject IDialogService DialogService*@
 
 <h1>Gestion des fournisseurs</h1>
 <MudPaper Class="mb-5 mt-5" Elevation="0">
@@ -17,33 +17,27 @@
         </CardHeaderContent>
         <CardHeaderActions>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Inherit" OnClick="OpenAddMessageBox" />
-            <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" />
+            <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" OnClick="OpenImportDialog" />
         </CardHeaderActions>
     </MudCardHeader>
 
     <MudCardContent>
-        
+
         @if (!string.IsNullOrWhiteSpace(_message))
         {
             <MessageAlert CloseAlert="CloseAlert" Message="@_message" Severity="@_severity"></MessageAlert>
         }
-        
-         
+
+
 
         <MudTable Items="@_vendorList" Dense="@_dense" Striped="true" Hover="true" Breakpoint="Breakpoint.Sm"
-                  @bind-SelectedItem="_selectedVendor"
-                  @ref="_mudTable"
-                  Filter="new Func<Vendor, bool>(FilterFuncInAction)"
-                  RowClassFunc="@SelectedRowClassFunc" T="Vendor"
-                  Loading="@_loading" LoadingProgressColor="Color.Info">
+            @bind-SelectedItem="_selectedVendor" @ref="_mudTable" Filter="new Func<Vendor, bool>(FilterFuncInAction)"
+            RowClassFunc="@SelectedRowClassFunc" T="Vendor" Loading="@_loading" LoadingProgressColor="Color.Info">
             <ToolBarContent>
                 <MudText Inline="true" Typo="Typo.h6">Liste des fournisseurs</MudText>
-                <MudSpacer/>
-                <MudTextField @bind-Value="_searchTexte"  Placeholder="Recherche..."
-                              Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Search"
-                              IconSize="Size.Medium"
-                              Class="mt-0" />
+                <MudSpacer />
+                <MudTextField @bind-Value="_searchTexte" Placeholder="Recherche..." Adornment="Adornment.Start"
+                    AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
             </ToolBarContent>
             <HeaderContent>
 
@@ -64,103 +58,166 @@
                 <MudTd DataLabel="Orders">@context.Orders?.Count</MudTd>
                 <MudTd DataLabel="Commentaires">@context.Comments</MudTd>
                 <MudTd>
-                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Edit" OnClick="() => OpenUpdateMessageBox(context)" aria-label="Modifier" Color="Color.Inherit" />
+                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Edit"
+                        OnClick="() => OpenUpdateMessageBox(context)" aria-label="Modifier" Color="Color.Inherit" />
                 </MudTd>
                 <MudTd>
-                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Delete" OnClick="() => OpenDeleteMessageBox(context)" aria-label="Supprimer" Color="Color.Inherit" />
+                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Delete"
+                        OnClick="() => OpenDeleteMessageBox(context)" aria-label="Supprimer" Color="Color.Inherit" />
                 </MudTd>
             </RowTemplate>
             <PagerContent>
-                <MudTablePager/>
+                <MudTablePager />
             </PagerContent>
         </MudTable>
-        
+
         <MudPaper Class="mt-2">
             <MudText Inline="true" Typo="Typo.h6" Class="align-self-center ml-2">@_selectedVendor?.Name</MudText>
-            
+
         </MudPaper>
-        
+
     </MudCardContent>
-    
+
 </MudCard>
 @*
-MessageBor for Add Vendor
+    MessageBor for Add Vendor
 *@
 <MudMessageBox @ref="_addMessageBox" CancelText="Annuler">
     <MessageContent>
         <div style="min-width: 400px; max-width: 400px;">
             <EditForm Model="_addVendor">
-                <DataAnnotationsValidator/>
+                <DataAnnotationsValidator />
                 <MudCard>
                     <MudCardContent>
                         <MudTextField Label="Nom" Helpertext="Min 3 caractères" For="@(() => _addVendor.Name)"
-                                      @bind-Value="_addVendor.Name"/>
+                            @bind-Value="_addVendor.Name" />
                         <MudTextField Label="E-mail" HelperText="Adresse e-mail" For="@(() => _addVendor.EmailId )"
-                                      @bind-Value="_addVendor.EmailId"/>
-                        <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420" 
-                                      For="@(() => _addVendor.Telephone)" @bind-Value="_addVendor.Telephone"/>
-                        <MudTextField Label="Commentaires" HelperText="fournisseur local" 
-                                      For="@(() => _addVendor.Comments)" @bind-Value="_addVendor.Comments"/>
+                            @bind-Value="_addVendor.EmailId" />
+                        <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420"
+                            For="@(() => _addVendor.Telephone)" @bind-Value="_addVendor.Telephone" />
+                        <MudTextField Label="Commentaires" HelperText="fournisseur local"
+                            For="@(() => _addVendor.Comments)" @bind-Value="_addVendor.Comments" />
                     </MudCardContent>
-                                
+
                 </MudCard>
             </EditForm>
         </div>
     </MessageContent>
     <YesButton>
-        <MudButton OnClick="() => AddNewVendor(_addVendor)" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary">Ajouter</MudButton>
+        <MudButton OnClick="() => AddNewVendor(_addVendor)" Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary">Ajouter</MudButton>
     </YesButton>
 </MudMessageBox>
 @*
-MessageBox for update Vendor
+    MessageBox for update Vendor
 *@
 <MudMessageBox @ref="_updateMessageBox" Title=@($"Modification Vendor {_selectedVendor?.Name}") CancelText="Annuler">
     <MessageContent>
         <div style="min-width: 400px; max-width: 400px;">
             <EditForm Model="_selectedVendor">
-                <DataAnnotationsValidator/>
+                <DataAnnotationsValidator />
                 <MudCard>
                     <MudCardContent>
                         <MudTextField Label="Nom" Helpertext="Min 3 caractères" For="@(() => _selectedVendor.Name)"
-                                      @bind-Value="_selectedVendor.Name"/>
+                            @bind-Value="_selectedVendor.Name" />
                         <MudTextField Label="E-mail" HelperText="Adresse e-mail" For="@(() => _selectedVendor.EmailId )"
-                                      @bind-Value="_selectedVendor.EmailId"/>
-                        <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420" 
-                                      For="@(() => _selectedVendor.Telephone)" @bind-Value="_selectedVendor.Telephone"/>
-                        <MudTextField Label="Commentaires" HelperText="fournisseur local" 
-                                      For="@(() => _selectedVendor.Comments)" @bind-Value="_selectedVendor.Comments"/>
+                            @bind-Value="_selectedVendor.EmailId" />
+                        <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420"
+                            For="@(() => _selectedVendor.Telephone)" @bind-Value="_selectedVendor.Telephone" />
+                        <MudTextField Label="Commentaires" HelperText="fournisseur local"
+                            For="@(() => _selectedVendor.Comments)" @bind-Value="_selectedVendor.Comments" />
                     </MudCardContent>
                     <MudCardActions>
-                        
+
                     </MudCardActions>
                 </MudCard>
             </EditForm>
         </div>
     </MessageContent>
     <YesButton>
-        <MudButton OnClick="() => UpdateSelectedVendor(_selectedVendor)" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Check" Color="Color.Primary">Modifier</MudButton>
+        <MudButton OnClick="() => UpdateSelectedVendor(_selectedVendor)" Variant="Variant.Filled"
+            StartIcon="@Icons.Material.Filled.Check" Color="Color.Primary">Modifier</MudButton>
     </YesButton>
 </MudMessageBox>
 
 @*
-MessageBox for delete vendor
+    MessageBox for delete vendor
 *@
 <MudMessageBox @ref="_deleteMessageBox" CancelText="Annuler">
-    
+
     <MessageContent>
         <div style="min-width: 400px; max-width: 400px;">
             <MudText>Voulez-vous vraiment supprimer le fournisseur </MudText>
         </div>
     </MessageContent>
     <YesButton>
-        <MudButton OnClick="() => DeleteSelectedVendor(_selectedVendor)" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Supprimer</MudButton>
+        <MudButton OnClick="() => DeleteSelectedVendor(_selectedVendor)" Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Supprimer</MudButton>
     </YesButton>
 </MudMessageBox>
+
+@*
+    Dialog for import Vendors
+*@
+<MudDialog @ref="_importDialog">
+    <DialogContent>
+
+        <InputFile id="fileInput" OnChange="ImportVendors" hidden />
+        <MudButton htmlTag="label" Variant="Variant.Filled" Color="Color.Primary"
+            StartIcon="@Icons.Material.Filled.AttachFile" For="fileInput">
+            Importer
+        </MudButton>
+
+        <MudProgressLinear Color="Color.Warning" Indeterminate="_loading" />
+    </DialogContent>
+
+</MudDialog>
 @code {
-    
+
+    private string _fileName = "";
+    private void OpenImportDialog()
+    {
+        _importDialog.Show("Importer les fournisseur");
+    }
+
+    private async Task ImportVendors(InputFileChangeEventArgs e)
+    {
+
+        IBrowserFile file = e.File;
+        using (var content = new MultipartFormDataContent())
+        {
+            using (var fs = file.OpenReadStream())
+            {
+                using (var streamContent = new StreamContent(fs))
+                {
+                    content.Add(streamContent);
+                        var request = _client.PostAsync("api/vendors/UploadVendors", content);
+                        _loading = !request.IsCompleted;
+                        await request;
+                        if (request.IsCompletedSuccessfully)
+                        {
+                            _message = "Fournisseur importés avec succés.";
+                            _severity = Severity.Success;
+                            _importDialog.Close();
+                        }
+                        else
+                        {
+                            _message = "Erreur inattendue lors de l'importation'.";
+                            _severity = Severity.Error;
+                        }
+                    
+                    _fileName = e.File.Name;
+                }
+            }
+
+
+        }
+    }
+
+    private MudDialog _importDialog;
     private List<Vendor> _vendorList;
-  
-    private string _message="";
+
+    private string _message = "";
     private bool _loading;
     private Task<List<Vendor>> _vendorsLoading;
     private Task<HttpResponseMessage> _vendorLoading;
@@ -168,12 +225,12 @@ MessageBox for delete vendor
     private MudMessageBox _updateMessageBox;
     private MudMessageBox _addMessageBox;
     private MudMessageBox _deleteMessageBox;
-    
+
     private Vendor _selectedVendor;
     private Vendor _addVendor;
     private string _searchTexte = "";
     private Severity _severity = Severity.Info;
-    private  bool _dense = true;
+    private bool _dense = true;
     private MudTable<Vendor> _mudTable;
     private HashSet<Vendor> selectedItems = new HashSet<Vendor>();
 
@@ -190,7 +247,7 @@ MessageBox for delete vendor
             {
                 _loading = false;
             }
-            
+
         }
         catch (Exception ex)
         {
@@ -213,12 +270,12 @@ MessageBox for delete vendor
         //_selectedVendor = null;
         if (string.IsNullOrWhiteSpace(query.ToLower()))
             return true;
-        if(vendor.Name != null)
-        if (vendor.Name.ToLower().Contains(query.ToLower()))
-            return true;
-        if(vendor.Comments != null)
-        if (vendor.Comments.ToLower().Contains(query.ToLower()))
-            return true;
+        if (vendor.Name != null)
+            if (vendor.Name.ToLower().Contains(query.ToLower()))
+                return true;
+        if (vendor.Comments != null)
+            if (vendor.Comments.ToLower().Contains(query.ToLower()))
+                return true;
         return false;
     }
 
@@ -241,8 +298,8 @@ MessageBox for delete vendor
             _severity = Severity.Error;
         }
     }
-    
-    private  async Task  UpdateSelectedVendor(Vendor selectedvendor)
+
+    private async Task UpdateSelectedVendor(Vendor selectedvendor)
     {
         try
         {
@@ -271,7 +328,7 @@ MessageBox for delete vendor
                 _loading = !_vendorLoading.IsCompleted;
 
                 var statusMessage = await _vendorLoading;
-                _message = statusMessage.IsSuccessStatusCode?"Fournisseur supprimé avec succés.":"Erreur lors de la suppression.";
+                _message = statusMessage.IsSuccessStatusCode ? "Fournisseur supprimé avec succés." : "Erreur lors de la suppression.";
                 _severity = Severity.Success;
                 _vendorList.Remove(selectedVendor);
                 _loading = false;
@@ -304,7 +361,7 @@ MessageBox for delete vendor
         bool? result = await _updateMessageBox.Show();
         _message = result == null ? "Annulé" : "Fournisseur Modifié";
         StateHasChanged();
-        
+
     }
 
     private async Task OpenDeleteMessageBox(Vendor vendor)
@@ -320,11 +377,11 @@ MessageBox for delete vendor
     {
         if (_mudTable.SelectedItem != null && _mudTable.SelectedItem.Equals(vendor))
         {
-            
+
             return "selected";
         }
         return string.Empty;
     }
-    
+
 
 }
