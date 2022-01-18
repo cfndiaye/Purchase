@@ -121,7 +121,8 @@ namespace Purchase.Controllers
     [HttpPost]
     public async Task<IActionResult> UploadVendors(IFormFile file)
     {
-      if (file is null) return StatusCode(500, "file not found");
+      if (file is null) 
+        return StatusCode(500, "file not found");
       var vendors = new List<Vendor>();
 
       using (var streamReader = new StreamReader((file.OpenReadStream())))

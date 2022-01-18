@@ -1,4 +1,6 @@
 ﻿@page "/vendors"
+@using System.Net.Http.Headers
+@using System.IO
 @inject HttpClient _client
 @*inject IDialogService DialogService*@
 
@@ -17,7 +19,7 @@
         </CardHeaderContent>
         <CardHeaderActions>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Inherit" OnClick="OpenAddMessageBox" />
-            <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" OnClick="OpenImportDialog" />
+            <MudIconButton Icon="@Icons.Material.Outlined.ImportExport" Color="Color.Inherit" OnClick="OpenImportDialog" />
         </CardHeaderActions>
     </MudCardHeader>
 
@@ -159,17 +161,25 @@
 @*
     Dialog for import Vendors
 *@
-<MudDialog @ref="_importDialog">
+<MudDialog @ref="_importDialog" >
     <DialogContent>
+        <MudPaper Class="d-flex align-center py-2 px-1" Elevation="0" Style="min-width: 400px; min-height: 100px">
+            <InputFile id="fileInput" OnChange="ImportVendors" accept=".csv" hidden />
+            <MudButton  htmlTag="label" Variant="Variant.Filled" Color="Color.Primary"
+                        StartIcon="@Icons.Material.Filled.AttachFile" For="fileInput">
+                Importer
+                @* <MudProgressLinear  Color="Color.Warning" Indeterminate="true" /> *@
+            
+            </MudButton>
+            <MudText>@_fileName</MudText>
+            <MudSpacer/>
+            <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="_loading"/>
 
-        <InputFile id="fileInput" OnChange="ImportVendors" hidden />
-        <MudButton htmlTag="label" Variant="Variant.Filled" Color="Color.Primary"
-            StartIcon="@Icons.Material.Filled.AttachFile" For="fileInput">
-            Importer
-        </MudButton>
-
-        <MudProgressLinear Color="Color.Warning" Indeterminate="_loading" />
+        </MudPaper>
     </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseImportDialog">Fermer</MudButton>
+    </DialogActions>
 
 </MudDialog>
 @code {
@@ -177,41 +187,47 @@
     private string _fileName = "";
     private void OpenImportDialog()
     {
-        _importDialog.Show("Importer les fournisseur");
+        _importDialog.Show("Importer les fournisseurs");
     }
 
+    private void CloseImportDialog()
+    {
+        _importDialog.Close();
+    }
     private async Task ImportVendors(InputFileChangeEventArgs e)
     {
 
         IBrowserFile file = e.File;
-        using (var content = new MultipartFormDataContent())
+        _fileName = file.Name;
+        var content = new MultipartFormDataContent();
+        using (var fs = file.OpenReadStream())
         {
-            using (var fs = file.OpenReadStream())
+            using (var streamContent = new StreamContent(fs))
             {
-                using (var streamContent = new StreamContent(fs))
+                using (var fileContent = new ByteArrayContent(await streamContent.ReadAsByteArrayAsync()))
                 {
-                    content.Add(streamContent);
-                        var request = _client.PostAsync("api/vendors/UploadVendors", content);
-                        _loading = !request.IsCompleted;
-                        await request;
-                        if (request.IsCompletedSuccessfully)
-                        {
-                            _message = "Fournisseur importés avec succés.";
-                            _severity = Severity.Success;
-                            _importDialog.Close();
-                        }
-                        else
-                        {
-                            _message = "Erreur inattendue lors de l'importation'.";
-                            _severity = Severity.Error;
-                        }
-                    
-                    _fileName = e.File.Name;
+                    fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+                    content.Add(fileContent, "file", file.Name);
+
+                    var request = _client.PostAsync("api/vendors/UploadVendors", content);
+                    _loading = !request.IsCompleted;
+                    var status = await request;
+                    if (status.IsSuccessStatusCode)
+                    {
+                        _message = "Fournisseur importés avec succés.";
+                        _severity = Severity.Success;
+                        _importDialog.Close();
+                    }
+                    else
+                    {
+                        _message = "Erreur inattendue lors de l'importation'.";
+                        _severity = Severity.Error;
+                    }
                 }
             }
-
-
         }
+
+
     }
 
     private MudDialog _importDialog;
@@ -384,4 +400,4 @@
     }
 
 
-}
+} 
