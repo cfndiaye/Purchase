@@ -37,7 +37,7 @@ namespace Purchase
             services.AddSingleton<OrderService>();
             services.AddCors(option => {
                 option.AddPolicy(name: MyPolicy, builder => {
-                    builder.WithOrigins("https://localhost:44331");
+                    //builder.WithOrigins("https://localhost:44331");
                     builder.AllowAnyOrigin();
                     builder.AllowAnyMethod();
                     //builder.AllowAnyHeader().WithMethods("GET, PATCH, DELETE, PUT, POST, OPTIONS");

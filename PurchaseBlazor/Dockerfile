@@ -1,21 +1,8 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+COPY . ./
+RUN dotnet publish "PurchaseBlazor.csproj" -c Release -o output
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-WORKDIR /src
-COPY ["PurchaseBlazor/PurchaseBlazor.csproj", "PurchaseBlazor/"]
-COPY ["PurchaseShared/PurchaseShared.csproj", "PurchaseShared/"]
-RUN dotnet restore "PurchaseBlazor/PurchaseBlazor.csproj"
-COPY . .
-WORKDIR "/src/PurchaseBlazor"
-RUN dotnet build "PurchaseBlazor.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "PurchaseBlazor.csproj" -c Release -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "PurchaseBlazor.dll"]
+FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
+COPY --from=base /app/output/wwwroot .
