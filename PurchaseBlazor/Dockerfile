@@ -1,8 +1,20 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
-WORKDIR /app
-COPY . ./
-RUN dotnet publish "PurchaseBlazor.csproj" -c Release -o output
-
-FROM nginx:alpine
-WORKDIR /usr/share/nginx/html
-COPY --from=base /app/output/wwwroot .
+# Specify the image that will be used  
+# This will be pulled from Docker Image Registry  
+FROM nginx:alpine  
+# Environment variable set for Blazor.  
+# The enviroment variable is used in nginx   
+# configuration file to set up the headers.  
+ENV BLAZOR_ENVIRONMENT=Production  
+# Set the working directory in the image  
+WORKDIR /usr/share/nginx/html  
+# Copy the publish application to the workdir in image  
+COPY bin/Release/net5.0/browser-wasm/publish/wwwroot  ./  
+# Copy the nginx configuration file  
+COPY nginx.conf /etc/nginx/nginx.conf  
+# Copy the start script  
+COPY start.sh ./  
+# This command is optional,   
+# it is just used to make sure all the EOL unix compliant  
+RUN sed -i -e "s/\r$//" start.sh  
+# The command that will be executed when the container starts  
+CMD /bin/sh ./start.sh
