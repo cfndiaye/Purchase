@@ -1,7 +1,10 @@
 ﻿@page "/orders"
 @using System.Globalization
+@using System.IO
+@using PurchaseBlazor.Pages.Components
 @inject HttpClient _client
 @inject IDialogService DialogService
+@inject NavigationManager NavigationManager
 <h1>Suivi des commandes</h1>
 <MudCard>
     <MudCardHeader>
@@ -13,7 +16,7 @@
         </CardHeaderContent>
         <CardHeaderActions>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="OpenAddMudDialog" Color="Color.Inherit"/>
-            <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit"/>
+            <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" OnClick="OpenImportPage" Color="Color.Inherit"/>
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
@@ -169,6 +172,7 @@
 </MudMessageBox>
 
 @code {
+    
     private string _message = "";
     private Severity _severity = Severity.Info;
     private List<Order> _ordersList = new List<Order>();
@@ -188,6 +192,17 @@
     private MudMessageBox _deleteMessageBox;
     private string _selectedVendor= "";
     private string _selectedVendorId = "";
+    private string _fileName = "";
+    private List<Order> _orders;
+
+
+    private void OpenImportPage()
+    {
+        NavigationManager.NavigateTo("importorders");
+    }
+
+
+   
 
     private List<string> Status = new List<string>
     {

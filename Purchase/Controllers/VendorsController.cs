@@ -19,8 +19,8 @@ namespace Purchase.Controllers
   [Route("api/[controller]/[action]")]
   public class VendorsController : ControllerBase
   {
-    private readonly IVendorService _vendorService;
     private readonly ILogger _logger;
+    private readonly IVendorService _vendorService;
 
     public VendorsController(VendorService vendorService, ILogger<VendorsController> logger)
     {

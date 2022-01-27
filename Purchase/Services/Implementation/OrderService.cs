@@ -48,5 +48,10 @@ namespace Purchase.Services.Implementation
 
         public async Task UpdateOrderAsync(string id, Order order) =>
             await _ordersCollection.ReplaceOneAsync(x => x.Id == id, order);
+
+        public async Task BulkImportAsync(List<Order> orders)
+        {
+            await _ordersCollection.InsertManyAsync(orders);
+        }
     }
 }

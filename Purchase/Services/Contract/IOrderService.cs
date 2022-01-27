@@ -14,5 +14,6 @@ namespace Purchase.Services.Contract
         Task AddOrderAsync(Order order);
         Task UpdateOrderAsync(string id, Order order);
         Task DeleteOrderAsync(string orderId);
+        Task BulkImportAsync(List<Order> orders);
     }
 }

@@ -1,0 +1,233 @@
+@page "/importorders"
+@using System.Globalization
+@using System.IO
+@using System.Threading
+@inject HttpClient _client
+<h1>Importation des commandes</h1>
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudIcon Icon="@Icons.Material.Outlined.List"></MudIcon>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.body1">Vérification des commandes importées</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Inherit"/>
+            <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit"/>
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudPaper Class="d-flex align-center py-2 px-1" Elevation="0" Style="min-width: 400px; min-height: 100px">
+            <InputFile id="fileInput" OnChange="UploadFileOrders" accept=".csv" hidden/>
+            <MudButton htmlTag="label" Variant="Variant.Filled" Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.AttachFile" For="fileInput">
+                Importer
+            </MudButton>
+            <MudSpacer/>
+            <MudText>
+                <MudChip Color="Color.Inherit">@_fileName</MudChip>
+            </MudText>
+            <MudSpacer/>
+            <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="_loading"/>
+
+        </MudPaper>
+        <MudPaper>
+            <MudTable @ref="_mudTableTempOrders" Items="_orders" @bind-SelectedItem="_selectedOrder" Hover="true" Dense="true" Loading="_loading" Striped="true" FixedHeader="true">
+                <HeaderContent>
+
+                    <MudTh>Agent</MudTh><MudTh>Location</MudTh><MudTh>PR</MudTh><MudTh>Description</MudTh><MudTh>Date Pr</MudTh>
+
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@context.AgentName</MudTd>
+                    <MudTd>@context.Localisation</MudTd>
+                    <MudTd>@context.ReqNumber.ToString()</MudTd>
+                    <MudTd>@context.Description</MudTd>
+                    <MudTd>@context.PrDate.Value.ToString(CultureInfo.CurrentCulture)</MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager/>
+                </PagerContent>
+            </MudTable>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="my-4" Style="height: 30px;">
+            <MudProgressLinear @ref="_mudProgressLinear" Size="Size.Large" Color="Color.Success" Value="_progressValue"/>
+
+        </MudPaper>
+        <MudPaper Class="d-flex px-6 justify-space-between py-6">
+            <MudChip @ref="_mudChipProgress" Color="Color.Info">@_progressValue.ToString()%</MudChip>
+            <MudChip @ref="_mudChipSuccess" Color="Color.Success">@_counterSuccess.ToString() importées</MudChip>
+            <MudChip @ref="_mudChipError" Color="Color.Error">@_errorCounter.ToString() erreurs</MudChip>
+        </MudPaper>
+
+
+        <div class="d-flex justify-space-between py-6">
+            <MudButton @ref="_btnValidate" OnClick="ValidateImportation" Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Approval" Color="Color.Success">Valider tous</MudButton>
+            <MudButton @ref="_btnValidateOne" OnClick="ValidateImportationOneByOne" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Approval" Color="Color.Success">Valider un par un</MudButton>
+
+        </div>
+
+    </MudCardContent>
+</MudCard>
+
+@code {
+    private MudChip _mudChipProgress;
+    private MudChip _mudChipSuccess;
+    private MudChip _mudChipError;
+    private MudProgressLinear _mudProgressLinear;
+    private string _message = "";
+    private Severity _severity = Severity.Info;
+    private string _fileName = "";
+    private List<Order> _orders = new List<Order>();
+    private bool _loading = false;
+    private int _countLine = int.MinValue;
+    private MudTable<Order> _mudTableTempOrders;
+    private int _progressValue;
+    private MudButton _btnValidate;
+    private MudButton _btnValidateOne;
+    private int _counterSuccess; //import counter success
+    private int _errorCounter; //import counter error
+    private Order _selectedOrder;
+
+    //Bulk Import
+    private async Task ValidateImportation()
+    {
+        _loading = true;
+        _btnValidate.Disabled = true;
+        BulkOder bulkOder = new BulkOder(_orders);
+        var status = await _client.PostAsJsonAsync("api/Orders/BulkImport", bulkOder);
+        if (status.IsSuccessStatusCode)
+        {
+            var obj = await status.Content.ReadAsStringAsync();
+            _message = $"{obj} Commande importé avec succés.";
+            _loading = false;
+        }
+    }
+
+    //import one by one
+    private async Task ValidateImportationOneByOne()
+    {
+        _btnValidateOne.Disabled = true;
+        var totalOrders = _orders.Count;
+        int counter = 0;
+        _loading = true;
+
+
+    //  Task[] jobs = new Task[totalOrders];
+    //  for (int i = 0; i < totalOrders; i++)
+    //  {
+    //      try
+    //      {
+    //          jobs[i] = _client.PostAsJsonAsync("api/Orders/Post", _orders[i], CancellationToken.None);
+    //          await jobs[i].ContinueWith(c =>
+    //          {
+    //              _counterSuccess++;
+    //              counter++;
+    //              _progressValue = (int) Math.Round(_counterSuccess / totalOrders * 100.0, MidpointRounding.ToEven);
+    //              
+    //              StateHasChanged();
+    //          });
+    //      }
+    //      catch (Exception e)
+    //      {
+    //          _errorCounter++;
+    //          Console.WriteLine(e.Message);
+    //          StateHasChanged();
+    //      }
+    //  }
+    // await Task.WhenAll(jobs).ContinueWith(c =>
+    //  {
+    //      _loading = false;
+    //  });
+
+
+        var jobs = Task.WhenAll(_orders.Select(order => Task.Run<Task>(async () =>
+        {
+            try
+            {
+                await _client.PostAsJsonAsync("api/Orders/Post", order, CancellationToken.None)
+                    .ContinueWith(c =>
+                    {
+                        _counterSuccess++;
+                        counter++;
+                        _progressValue = (int) Math.Round(counter / totalOrders * 100.0, MidpointRounding.ToEven);
+
+                        StateHasChanged();
+                    });
+            }
+            catch (Exception e)
+            {
+                _errorCounter++;
+                Console.WriteLine(e.Message);
+            }
+
+            StateHasChanged();
+        }
+            )));
+        await jobs.ContinueWith(
+            c => { _loading = false; });
+    }
+
+    private async Task UploadFileOrders(InputFileChangeEventArgs e)
+    {
+        _loading = true;
+        _btnValidate.Disabled = true;
+        IBrowserFile file = e.File;
+        _fileName = file.Name;
+
+    //importer le fichier et traiter le contenu en Orders
+        using (var streamReader = new StreamReader(file.OpenReadStream()))
+        {
+            int count = 0;
+            _orders = new List<Order>();
+    //while (await streamReader.ReadLineAsync() != null)
+
+            var bloc = await streamReader.ReadToEndAsync();
+            var blocLine = bloc.Split('\n');
+            for (int i = 0; i < blocLine.Length; i++)
+            {
+                count++;
+    //var line = await streamReader.ReadLineAsync();
+                var orderLine = blocLine[i].Split(";");
+    //var orderLine = line.Split(";");
+                int noLine;
+                int.TryParse(orderLine[2], out noLine);
+                DateTime prDate;
+                DateTime.TryParse(orderLine[7], out prDate);
+                DateTime approveDate;
+                DateTime.TryParse(orderLine[8], out approveDate);
+                int req;
+                int.TryParse(orderLine[3], out req);
+                DateTime poDate;
+                DateTime.TryParse(orderLine[14], out poDate);
+                double amount;
+                double.TryParse(orderLine[13], out amount);
+                if (amount == 0) amount = 1;
+                Order order = new Order
+                {
+                    Id = null,
+                    AgentName = orderLine[0],
+                    NoLigne = noLine,
+                    UnitName = orderLine[1],
+                    ReqNumber = req,
+                    Description = orderLine[4],
+                    Localisation = orderLine[5],
+                    Type = orderLine[6],
+                    PrDate = prDate,
+                    ApprovedDate = approveDate,
+                    Status = orderLine[8],
+                    PurchaseOrder = orderLine[9],
+                    DatePo = poDate,
+                    Amount = amount,
+    //VendorId = orderLine[12]
+                    VendorId = null
+                };
+                _orders.Add(order);
+            }
+            _fileName = $"{count} Commandes";
+        }
+        _loading = false;
+    }
+
+}

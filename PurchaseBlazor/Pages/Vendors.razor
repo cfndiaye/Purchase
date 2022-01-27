@@ -217,12 +217,14 @@
                         _message = "Fournisseur importés avec succés.";
                         _severity = Severity.Success;
                         _importDialog.Close();
+                        
                     }
                     else
                     {
                         _message = "Erreur inattendue lors de l'importation'.";
                         _severity = Severity.Error;
                     }
+                    _loading = false;
                 }
             }
         }

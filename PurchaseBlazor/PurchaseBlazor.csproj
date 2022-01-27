@@ -28,8 +28,4 @@
     <None Remove="Newtonsoft.Json" />
     <None Remove="MudBlazor" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Components" />
-  </ItemGroup>
 </Project>

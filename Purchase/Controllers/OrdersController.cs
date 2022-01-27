@@ -45,7 +45,7 @@ namespace Purchase.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Order order)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -54,7 +54,7 @@ namespace Purchase.Controllers
                     await _vendorService.UpdateVendorOrdersAsync(order.VendorId, order.Id);
                     return Ok(order);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _logger.LogError(ex.Message);
                 }
@@ -75,7 +75,7 @@ namespace Purchase.Controllers
                 _logger.LogInformation($"Order Id: {orderUpdated.Id} modifie avec succes");
                 return Ok(orderUpdated);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
             }
@@ -95,11 +95,37 @@ namespace Purchase.Controllers
                 await _vendorService.RemoveOrderOnVendor(id, order.Vendor);
                 return Ok(order);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
             }
             return StatusCode(500, order);
+        }
+
+        //Bulk import of Orders
+        [HttpPost]
+        public async Task<IActionResult> BulkImport([FromBody] BulkOder bulkOrder)
+        {
+            int count = 0;
+            int errorCount = 0;
+
+            foreach (var order in bulkOrder.Orders)
+            {
+                try
+                {
+                    await _orderService.AddOrderAsync(order);
+                    //await _vendorService.UpdateVendorOrdersAsync(order.VendorId, order.Id);
+                    count++;
+                }
+                catch (Exception e)
+                {
+                    errorCount++;
+                    return StatusCode(500, e.Message);
+
+                }
+
+            }
+            return Ok(new { Count = count, ErreurCount = errorCount });
         }
     }
 }
