@@ -42,7 +42,7 @@ namespace Purchase.Services.Implementation
         public async Task<IEnumerable<Order>> GetOrdersAsync()
         {
             var orders = await _ordersCollection.Find(_ => true).ToListAsync();
-            orders.ForEach(o => o.Vendor = _vendorService.GetVendorById(o.VendorId));
+            //orders.ForEach(o => o.Vendor = _vendorService.GetVendorById(o.VendorId));
             return orders;
         }
 

@@ -52,7 +52,7 @@
             </MudTable>
         </MudPaper>
         <MudPaper Elevation="0" Class="my-4" Style="height: 30px;">
-            <MudProgressLinear @ref="_mudProgressLinear" Size="Size.Large" Color="Color.Success" Value="_progressValue"/>
+            <MudProgressLinear @ref="_mudProgressLinear" Size="Size.Large" Color="Color.Success" Indeterminate="@_indeterminate" Value="_progressValue"/>
 
         </MudPaper>
         <MudPaper Class="d-flex px-6 justify-space-between py-6">
@@ -63,8 +63,8 @@
 
 
         <div class="d-flex justify-space-between py-6">
-            <MudButton @ref="_btnValidate" OnClick="ValidateImportation" Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Approval" Color="Color.Success">Valider tous</MudButton>
-            <MudButton @ref="_btnValidateOne" OnClick="ValidateImportationOneByOne" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Approval" Color="Color.Success">Valider un par un</MudButton>
+            <MudButton @ref="_btnValidate" OnClick="ValidateImportation" Disabled="_disabledBtnValidate" Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Approval" Color="Color.Success">Valider tous</MudButton>
+            <MudButton @ref="_btnValidateOne" OnClick="ValidateImportationOneByOne" Disabled="_disabledBtnValidateOneByOne" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Approval" Color="Color.Success">Valider un par un</MudButton>
 
         </div>
 
@@ -89,6 +89,11 @@
     private int _counterSuccess; //import counter success
     private int _errorCounter; //import counter error
     private Order _selectedOrder;
+    private bool _indeterminate = false;
+    private bool _disabledBtnValidate = true;
+    private bool _disabledBtnValidateOneByOne = true;
+    private int _totalOrderToImport = int.MinValue;
+    private int _counter = 0;
 
     //Bulk Import
     private async Task ValidateImportation()
@@ -108,71 +113,78 @@
     //import one by one
     private async Task ValidateImportationOneByOne()
     {
-        _btnValidateOne.Disabled = true;
-        var totalOrders = _orders.Count;
-        int counter = 0;
+        _disabledBtnValidateOneByOne = true;
+        _totalOrderToImport = _orders.Count;
         _loading = true;
+        _indeterminate = true;
+        
+     Task[] jobs = new Task[_totalOrderToImport];
+     for (int i = 0; i < _totalOrderToImport; i++)
+     {
+         try
+         {
+             jobs[i] = _client.PostAsJsonAsync("api/Orders/Post", _orders[i], CancellationToken.None);
+              await jobs[i].ContinueWith( c =>
+             {
+                 _counterSuccess++;
+                 _counter++;
+                 _progressValue = (int) Math.Round((_counter / _totalOrderToImport) * 100.0, MidpointRounding.ToEven);
+                 
+                 StateHasChanged();
+             });
+         }
+         catch (Exception e)
+         {
+             _errorCounter++;
+             _counter++;
+             Console.WriteLine(e.Message);
+             StateHasChanged();
+         }
+     }
+    await Task.WhenAll(jobs).ContinueWith(c =>
+     {
+         _loading = false;
+         _indeterminate = false;
+     });
 
 
-    //  Task[] jobs = new Task[totalOrders];
-    //  for (int i = 0; i < totalOrders; i++)
-    //  {
-    //      try
-    //      {
-    //          jobs[i] = _client.PostAsJsonAsync("api/Orders/Post", _orders[i], CancellationToken.None);
-    //          await jobs[i].ContinueWith(c =>
-    //          {
-    //              _counterSuccess++;
-    //              counter++;
-    //              _progressValue = (int) Math.Round(_counterSuccess / totalOrders * 100.0, MidpointRounding.ToEven);
-    //              
-    //              StateHasChanged();
-    //          });
-    //      }
-    //      catch (Exception e)
-    //      {
-    //          _errorCounter++;
-    //          Console.WriteLine(e.Message);
-    //          StateHasChanged();
-    //      }
-    //  }
-    // await Task.WhenAll(jobs).ContinueWith(c =>
-    //  {
-    //      _loading = false;
-    //  });
+    //     await Task.WhenAll(_orders.Select(order => Task.Run<Task>(async () =>
+    //     {
+    //         try
+    //         {
+    //             await _client.PostAsJsonAsync("api/Orders/Post", order, CancellationToken.None)
+    //                 .ContinueWith(async c =>
+    //                 {
+    //                     var result = await c;
+    //                     if (result.IsSuccessStatusCode)
+    //                     {
+    //                         _counterSuccess++;
+    //                         counter++;
+    //                         _progressValue = (int) Math.Round(counter / totalOrders * 100.0, MidpointRounding.ToEven);
+    //                     }
+    //                     else
+    //                     {
+    //                         _errorCounter++;
+    //                     }
+    //                     StateHasChanged();
+    //                 });
+    //         }
+    //         catch (Exception e)
+    //         {
+    //             Console.WriteLine(e.Message);
+    //         }
+    //
+    // // StateHasChanged();
+    //     }
+    //         )));
 
-
-        var jobs = Task.WhenAll(_orders.Select(order => Task.Run<Task>(async () =>
-        {
-            try
-            {
-                await _client.PostAsJsonAsync("api/Orders/Post", order, CancellationToken.None)
-                    .ContinueWith(c =>
-                    {
-                        _counterSuccess++;
-                        counter++;
-                        _progressValue = (int) Math.Round(counter / totalOrders * 100.0, MidpointRounding.ToEven);
-
-                        StateHasChanged();
-                    });
-            }
-            catch (Exception e)
-            {
-                _errorCounter++;
-                Console.WriteLine(e.Message);
-            }
-
-            StateHasChanged();
-        }
-            )));
-        await jobs.ContinueWith(
-            c => { _loading = false; });
     }
 
     private async Task UploadFileOrders(InputFileChangeEventArgs e)
     {
         _loading = true;
-        _btnValidate.Disabled = true;
+        _disabledBtnValidate = false;
+        _disabledBtnValidateOneByOne = false;
         IBrowserFile file = e.File;
         _fileName = file.Name;
 
@@ -188,9 +200,7 @@
             for (int i = 0; i < blocLine.Length; i++)
             {
                 count++;
-    //var line = await streamReader.ReadLineAsync();
                 var orderLine = blocLine[i].Split(";");
-    //var orderLine = line.Split(";");
                 int noLine;
                 int.TryParse(orderLine[2], out noLine);
                 DateTime prDate;
@@ -200,7 +210,7 @@
                 int req;
                 int.TryParse(orderLine[3], out req);
                 DateTime poDate;
-                DateTime.TryParse(orderLine[14], out poDate);
+                DateTime.TryParse(orderLine[15], out poDate);
                 double amount;
                 double.TryParse(orderLine[13], out amount);
                 if (amount == 0) amount = 1;
@@ -216,8 +226,8 @@
                     Type = orderLine[6],
                     PrDate = prDate,
                     ApprovedDate = approveDate,
-                    Status = orderLine[8],
-                    PurchaseOrder = orderLine[9],
+                    Status = orderLine[10],
+                    PurchaseOrder = orderLine[11],
                     DatePo = poDate,
                     Amount = amount,
     //VendorId = orderLine[12]

@@ -4,6 +4,7 @@ using PurchaseShared.Models;
 using Purchase.Services.Implementation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -28,7 +29,7 @@ namespace Purchase.Controllers
         [HttpGet]
         public async Task<IEnumerable<Order>> Get()
         {
-            return await _orderService.GetOrdersAsync();
+            return (await _orderService.GetOrdersAsync());
         }
 
         // GET api/<OrdersController>/5
