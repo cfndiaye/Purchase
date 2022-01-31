@@ -56,8 +56,9 @@
 
         </MudPaper>
         <MudPaper Class="d-flex px-6 justify-space-between py-6">
-            <MudChip @ref="_mudChipProgress" Color="Color.Info">@_progressValue.ToString()%</MudChip>
+            <MudChip @ref="_mudChipProgress" Color="Color.Info">@_progressValue.ToString() %</MudChip>
             <MudChip @ref="_mudChipSuccess" Color="Color.Success">@_counterSuccess.ToString() importées</MudChip>
+            <MudChip Color="Color.Primary">@_watchValue.ToString()</MudChip>
             <MudChip @ref="_mudChipError" Color="Color.Error">@_errorCounter.ToString() erreurs</MudChip>
         </MudPaper>
 
@@ -81,7 +82,6 @@
     private string _fileName = "";
     private List<Order> _orders = new List<Order>();
     private bool _loading = false;
-    private int _countLine = int.MinValue;
     private MudTable<Order> _mudTableTempOrders;
     private int _progressValue;
     private MudButton _btnValidate;
@@ -93,7 +93,24 @@
     private bool _disabledBtnValidate = true;
     private bool _disabledBtnValidateOneByOne = true;
     private int _totalOrderToImport = int.MinValue;
-    private int _counter = 0;
+    private int _counter;
+    private TimeSpan _watchValue = new TimeSpan();
+    private bool _isWatchrunning = false;
+
+
+    private async Task Watch()
+    {
+        _isWatchrunning = true;
+        while (_isWatchrunning)
+        {
+           await Task.Delay(1000);
+            if (_isWatchrunning)
+            {
+                _watchValue = _watchValue.Add(new TimeSpan(0, 0, 1));
+                StateHasChanged();
+            }
+        }
+    }
 
     //Bulk Import
     private async Task ValidateImportation()
@@ -116,8 +133,47 @@
         _disabledBtnValidateOneByOne = true;
         _totalOrderToImport = _orders.Count;
         _loading = true;
-        _indeterminate = true;
+         Watch();
+        //_indeterminate = true;
         
+        ////OPTION 1 work with errors
+        //BUGS
+        // Task<HttpResponseMessage>[] jobs = new Task<HttpResponseMessage>[_totalOrderToImport];
+        // for (int i = 0; i < _totalOrderToImport; i++)
+        // {
+        //     try
+        //     {
+        //         jobs[i] = _client.PostAsJsonAsync("api/Orders/Post", _orders[i], CancellationToken.None);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         _errorCounter++;
+        //         Console.WriteLine(e);
+        //         
+        //     }   
+        // }
+        // foreach (var t in jobs)
+        // {
+        //     var result = await t;
+        //     _counter++;
+        //     if (result.IsSuccessStatusCode)
+        //     {
+        //         _counterSuccess++;
+        //     }
+        //     else
+        //     {
+        //         _errorCounter++;
+        //     }
+        //     _progressValue = (int)Math.Round((decimal)_counter/(decimal)_orders.Count * 100, MidpointRounding.ToEven);
+        //     StateHasChanged();
+        // }
+        // await Task.WhenAll(jobs).ContinueWith(c =>
+        // {
+        //     _loading = false;
+        // });
+
+
+    ////OPTION 2 Take Time but job done without error
      Task[] jobs = new Task[_totalOrderToImport];
      for (int i = 0; i < _totalOrderToImport; i++)
      {
@@ -128,8 +184,8 @@
              {
                  _counterSuccess++;
                  _counter++;
-                 _progressValue = (int) Math.Round((_counter / _totalOrderToImport) * 100.0, MidpointRounding.ToEven);
-                 
+                 var prog= (decimal)_counter / _totalOrderToImport;
+                 _progressValue = (int) Math.Round((prog) * 100, MidpointRounding.ToEven);
                  StateHasChanged(); 
              });
          }
@@ -144,39 +200,42 @@
     await Task.WhenAll(jobs).ContinueWith(c =>
      {
          _loading = false;
-         _indeterminate = false;
+         _isWatchrunning = false;
+
      });
 
 
-    //     await Task.WhenAll(_orders.Select(order => Task.Run<Task>(async () =>
-    //     {
-    //         try
-    //         {
-    //             await _client.PostAsJsonAsync("api/Orders/Post", order, CancellationToken.None)
-    //                 .ContinueWith(async c =>
-    //                 {
-    //                     var result = await c;
-    //                     if (result.IsSuccessStatusCode)
-    //                     {
-    //                         _counterSuccess++;
-    //                         counter++;
-    //                         _progressValue = (int) Math.Round(counter / totalOrders * 100.0, MidpointRounding.ToEven);
-    //                     }
-    //                     else
-    //                     {
-    //                         _errorCounter++;
-    //                     }
-    //                     StateHasChanged();
-    //                 });
-    //         }
-    //         catch (Exception e)
-    //         {
-    //             Console.WriteLine(e.Message);
-    //         }
-    //
-    // // StateHasChanged();
-    //     }
-    //         )));
+        ////OPTION 3 work with errors
+        //BUGS
+        // await Task.WhenAll(_orders.Select(order => Task.Run<Task>(async () =>
+        // {
+        //     try
+        //     {
+        //         await _client.PostAsJsonAsync("api/Orders/Post", order, CancellationToken.None)
+        //             .ContinueWith(async c =>
+        //             {
+        //                 var result = await c;
+        //                 if (result.IsSuccessStatusCode)
+        //                 {
+        //                     _counterSuccess++;
+        //                     _counter++;
+        //                 }
+        //                 else
+        //                 {
+        //                     _errorCounter++;
+        //                 }
+        //                 _progressValue = (int) Math.Round((decimal)_counter / (decimal)_totalOrderToImport * 100, MidpointRounding.ToEven);
+        //                 StateHasChanged();
+        //             });
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Console.WriteLine(e.Message);
+        //     }
+        //
+        //
+        // }
+        //     )));
 
     }
 
@@ -193,11 +252,9 @@
         {
             int count = 0;
             _orders = new List<Order>();
-    //while (await streamReader.ReadLineAsync() != null)
-
             var bloc = await streamReader.ReadToEndAsync();
             var blocLine = bloc.Split('\n');
-            for (int i = 0; i < blocLine.Length; i++)
+            for (int i = 0; i < blocLine.Length-1; i++)
             {
                 count++;
                 var orderLine = blocLine[i].Split(";");
