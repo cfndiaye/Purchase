@@ -69,10 +69,10 @@
                 <MudTd>@context.Status</MudTd>
 
                 <MudTd>
-                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Edit" aria-label="Modifier" Color="Color.Inherit"/>
+                    <MudIconButton Class="pa-0" OnClick="() => OpenUpdateMudDialog(context)" Icon="@Icons.Material.Filled.Edit" aria-label="Modifier" Color="Color.Inherit"/>
                 </MudTd>
                 <MudTd>
-                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Delete" aria-label="Supprimer" Color="Color.Inherit"/>
+                    <MudIconButton Class="pa-0" OnClick="() => OpenDeleteMessageBox(context)" Icon="@Icons.Material.Filled.Delete" aria-label="Supprimer" Color="Color.Inherit"/>
                 </MudTd>
             </RowTemplate>
             <PagerContent>
@@ -162,11 +162,87 @@
     
 </MudDialog>
 
+@*Update order*@
+<MudDialog @ref="_updateMudDialog">
+    
+    <DialogContent>
+        <div style="min-width: 400px;">
+            <EditForm @ref="_updateForm" Model="_selectedOrder" OnValidSubmit="OnValidUpdateSubmit">
+                <DataAnnotationsValidator/>
+                <MudCard>
+                    <MudCardContent>
+                        <MudTextField Class="d-flex mb-2" @bind-Value="_selectedOrder.AgentName" Label="Nom agent" For="() => _selectedOrder.AgentName"
+                                      Margin="_marginDense" Variant="Variant.Outlined"/>
+                        <div class="d-flex justify-space-between py-2">
+                            <MudTextField Class="mr-2" @bind-Value="_selectedOrder.NoLigne" Label="Nombre de ligne" For="@(() => _selectedOrder.NoLigne)"
+                                          Margin="_marginDense" Variant="Variant.Outlined"/>
+
+                            <MudTextField @bind-Value="_selectedOrder.UnitName" Label="Unité" For="() => _selectedOrder.UnitName"
+                                          Margin="_marginDense" Class="ml-2" Variant="Variant.Outlined"/>
+                        </div>
+                        <MudTextField @bind-Value="_selectedOrder.Description" Label="Description" For="() => _selectedOrder.Description"
+                                      Margin="_marginDense" Class="d-flex py-2" Variant="Variant.Outlined"/>
+                        <div class="d-flex justify-space-between py-2">
+                            <MudTextField @bind-Value="_selectedOrder.ReqNumber" Label="PR" For="() => _selectedOrder.ReqNumber"
+                                          Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined"/>
+                            <MudTextField @bind-Value="_selectedOrder.Localisation" Label="Localisation" For="() => _selectedOrder.Localisation"
+                                          Margin="_marginDense" Class="ml-2" Variant="Variant.Outlined"/>
+                        </div>
 
 
-<MudMessageBox @ref="_updateMessageBox" CancelText="Annuler">
-    @* TODO: Formulaire Mise à jour commande a mettre *@
-</MudMessageBox>
+                        <div class="d-flex justify-space-between py-2">
+                            <MudTextField @bind-Value="_selectedOrder.Type" Label="Type" For="() => _selectedOrder.Type"
+                                          Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined"/>
+                            <MudDatePicker @bind-Date="_selectedOrder.PrDate" Culture="CultureInfo.CurrentCulture"  Label="Date PR" For="() => _selectedOrder.PrDate"
+                                          Margin="_marginDense" Class="ml-2" Variant="Variant.Outlined"/>
+                        </div>
+
+                        <div class="d-flex justify-space-between py-2">
+                            <MudDatePicker @bind-Date="_selectedOrder.ApprovedDate" Culture="CultureInfo.CurrentCulture" Label="Date Approbation" For="() => _selectedOrder.ApprovedDate"
+                                          Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined"/>
+                            <MudSelect @bind-Value="_selectedOrder.Status" Class="ml-2" Label="Status" For="() => _selectedOrder.Status" T="string" Variant="Variant.Outlined" Margin="_marginDense">
+                                @foreach (var status in Status)
+                                {
+                                    <MudSelectItem Value="@status">@status</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
+                        <div class="d-flex justify-space-between py-2">
+                            <MudTextField @bind-Value="_selectedOrder.PurchaseOrder" Label="PO" For="() => _selectedOrder.PurchaseOrder"
+                                          Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined"/>
+                            <MudDatePicker Culture="CultureInfo.CurrentCulture" @bind-Date="_selectedOrder.DatePo"  Label="Date PO" For="() => _selectedOrder.DatePo"
+                                          Margin="_marginDense" Class="ml-2" Variant="Variant.Outlined"/>
+                        </div>
+
+                        <MudTextField @bind-Value="_selectedOrder.Amount" Label="Montant" For="() => _selectedOrder.Amount"
+                                      Margin="_marginDense" Class="d-flex py-2" Variant="Variant.Outlined"/>
+
+                        <MudAutocomplete  @bind-Value="_selectedVendor" Label="Fournisseur" Margin="_marginDense" Variant="Variant.Outlined"
+                                          For="() => _selectedOrder.VendorId" Class="d-flex py-2" 
+                                          SearchFunc="FindVendorsAsync"/>
+                        @*TODO: Enlever l'id de l'affichage*@
+                        <MudHidden @bind-Value="_selectedOrder.VendorId"></MudHidden>
+                    </MudCardContent>
+                   
+                   
+                </MudCard>
+            </EditForm>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseAddDialog" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel"
+                                           Color="Color.Warning">
+                                    Annuler
+                                </MudButton>
+                                <MudButton OnClick="() => OnValidUpdateSubmit(_updateForm.EditContext)" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Edit"
+                                           Color="Color.Success">
+                                    Modifier
+                                </MudButton>
+    </DialogActions>
+    
+</MudDialog>
+
+
 <MudMessageBox @ref="_deleteMessageBox" CancelText="Annuler">
     @* TODO: Formulaire suppression commande a mettre *@
 </MudMessageBox>
@@ -185,10 +261,12 @@
     private string _searchTexte = "";
     private Task<List<Order>> _ordersLoading;
     private Task<HttpResponseMessage> _orderLoading;
+
     private EditForm _addForm;
+    private EditForm _updateForm;
    
     private MudDialog _addMudDialog;
-    private MudMessageBox _updateMessageBox;
+    private MudDialog _updateMudDialog;
     private MudMessageBox _deleteMessageBox;
     private string _selectedVendor= "";
     private string _selectedVendorId = "";
@@ -200,10 +278,7 @@
     {
         NavigationManager.NavigateTo("importorders");
     }
-
-
-   
-
+    
     private List<string> Status = new List<string>
     {
         "PR PENDING",
@@ -211,8 +286,7 @@
         "PO APPROVAL", "PO RELEASED",
         "WAITING PROFORMA", "DPI&AC", "COMPLETED"
     };
-
-
+    
     private int CalculeAge(DateTime d2, DateTime d1) => Age(d1, d2);
 
     private int Age(DateTime dateDebut, DateTime dateFin)
@@ -246,6 +320,7 @@
         _message = "";
     }
 
+    //Post order
     private async Task  OnValidSubmit(EditContext context)
     {
         if (_selectedVendor.Length > 24)
@@ -289,6 +364,18 @@
         _loading = false;
     }
 
+    
+    //Put Order
+    private async Task OnValidUpdateSubmit(EditContext context)
+    {
+        if (_selectedVendor.Length > 24)
+        {
+            _selectedVendorId = _selectedVendor.Substring(0,24);
+            _selectedOrder.VendorId = _selectedVendorId;
+            await UpdateSelectedOrder(_selectedOrder);
+            _updateMudDialog.Close();
+        }
+    }
     //Update one order
     private async Task UpdateSelectedOrder(Order order)
     {
@@ -349,13 +436,16 @@
     {
         _addMudDialog.Close();
     }
-    //Open messageBox Update Order
-    private async Task OpenUpdateMessageBox(Order order)
+    
+    //Open MudDialog Update Order
+    private void OpenUpdateMudDialog(Order order)
     {
-        bool? result = await _updateMessageBox.Show();
-        _message = result == null ? "Mise à jour Annulée." : "";
-        StateHasChanged();
+        _selectedOrder = order;
+        _updateMudDialog.ClassActions = "d-flex px-6 justify-space-between py-6";
+        _addMudDialog.Show($"Modifier une commande PR:{_selectedOrder.ReqNumber.ToString()} ");
+        
     }
+   
 
     //Open messageBox Delete Order
     private async Task OpenDeleteMessageBox(Order order)
