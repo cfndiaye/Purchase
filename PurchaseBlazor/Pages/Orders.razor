@@ -113,12 +113,12 @@
                         <div class="d-flex justify-space-between py-2">
                             <MudTextField @bind-Value="_addOrder.Type" Label="Type" For="() => _addOrder.Type"
                                           Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined"/>
-                            <MudDatePicker @bind-Date="_addOrder.PrDate" Culture="CultureInfo.CurrentCulture"  Label="Date PR" For="() => _addOrder.PrDate"
+                            <MudDatePicker @bind-Date="_addOrder.PrDate" Culture="CultureInfo.CurrentCulture"  Label="Date PR" 
                                           Margin="_marginDense" Class="ml-2" Variant="Variant.Outlined"/>
                         </div>
 
                         <div class="d-flex justify-space-between py-2">
-                            <MudDatePicker @bind-Date="_addOrder.ApprovedDate" Culture="CultureInfo.CurrentCulture" Label="Date Approbation" For="() => _addOrder.ApprovedDate"
+                            <MudDatePicker @bind-Date="_addOrder.ApprovedDate" Culture="CultureInfo.CurrentCulture" Label="Date Approbation" 
                                           Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined"/>
                             <MudSelect @bind-Value="_addOrder.Status" Class="ml-2" Label="Status" For="() => _addOrder.Status" T="string" Variant="Variant.Outlined" Margin="_marginDense">
                                 @foreach (var status in Status)
@@ -130,7 +130,7 @@
                         <div class="d-flex justify-space-between py-2">
                             <MudTextField @bind-Value="_addOrder.PurchaseOrder" Label="PO" For="() => _addOrder.PurchaseOrder"
                                           Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined"/>
-                            <MudDatePicker Culture="CultureInfo.CurrentCulture" @bind-Date="_addOrder.DatePo"  Label="Date PO" For="() => _addOrder.DatePo"
+                            <MudDatePicker Culture="CultureInfo.CurrentCulture" @bind-Date="_addOrder.DatePo"  Label="Date PO" 
                                           Margin="_marginDense" Class="ml-2" Variant="Variant.Outlined"/>
                         </div>
 
@@ -167,7 +167,7 @@
     
     <DialogContent>
         <div style="min-width: 400px;">
-            <EditForm @ref="_updateForm" Model="_selectedOrder" OnValidSubmit="OnValidUpdateSubmit">
+            <EditForm @ref="_updateForm" Model="@_selectedOrder"  OnValidSubmit="OnValidUpdateSubmit">
                 <DataAnnotationsValidator/>
                 <MudCard>
                     <MudCardContent>
@@ -193,12 +193,12 @@
                         <div class="d-flex justify-space-between py-2">
                             <MudTextField @bind-Value="_selectedOrder.Type" Label="Type" For="() => _selectedOrder.Type"
                                           Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined"/>
-                            <MudDatePicker @bind-Date="_selectedOrder.PrDate" Culture="CultureInfo.CurrentCulture"  Label="Date PR" For="() => _selectedOrder.PrDate"
+                            <MudDatePicker @bind-Date="_selectedOrder.PrDate" Culture="CultureInfo.CurrentCulture"  Label="Date PR" 
                                           Margin="_marginDense" Class="ml-2" Variant="Variant.Outlined"/>
                         </div>
 
                         <div class="d-flex justify-space-between py-2">
-                            <MudDatePicker @bind-Date="_selectedOrder.ApprovedDate" Culture="CultureInfo.CurrentCulture" Label="Date Approbation" For="() => _selectedOrder.ApprovedDate"
+                            <MudDatePicker @bind-Date="_selectedOrder.ApprovedDate" Culture="CultureInfo.CurrentCulture" Label="Date Approbation" 
                                           Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined"/>
                             <MudSelect @bind-Value="_selectedOrder.Status" Class="ml-2" Label="Status" For="() => _selectedOrder.Status" T="string" Variant="Variant.Outlined" Margin="_marginDense">
                                 @foreach (var status in Status)
@@ -210,7 +210,7 @@
                         <div class="d-flex justify-space-between py-2">
                             <MudTextField @bind-Value="_selectedOrder.PurchaseOrder" Label="PO" For="() => _selectedOrder.PurchaseOrder"
                                           Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined"/>
-                            <MudDatePicker Culture="CultureInfo.CurrentCulture" @bind-Date="_selectedOrder.DatePo"  Label="Date PO" For="() => _selectedOrder.DatePo"
+                            <MudDatePicker Culture="CultureInfo.CurrentCulture" @bind-Date="_selectedOrder.DatePo"  Label="Date PO" 
                                           Margin="_marginDense" Class="ml-2" Variant="Variant.Outlined"/>
                         </div>
 
@@ -255,7 +255,7 @@
     private MudTable<Order> _mudTable;
     private bool _dense = true;
     private Margin _marginDense = Margin.Dense;
-    private Order _selectedOrder = null;
+    private Order _selectedOrder;
     private Order _addOrder;
     private bool _loading = false;
     private string _searchTexte = "";
@@ -440,9 +440,10 @@
     //Open MudDialog Update Order
     private void OpenUpdateMudDialog(Order order)
     {
+        
         _selectedOrder = order;
         _updateMudDialog.ClassActions = "d-flex px-6 justify-space-between py-6";
-        _addMudDialog.Show($"Modifier une commande PR:{_selectedOrder.ReqNumber.ToString()} ");
+        _updateMudDialog.Show($"Modifier une commande PR:{_selectedOrder.ReqNumber.ToString()} ");
         
     }
    

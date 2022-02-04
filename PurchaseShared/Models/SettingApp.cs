@@ -9,6 +9,8 @@ namespace PurchaseShared.Models
     public static class SettingApp
     {
         public static string ServerUrl { get; set; } = "https://localhost:5001";
+        //public static string ServerUrl { get; set; } = "https://localhost:44311";
+
 
     }
 }
