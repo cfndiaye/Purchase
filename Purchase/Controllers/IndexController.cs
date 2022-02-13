@@ -28,7 +28,7 @@ namespace Purchase.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(_vendor);
+            return await Task.Run(() => Ok(_vendor));
         }
     }
 }

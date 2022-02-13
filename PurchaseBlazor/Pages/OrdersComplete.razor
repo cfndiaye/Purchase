@@ -1,11 +1,12 @@
-﻿@page "/orders"
+@page "/orderscompletes"
+
 @using System.Globalization
 @using System.IO
 @using PurchaseBlazor.Pages.Components
 @inject HttpClient _client
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
-<h1>Suivi des commandes</h1>
+<h1>Suivi des commandes complètes</h1>
 <MudCard>
     <MudCardHeader>
         <CardHeaderAvatar>
@@ -25,11 +26,9 @@
             <MessageAlert Message="@_message" Severity="@_severity" CloseAlert="CloseAlert"/>
         }
         <MudTable @ref="_mudTable" Items="@_ordersList" Dense="@_dense"
-                   Striped="false" Hover="false" Breakpoint="Breakpoint.Sm"
+                   Striped="true" Hover="true" Breakpoint="Breakpoint.Sm"
                    @bind-SelectedItem="_selectedOrder" Loading="@_loading"
                    RowClassFunc="@SelectedRowClassFunc" T="Order"
-                   
-                   Virtualize="true"
                    LoadingProgressColor="Color.Success">
             <ToolBarContent>
                 <MudText Inline="true" Typo="Typo.h6">Liste des commandes</MudText>
@@ -44,14 +43,14 @@
                 <MudTh>Nom Agent</MudTh>
                 <MudTh>PR</MudTh>
                 <MudTh>Description</MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.ApprovedDate)">Date Approbation</MudTableSortLabel></MudTh>
+                <MudTh>Date Approbation</MudTh>
                 <MudTh>PO</MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.DatePo)">Age</MudTableSortLabel></MudTh>
+                <MudTh>Age</MudTh>
                 <MudTh>Status</MudTh>
                 <MudTh></MudTh>
                 <MudTh></MudTh>
             </HeaderContent>
-            <RowTemplate >
+            <RowTemplate>
                 <MudTd>@context.AgentName</MudTd>
                 <MudTd>@context.ReqNumber.ToString()</MudTd>
                 <MudTd>@context.Description</MudTd>
@@ -75,6 +74,7 @@
 
 </MudCard>
 <MudDialog @ref="_addMudDialog">
+    @* TODO: Formulaire ajout commande a mettre *@
     <DialogContent>
         <div style="min-width: 400px;">
             <EditForm @ref="_addForm" Model="_addOrder" OnValidSubmit="OnValidSubmit">
@@ -235,6 +235,9 @@
 
 
 <MudMessageBox @ref="_deleteMessageBox"  CancelText="Annuler">
+    @* TODO: Formulaire suppression commande a mettre 
+        *@
+    
     <MessageContent>
         <div style="min-height: 200px; min-width: 400px; text-align: center">
             <MudText>Voulez-vous vraiment supprimer la commande:</MudText>
@@ -276,8 +279,6 @@
     private string _selectedVendorId = "";
     
     
-
-
     //goto import page
     private void OpenImportPage()
     {
@@ -305,7 +306,7 @@
         _loading = true;
         try
         {
-            _ordersLoading = _client.GetFromJsonAsync<List<Order>>("api/orders/Get");
+            _ordersLoading = _client.GetFromJsonAsync<List<Order>>($"api/orders/GetOrdersByStatus/PO RELEASED");
             _loading = !_ordersLoading.IsCompleted;
             _ordersList = await _ordersLoading;
             if (_ordersLoading.IsCompleted)
@@ -471,51 +472,7 @@
         {
             return "selected";
         }
-        
-        string rowClass = "";
-        switch (order.Status)
-        {
-            case "PO RELEASED":
-                rowClass = "success-po-released";
-                break;
-            case "PR PENDING":
-                rowClass = "warning";
-                break;
-            case "TECHNICAL CLEARANCE":
-                rowClass = "info";
-                break;
-            case "WAITING PROFORMA":
-                rowClass = "info";
-                break;
-            case "DPI&AC":
-                rowClass = "info";
-                break;
-        }
-        return rowClass;
-    }
-    //set color to completed order
-    private string RowClassFunc(Order order)
-    {
-        string rowClass = "";
-        switch (order.Status)
-        {
-            case "PO RELEASED":
-                rowClass = "success";
-                break;
-            case "PR PENDING":
-                rowClass = "warning";
-                break;
-            case "TECHNICAL CLEARANCE":
-                rowClass = "info";
-                break;
-            case "WAITING PROFORMA":
-                rowClass = "info";
-                break;
-            case "DPI&AC":
-                rowClass = "info";
-                break;
-        }
-        return rowClass;
+        return string.Empty;
     }
 
 }

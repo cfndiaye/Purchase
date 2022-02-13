@@ -48,6 +48,8 @@ a, .btn-link {
         right: 0.75rem;
         top: 0.5rem;
     }
+    
+    /*selected item*/
 .selected {
     background-color: #1E88E5 !important;
 }
@@ -57,5 +59,17 @@ a, .btn-link {
 }
 
 .selected > td .mud-input {
+    color: white !important;
+}
+/*Po released*/
+.success-po-released {
+    background-color: #2ca936;
+}
+
+.success-po-released > td {
+    color: white !important;
+}
+
+.success-po-released > td .mud-input {
     color: white !important;
 }
