@@ -13,14 +13,17 @@ namespace Purchase.Services.Implementation
     public class VendorService : IVendorService
     {
         private readonly IMongoCollection<Vendor> _vendorsCollection;
+        private readonly MongoContext _mongoContext;
 
 
-        public VendorService(IOptions<PurchaseStoreDatabaseSettings> purchaseStoreDatabaseSettings)
+        public VendorService(IOptions<PurchaseStoreDatabaseSettings> storeSettings)
         {
-            var mongoClient = new MongoClient(purchaseStoreDatabaseSettings.Value.ConnectionString);
+            /*var mongoClient = new MongoClient(purchaseStoreDatabaseSettings.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(purchaseStoreDatabaseSettings.Value.DatabaseName);
             _vendorsCollection = mongoDatabase.GetCollection<Vendor>(purchaseStoreDatabaseSettings.Value.VendorsCollectionName);
-
+            */
+            _mongoContext = new MongoContext(storeSettings);
+            _vendorsCollection = _mongoContext.GetDatabase().GetCollection<Vendor>(storeSettings.Value.VendorsCollectionName);
         }
 
         public async Task AddVendorAsync(Vendor vendor) =>

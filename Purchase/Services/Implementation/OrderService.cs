@@ -14,10 +14,15 @@ namespace Purchase.Services.Implementation
   {
     private readonly IMongoCollection<Order> _ordersCollection;
     private readonly VendorService _vendorService;
+        private readonly MongoContext  _mongoContext;
 
-    public OrderService(IOptions<PurchaseStoreDatabaseSettings> purchaseStoreDatabaseSettings, VendorService vendorService)
+    public OrderService(IOptions<PurchaseStoreDatabaseSettings> storeSettings, 
+        
+        VendorService vendorService)
     {
-      var credentials = MongoCredential.CreateCredential(
+            _mongoContext = new MongoContext(storeSettings);
+            _ordersCollection = _mongoContext.GetDatabase().GetCollection<Order>(storeSettings.Value.OrdersCollectionName);
+      /*var credentials = MongoCredential.CreateCredential(
           purchaseStoreDatabaseSettings.Value.DatabaseName,
           purchaseStoreDatabaseSettings.Value.User,
           purchaseStoreDatabaseSettings.Value.Password);
@@ -32,8 +37,8 @@ namespace Purchase.Services.Implementation
         WaitQueueSize = 20000
 
       });
-      var mongoDatabase = mongoClient.GetDatabase(purchaseStoreDatabaseSettings.Value.DatabaseName);
-      _ordersCollection = mongoDatabase.GetCollection<Order>(purchaseStoreDatabaseSettings.Value.OrdersCollectionName);
+      var mongoDatabase = mongoClient.GetDatabase(purchaseStoreDatabaseSettings.Value.DatabaseName);*/
+      //_ordersCollection = mongoDatabase.GetCollection<Order>(purchaseStoreDatabaseSettings.Value.OrdersCollectionName);
 
       _vendorService = vendorService;
     }
