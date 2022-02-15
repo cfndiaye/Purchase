@@ -3,3 +3,9 @@ docker build -f Purchase/Dockerfile -t cfndiaye/purchase-api --platform linux/am
 
 #running Client blazor container
 docker run -p 8081:80 --name purchase-blazor cfndiaye/purchase-blazor
+#running server apiserver
+docker run -p 8080:80 --name purchase-blazor cfndiaye/purchase-api
+
+
+#create user on MongoDB
+db.createUser({ user: "cfndiaye", pwd: passwordPrompt(), roles: [{ role: 'readWrite', db: "purchaseproductiondb" }]})

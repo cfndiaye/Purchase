@@ -9,7 +9,7 @@ ENV BLAZOR_ENVIRONMENT=Production
 WORKDIR /usr/share/nginx/html  
 # Copy the publish application to the workdir in image  
 #COPY bin/Release/net5.0/browser-wasm/publish/wwwroot  ./  
-COPY bin/Release/net5.0/browser-wasm/publish/wwwroot  ./ 
+COPY bin/Release/net5.0/publish/wwwroot  ./ 
 # Copy the nginx configuration file  
 COPY nginx.conf /etc/nginx/nginx.conf  
 # Copy the start script  

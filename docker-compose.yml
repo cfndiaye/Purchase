@@ -1,0 +1,12 @@
+version: "2"
+
+services:
+
+  purchaseapi:
+    image: cfndiaye/purchase-api:latest
+    ports:
+       - 8080:80
+  purchaseblazor: 
+    image: cfndiaye/purchase-blazor:latest
+    ports:
+       - 8081:80

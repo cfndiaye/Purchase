@@ -18,7 +18,7 @@ namespace Purchase.Models
                 Server = _serverAddress,
                 Credential = _credential,
                 MaxConnectionPoolSize = 1000,
-                WaitQueueSize = 1000
+                WaitQueueSize = 20000
             };
             _mongoClient = new MongoClient(_mongoClientSettings);
             _mongoDatabase = _mongoClient.GetDatabase(purchaseOption.Value.DatabaseName);
