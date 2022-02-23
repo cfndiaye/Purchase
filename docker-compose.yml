@@ -4,9 +4,13 @@ services:
 
   purchaseapi:
     image: cfndiaye/purchase-api:latest
+    volumes: 
+      - /Users/cfndiaye/Projects/volumes/purchaseapi
     ports:
        - 8080:80
   purchaseblazor: 
     image: cfndiaye/purchase-blazor:latest
+    volumes:
+       - /Users/cfndiaye/Projects/volumes/purchaseclient
     ports:
        - 8081:80

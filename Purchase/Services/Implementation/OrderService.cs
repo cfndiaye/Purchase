@@ -22,25 +22,7 @@ namespace Purchase.Services.Implementation
     {
             _mongoContext = new MongoContext(storeSettings);
             _ordersCollection = _mongoContext.GetDatabase().GetCollection<Order>(storeSettings.Value.OrdersCollectionName);
-      /*var credentials = MongoCredential.CreateCredential(
-          purchaseStoreDatabaseSettings.Value.DatabaseName,
-          purchaseStoreDatabaseSettings.Value.User,
-          purchaseStoreDatabaseSettings.Value.Password);
-
-      //var url = MongoUrl.Create(purchaseStoreDatabaseSettings.Value.ConnectionString);
-      var server = new MongoServerAddress(purchaseStoreDatabaseSettings.Value.Server, purchaseStoreDatabaseSettings.Value.Port);
-      var mongoClient = new MongoClient(new MongoClientSettings
-      {
-        Server = server,
-        Credential = credentials,
-        MaxConnectionPoolSize = 1000,
-        WaitQueueSize = 20000
-
-      });
-      var mongoDatabase = mongoClient.GetDatabase(purchaseStoreDatabaseSettings.Value.DatabaseName);*/
-      //_ordersCollection = mongoDatabase.GetCollection<Order>(purchaseStoreDatabaseSettings.Value.OrdersCollectionName);
-
-      _vendorService = vendorService;
+            _vendorService = vendorService;
     }
 
     public async Task AddOrderAsync(Order order) =>

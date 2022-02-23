@@ -18,10 +18,6 @@ namespace Purchase.Services.Implementation
 
         public VendorService(IOptions<PurchaseStoreDatabaseSettings> storeSettings)
         {
-            /*var mongoClient = new MongoClient(purchaseStoreDatabaseSettings.Value.ConnectionString);
-            var mongoDatabase = mongoClient.GetDatabase(purchaseStoreDatabaseSettings.Value.DatabaseName);
-            _vendorsCollection = mongoDatabase.GetCollection<Vendor>(purchaseStoreDatabaseSettings.Value.VendorsCollectionName);
-            */
             _mongoContext = new MongoContext(storeSettings);
             _vendorsCollection = _mongoContext.GetDatabase().GetCollection<Vendor>(storeSettings.Value.VendorsCollectionName);
         }
