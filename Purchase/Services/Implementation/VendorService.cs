@@ -30,6 +30,7 @@ namespace Purchase.Services.Implementation
 
         public async Task<Vendor> GetVendorByIdAsync(string id) =>
             await _vendorsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
         public Vendor GetVendorById(string id) => 
             _vendorsCollection.Find(x =>x.Id == id).FirstOrDefault();
 

@@ -26,6 +26,10 @@ namespace PurchaseShared.Models
     [BsonElement("telephone")]
     public string Telephone { get; set; }
 
+    [JsonProperty(PropertyName = "type")]
+    [BsonElement("type")]
+    public string Type { get; set; }
+
     [JsonProperty(PropertyName = "comments")]
     [BsonElement("comments")]
     public string Comments { get; set; }

@@ -56,7 +56,7 @@ namespace Purchase.Services.Implementation
     public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(string status)
     {
       var orders = (await _ordersCollection.Find(o => o.Status == status).ToListAsync());
-      orders.ForEach(async o => o.Vendor = await _vendorService.GetVendorByIdAsync(o.VendorId));
+      orders.ForEach(o => o.Vendor =  _vendorService.GetVendorById(o.VendorId));
       return orders;
     }
 
@@ -80,5 +80,7 @@ namespace Purchase.Services.Implementation
     {
       await _ordersCollection.InsertManyAsync(orders);
     }
+
+       
   }
 }

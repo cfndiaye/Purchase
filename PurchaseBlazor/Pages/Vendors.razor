@@ -279,8 +279,10 @@
     {
         _message = "";
     }
-    private bool FilterFuncInAction(Vendor vendor) => FilterFunc(vendor, _searchTexte);
 
+    //delegate pour le filtrage
+    private bool FilterFuncInAction(Vendor vendor) => FilterFunc(vendor, _searchTexte);
+    //Filtrage des enregistrements
     private bool FilterFunc(Vendor vendor, string query)
     {
         //remove the selected item

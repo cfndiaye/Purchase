@@ -73,5 +73,13 @@ namespace PurchaseShared.Models
     [BsonIgnore]
     [JsonProperty(PropertyName = "vendor")]
     public Vendor Vendor { get; set; }
-  }
+
+        [JsonProperty(PropertyName = "devise")]
+        [BsonElement("devise")]
+        public string Devise { get; set; }
+
+        [JsonProperty(PropertyName = "commentaires")]
+        [BsonElement("commentaires")]
+        public string Commentaires { get; set; }
+    }
 }

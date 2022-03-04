@@ -1,4 +1,4 @@
-docker build -f Dockerfile -t cfndiaye/purchase-blazor .
+docker build -f Dockerfile -t cfndiaye/purchase-blazor --platform linux/amd64 .
 docker build -f Purchase/Dockerfile -t cfndiaye/purchase-api --platform linux/amd64 .
 
 #running Client blazor container
