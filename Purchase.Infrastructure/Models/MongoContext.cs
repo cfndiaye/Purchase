@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace Purchase.Models
+namespace Purchase.Infrastructure.Models
 {
     public class MongoContext
     {

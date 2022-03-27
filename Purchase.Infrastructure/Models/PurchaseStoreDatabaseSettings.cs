@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Purchase.Models
+namespace Purchase.Infrastructure.Models
 {
     public class PurchaseStoreDatabaseSettings
     {

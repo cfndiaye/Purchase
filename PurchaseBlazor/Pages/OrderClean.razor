@@ -1,0 +1,87 @@
+﻿@page "/ordersclean"
+@inject NavigationManager NavigationManager
+@inject HttpClient _client
+
+<h1>Suivi des commandes</h1>
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudIcon Icon="@Icons.Material.Outlined.List"></MudIcon>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.body1">Liste des commandes</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="OpenAddDialog" Color="Color.Inherit" />
+            <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" OnClick="OpenImportPage" Color="Color.Inherit" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    @*intégration du composant OrderTable*@
+    <OrderTable @ref="@_orderTable"
+                Client="@_client"
+                Message="@_message" Dense="@_dense" Loading="@_loading"
+                MarginDense="@_marginDense" Severity="@_severity" 
+                SelectedOrder="@_selectedOrder" />
+</MudCard>
+@*intégration du composant AddOrder*@
+<AddOrder @ref="_addOrder" Client="_client" @bind-OrdersList="@_ordersList"
+          MarginDense="_marginDense"
+          @bind-Message="_message"
+          @bind-Loading="@_loading"
+          @bind-Severity="@_severity" />
+
+
+@code {
+    private string _message = "";
+    private OrderTable _orderTable;
+    private AddOrder _addOrder;
+    private Order _selectedOrder;
+    protected const string URL = "api/orders/Get";
+    protected const string PAGETOGO = "importorders";
+    private bool _dense = true;
+    private Margin _marginDense = Margin.Dense;
+    private bool _loading = false;
+    private Task<List<Order>> _ordersLoading;
+    private List<Order> _ordersList = new List<Order>();
+    public string Url { get; set; } = URL;
+    private Severity _severity = Severity.Info;
+
+    //open add dialog
+    private void OpenAddDialog()
+    {
+        _addOrder.Show();
+    }
+
+    //goto import page
+    private void OpenImportPage()
+    {
+        NavigationManager.NavigateTo(PAGETOGO);
+    }
+
+    //initialize component
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        try
+        {
+
+            _ordersLoading = _client.GetFromJsonAsync<List<Order>>(Url);
+            _loading = !_ordersLoading.IsCompleted;
+            _ordersList = await _ordersLoading;
+            if (_ordersLoading.IsCompleted)
+            {
+                _loading = false;
+                _orderTable.DataLoaded(true, _ordersList);
+            }
+            
+        }
+        catch (Exception ex)
+        {
+            _message = ex.Message;
+            _severity = Severity.Error;
+            _loading = false;
+        }
+    }
+
+    
+}

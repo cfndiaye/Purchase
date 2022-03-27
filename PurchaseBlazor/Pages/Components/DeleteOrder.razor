@@ -1,0 +1,84 @@
+﻿<MudMessageBox @ref="_deleteMessageBox" CancelText="Annuler">
+    <MessageContent>
+        <div style="min-height: 200px; min-width: 400px; text-align: center">
+            <MudText>Voulez-vous vraiment supprimer la commande:</MudText>
+            <MudText Color="Color.Error" Icon="@Icons.Material.Filled.Dangerous">
+                @_selectedOrder.Description
+            </MudText>
+        </div>
+    </MessageContent>
+    <CancelButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.Cancel">Annuler</MudButton>
+    </CancelButton>
+    <YesButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" OnClick="() => DeleteSelectedOrder(_selectedOrder) ">Supprimer</MudButton>
+    </YesButton>
+</MudMessageBox>
+
+@code {
+
+    private MudMessageBox _deleteMessageBox;
+    public Order _selectedOrder;
+    [Parameter]
+    public HttpClient Client { get; set; }
+    [Parameter]
+    public string Message { get; set; } = "";
+    [Parameter]
+    public EventCallback<string> MessageChanged { get; set; }
+    [Parameter]
+    public List<Order> OrdersList { get; set; }
+    [Parameter]
+    public Severity Severity { get; set; } = Severity.Info;
+    [Parameter]
+    public EventCallback<Severity> SeverityChanged { get; set; }
+    [Parameter]
+    public bool Loading { get; set; } = false;
+    [Parameter]
+    public EventCallback<bool> LoadingChanged { get; set; }
+    public Task<HttpResponseMessage> OrderLoading { get; set; }
+
+
+    //Delete one order
+    private async Task DeleteSelectedOrder(Order order)
+    {
+        try
+        {
+            OrderLoading = Client.DeleteAsync($"api/Orders/Delete/{order.Id}");
+
+            Loading = !OrderLoading.IsCompleted;
+            await LoadingChanged.InvokeAsync(Loading);
+
+            var statusMessage = await OrderLoading;
+            Message = statusMessage.IsSuccessStatusCode ? "Commande supprimée avec succés." : "Erreur lors de la suppression!!!";
+            await MessageChanged.InvokeAsync(Message);
+
+            Severity = Message.Contains("Erreur") ? Severity.Error : Severity.Success;
+            await SeverityChanged.InvokeAsync(Severity);
+
+            OrdersList.Remove(order);
+        }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+            await MessageChanged.InvokeAsync(Message);
+            Severity = Severity.Error;
+            await SeverityChanged.InvokeAsync(Severity);
+        }
+        finally
+        {
+            Loading = false;
+            await LoadingChanged.InvokeAsync(Loading);
+        }
+    }
+
+    //Open messageBox Delete Order
+    public async Task Show(Order order)
+    {
+        _selectedOrder = order;
+        bool? result = await _deleteMessageBox.Show();
+
+        Message = result == null ? "Suppression de la commande Annulée." : "";
+        await MessageChanged.InvokeAsync(Message);
+        StateHasChanged();
+    }
+}
