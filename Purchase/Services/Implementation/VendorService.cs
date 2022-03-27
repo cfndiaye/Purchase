@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Purchase.Models;
+using Purchase.Infrastructure.Models;
 using PurchaseShared.Models;
 using Purchase.Services.Contract;
 

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using PurchaseShared.Models;
 using Purchase.Services.Contract;
-using Purchase.Models;
+using Purchase.Infrastructure.Models;
 
 namespace Purchase.Services.Implementation
 {

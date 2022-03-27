@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Purchase.Models;
+using Purchase.Infrastructure.Models;
 using Purchase.Services.Contract;
 using Purchase.Services.Implementation;
 
