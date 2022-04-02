@@ -1,5 +1,29 @@
-﻿@page "/"
+﻿@page "/home"
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h1>Hello, world!</h1>
+<AuthorizeView>
+    <Authorized>
+        Bienvenue sur l'application Purchase Manager @_user.Identity.Name
+    </Authorized>
+    <NotAuthorized>
+        Bienvenue sur l'application Purchase Manager
+    </NotAuthorized>
+</AuthorizeView>
 
-Bienvenue sur l'application Purchase Manager
+@code {
+
+    private bool _isAuthenticate;
+    private ClaimsPrincipal _user;
+
+    private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+    private async Task GetClaimsPrincipalData()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _user = authState.User;
+        if (_user.Identity.IsAuthenticated)
+        {
+            _isAuthenticate = true;
+        }
+    }
+}

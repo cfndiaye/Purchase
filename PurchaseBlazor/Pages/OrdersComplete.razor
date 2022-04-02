@@ -21,17 +21,11 @@
         </CardHeaderActions>
     </MudCardHeader>
     @*intégration du composant OrderTable*@
-    <OrderTable @ref="@_orderTable"
-                Client="@_client"
-                Message="@_message" Dense="@_dense" Loading="@_loading"
-                MarginDense="@_marginDense" Severity="@_severity"
-                SelectedOrder="@_selectedOrder" />
+    <OrderTable @ref="@_orderTable" Client="@_client" Message="@_message" Dense="@_dense" Loading="@_loading"
+        MarginDense="@_marginDense" Severity="@_severity" SelectedOrder="@_selectedOrder" />
     @*intégration du composant AddOrder*@
-    <AddOrder @ref="_addOrder" Client="_client" @bind-OrdersList="_ordersList"
-              MarginDense="_marginDense"
-              @bind-Message="_message"
-              @bind-Loading="@_loading"
-              @bind-Severity="@_severity" />
+    <AddOrder @ref="_addOrder" Client="_client" @bind-OrdersList="_ordersList" MarginDense="_marginDense"
+        @bind-Message="_message" @bind-Loading="@_loading" @bind-Severity="@_severity" />
 
 </MudCard>
 
@@ -62,7 +56,7 @@
     //goto import page
     private void OpenImportPage()
     {
-        NavigationManager.NavigateTo("importorders");
+        NavigationManager.NavigateTo(PAGETOGO);
     }
 
     //open add dialog
@@ -70,11 +64,6 @@
     {
         _addOrder.Show();
     }
-
-
-
-
-
 
     protected override async Task OnInitializedAsync()
     {

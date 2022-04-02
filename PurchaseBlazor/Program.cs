@@ -12,25 +12,25 @@ using MudBlazor.Services;
 
 namespace PurchaseBlazor
 {
-  public class Program
-  {
-    public static async Task Main(string[] args)
+    public class Program
     {
-      var builder = WebAssemblyHostBuilder.CreateDefault(args);
-      builder.RootComponents.Add<App>("#app");
-      if (builder.HostEnvironment.IsProduction())
-      {
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://dakar-hightech.com:8080") });
-      }
-      else
-      {
-        //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-        builder.Services.AddScoped(c => new HttpClient { BaseAddress = new Uri(SettingApp.ServerUrl) });
-      }
+        public static async Task Main(string[] args)
+        {
+            var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            builder.RootComponents.Add<App>("#app");
+            if (builder.HostEnvironment.IsProduction())
+            {
+                builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://dakar-hightech.com:8080") });
+            }
+            else
+            {
+                //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+                builder.Services.AddScoped(c => new HttpClient { BaseAddress = new Uri(SettingApp.ServerUrl) });
+            }
 
-
-      builder.Services.AddMudServices();
-      await builder.Build().RunAsync();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddMudServices();
+            await builder.Build().RunAsync();
+        }
     }
-  }
 }

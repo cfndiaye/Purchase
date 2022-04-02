@@ -11,12 +11,15 @@ using PurchaseShared.Models;
 using Purchase.Services.Contract;
 using Purchase.Services.Implementation;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Purchase.Controllers
 {
   [Route("api/[controller]/[action]")]
+  [ApiController]
+  [Authorize]
   public class VendorsController : ControllerBase
   {
     private readonly ILogger _logger;
