@@ -98,8 +98,7 @@
                             @bind-Value="_addVendor.EmailId" />
                         <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420"
                             For="@(() => _addVendor.Telephone)" @bind-Value="_addVendor.Telephone" />
-                        <MudSelect @bind-Value="_addVendor.Type" Label="Type" For="() => _addVendor.Type" T="string"
-                            Variant="Variant.Outlined">
+                        <MudSelect @bind-Value="_addVendor.Type" Label="Type" For="() => _addVendor.Type" T="string">
                             @foreach (var type in Types)
                             {
                                 <MudSelectItem Value="@type">@type</MudSelectItem>
@@ -134,6 +133,13 @@
                             @bind-Value="_selectedVendor.EmailId" />
                         <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420"
                             For="@(() => _selectedVendor.Telephone)" @bind-Value="_selectedVendor.Telephone" />
+                        <MudSelect @bind-Value="_selectedVendor.Type" Label="Type" For="() => _selectedVendor.Type"
+                            T="string">
+                            @foreach (var type in Types)
+                            {
+                                <MudSelectItem Value="@type">@type</MudSelectItem>
+                            }
+                        </MudSelect>
                         <MudTextField Label="Commentaires" HelperText="fournisseur local"
                             For="@(() => _selectedVendor.Comments)" @bind-Value="_selectedVendor.Comments" />
                     </MudCardContent>
@@ -258,8 +264,8 @@
     private bool _dense = true;
     private MudTable<Vendor> _mudTable;
     private HashSet<Vendor> selectedItems = new HashSet<Vendor>();
-    private List<string> Types = new List<string> { "Locale", "Europe", "Asie"};
-      protected override async Task OnInitializedAsync()
+    private List<string> Types = new List<string> { "Locale", "Europe", "Asie" };
+    protected override async Task OnInitializedAsync()
     {
         _vendorList = new List<Vendor>();
         _loading = true;

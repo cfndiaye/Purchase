@@ -55,13 +55,20 @@
                             <MudTextField @bind-Value="_selectedOrder.Devise" Label="Devise" For="() => _selectedOrder.Devise"
                                           Margin="_marginDense" Class="ml-2" Variant="Variant.Outlined" />
                         </div>
+                        <div class="d-flex justify-space-between py-2">
+                            <MudDatePicker @bind-Date="_selectedOrder.DateLivraison" Culture="CultureInfo.CurrentCulture" Label="Date Livraison"
+                                           Margin="_marginDense" Class="mr-2" Variant="Variant.Outlined" />
+                            <MudSwitch @bind-Value="_selectedOrder.Livree" Label="Livrée?" For="() => _selectedOrder.Livree"
+                                           Class="ml-2" Color="Color.Primary" />
+                        </div>
 
 
                         <MudAutocomplete @bind-Value="_selectedVendor" Label="Fournisseur" Margin="_marginDense" Variant="Variant.Outlined"
-                                         For="() => _selectedOrder.VendorId" Class="d-flex py-2"
+                                         For="() => _selectedOrder.VendorId" Class="d-flex py-2" 
+                                         ToStringFunc="FindDescription"
                                          SearchFunc="FindVendorsAsync" />
                         @*TODO: Enlever l'id de l'affichage*@
-                        <MudChip>@_selectedOrder.Vendor?.Name</MudChip>
+                        <MudChip>@_selectedOrder.Vendor?.Name</MudChip><MudChip>@_selectedOrder.VendorId</MudChip>
                         <MudHidden @bind-Value="_selectedOrder.VendorId"></MudHidden>
                         <MudTextField @bind-Value="_selectedOrder.Commentaires" Label="Commentaires" Margin="_marginDense"
                                       Class="d-flex mb-2" Variant="Variant.Outlined" />
@@ -168,9 +175,20 @@
     //Close update Dialog
     private void CloseUpdateDialog() => _updateMudDialog.Close();
 
+     private void OnVendorChange()
+    {
+        Console.WriteLine(_selectedVendor);
+        if (_selectedVendor.Length > 24)
+        {
+            _selectedVendorId = _selectedVendor.Substring(0, 24);
+            _selectedOrder.VendorId = _selectedVendorId;
+            
+        }
+    }
+
     //find vendor for Autocomplete
     private async Task<IEnumerable<string>> FindVendorsAsync(string searchVendor) => await FindVendor.FindVendorsAsyncDelegate(searchVendor, Client);
-
+    private string FindDescription(string query) => FindVendor.GetDescription(query);
 
 
 }
