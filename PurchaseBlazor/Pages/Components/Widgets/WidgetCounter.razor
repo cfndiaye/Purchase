@@ -1,0 +1,32 @@
+﻿<MudCard Class="@BgColor" Elevation="2" Style="@($"width: 300px; height: 160px; color:{TextColor}; background:{BgColor};")">
+    <MudCardContent>
+        <div class="d-flex align-items-center flex-column py-4">
+            <div class="mx-auto p-2">
+               
+                    <MudIcon Icon="@CustomContentIcon" Class="@CustomColor" Size="Size.Large" />
+                
+            </div>
+            <div class="mx-auto p-2">
+                <MudText Typo="Typo.h6">@($"{Counter:N0} {Currency}")</MudText>
+            </div>
+            <div class="mx-auto p-2">
+                <MudText Class="text-secondary">@Description</MudText>
+            </div>
+
+        </div>
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+    [Parameter] public decimal Counter { get; set; }
+    [Parameter] public string Description { get; set; }
+    //[Parameter] public string CustomIcon { get; set; }
+    [Parameter] public string CustomContentIcon { get; set; }
+    [Parameter] public string CustomColor { get; set; }
+    //[Parameter] public Color CustomAvatarColor { get; set; }
+    [Parameter] public string BgColor { get; set; } = Colors.BlueGrey.Darken4;
+    [Parameter] public string TextColor { get; set; } = Colors.LightGreen.Accent3;
+    [Parameter] public string Currency { get; set; }
+
+}

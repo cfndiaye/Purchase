@@ -1,6 +1,11 @@
 ﻿@page "/login"
 @inject HttpClient _client
 @inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@attribute [AllowAnonymous]
+
+
 
 <h3>Login</h3>
 <MudPaper Height="400px" Width="400px" Square="false">
@@ -18,18 +23,18 @@
                 <MudCardContent>
 
                     <MudTextField Label="Login" @bind-Value="_loginModel.UserName" Variant="Variant.Outlined"
-                        For="@(() => _loginModel.UserName)" />
+                                  For="@(() => _loginModel.UserName)" />
                     <MudTextField Label="Mot de passe" @bind-Value="_loginModel.Password" InputType="InputType.Password"
-                        Variant="Variant.Outlined" For="@(() => _loginModel.Password)" />
+                                  Variant="Variant.Outlined" For="@(() => _loginModel.Password)" />
 
                 </MudCardContent>
                 <MudCardActions class="d-flex px-6 justify-space-between py-6">
                     <MudButton OnClick="GotoHomePage" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel"
-                        Color="Color.Warning">
+                               Color="Color.Warning">
                         Annuler
                     </MudButton>
                     <MudButton OnClick="() => OnValidSubmit(_loginForm.EditContext)" Variant="Variant.Filled"
-                        EndIcon="@Icons.Material.Filled.Add" Color="Color.Success">
+                               EndIcon="@Icons.Material.Filled.Add" Color="Color.Success">
                         Connexion
                     </MudButton>
                 </MudCardActions>
@@ -74,6 +79,8 @@
     {
         NavigationManager.NavigateTo(_homePage);
     }
+
+    
 
 
 }

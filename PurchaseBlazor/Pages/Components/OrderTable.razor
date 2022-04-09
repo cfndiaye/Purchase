@@ -5,8 +5,8 @@
     }
 
     <MudTable @ref="_mudTable" Items="@OrdersFiltered" Dense="@Dense"
-              Striped="false" Hover="false" Breakpoint="Breakpoint.Sm"
-              @bind-SelectedItem="SelectedOrder" Loading="@Loading"
+              Striped="true" Hover="false" Breakpoint="Breakpoint.Sm"
+              @bind-SelectedItem="SelectedOrder" Loading="@Loading" 
               RowClassFunc="@SelectedRowClassFunc" T="Order"
               
               LoadingProgressColor="Color.Success">
@@ -47,7 +47,7 @@
             </MudTd>
         </RowTemplate>
         <PagerContent>
-            <MudTablePager />
+            <MudTablePager PageSizeOptions="SizeOptions" RowsPerPageString="Commandes par page" />
         </PagerContent>
 
     </MudTable>
@@ -69,7 +69,8 @@
              @bind-Loading="@Loading" />
 
 @code {
-    
+
+    [Parameter] public int[] SizeOptions{ get; set; } = { 5, 10, 15, 20, 30, 40, 50 };
     private UpdateOrder _updateOrder;
     private DeleteOrder _deleteOrder;
 
@@ -85,8 +86,7 @@
     [Parameter]
     public HttpClient Client { get; set; }
 
-    //[Parameter]
-   // public string Url { get; set; }
+
     [Parameter]
     public string Message { get; set; } = "";
     [Parameter]
@@ -108,7 +108,7 @@
     [Parameter]
     public bool Loading { get; set; }
 
-   
+
 
     private int CalculeAge(DateTime d2, DateTime d1) => Age(d1, d2);
 

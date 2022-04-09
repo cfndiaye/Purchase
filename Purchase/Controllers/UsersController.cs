@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Purchase.Services.Contract;
 using Purchase.Services.Implementation;
 using PurchaseShared.Models;
 using System.Threading.Tasks;
@@ -13,9 +14,9 @@ namespace Purchase.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        public UsersController(UserService userService, ILogger<UsersController> logger)
+        public UsersController(IUserService userService, ILogger<UsersController> logger)
         {
             _logger = logger;
             _userService = userService;

@@ -16,5 +16,6 @@ namespace Purchase.Services.Contract
         Task UpdateVendorOrdersAsync(string id, string orderId);
         Task DeleteVendorAsync(string vendorId);
         Task RemoveOrderOnVendor(string id, Vendor vendor);
+        Task<IEnumerable<Vendor>> GetVendorsWithOrdersAsync();
     }
 }

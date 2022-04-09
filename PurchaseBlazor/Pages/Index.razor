@@ -1,29 +1,104 @@
 ﻿@page "/home"
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient _client
 
-<h1>Hello, world!</h1>
-<AuthorizeView>
-    <Authorized>
-        Bienvenue sur l'application Purchase Manager @_user.Identity.Name
-    </Authorized>
-    <NotAuthorized>
-        Bienvenue sur l'application Purchase Manager
-    </NotAuthorized>
-</AuthorizeView>
+<MudText Typo="Typo.h5">Tableau de bord</MudText>
+<MudText Typo="Typo.subtitle1">Suivi des demandes d'achat et commandes</MudText>
+<MudSpacer />
+<MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
+
+<MudGrid Spacing="@spacing" Justify="Justify.Center" Class="mb-4">
+    <MudItem>
+        <WidgetCounter Counter="@_totalCostLocal" Currency="XOF" Description="Commandes locales"
+                       CustomColor="@Colors.Grey.Lighten5" 
+                       BgColor="@Colors.LightGreen.Darken3" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess" />
+    </MudItem>
+    <MudItem>
+        <WidgetCounter Counter="@_totalCostEurope" Currency="€" Description="Commandes Europe"
+                       CustomColor="@Colors.Grey.Lighten5" 
+                       BgColor="@Colors.LightBlue.Darken3" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Material.Filled.Euro" />
+    </MudItem>
+    <MudItem>
+        <WidgetCounter Counter="@_totalCostUSD" Currency="$" Description="Commandes en Dollar"
+                       CustomColor="@Colors.Grey.Lighten5" 
+                       BgColor="@Colors.Yellow.Darken3" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Filled.AttachMoney" />
+    </MudItem>
+    <MudItem>
+        <WidgetCounter Counter="@_totalCostLocal" Description="Commandes locales"
+                       CustomColor="@Colors.Grey.Darken4" 
+                       BgColor="@Colors.LightGreen.Lighten5" TextColor="@Colors.Grey.Darken4"
+                       CustomContentIcon="@Icons.Material.Filled.Money" />
+    </MudItem>
+</MudGrid>
+
+<MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
+<MudText Typo="Typo.h6">PR PENDING</MudText>
+<OrderTable @ref="_prPendingTable" Client="_client" Loading="_prPendingLoading"
+            MarginDense="Margin.Dense" Message="" SelectedOrder="_selectedOrder"  />
+<MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
+<MudText Typo="Typo.h6">PROFORMA PENDING</MudText>
+<OrderTable @ref="_poProformaPendingTable" Client="_client" Loading="_poProformaPendingLoading"
+            MarginDense="Margin.Dense" Message="" SelectedOrder="_selectedOrder" />
+
 
 @code {
 
     private bool _isAuthenticate;
-    private ClaimsPrincipal _user;
+    private int spacing { get; set; } = 4;
+    private Order _selectedOrder;
+    private OrderTable _prPendingTable;
+    private OrderTable _poProformaPendingTable;
+    private List<Order> _prPending;
+    private List<Order> _poProformaPending;
+    private bool _prPendingLoading;
+    private bool _poProformaPendingLoading;
+    private const string _URIPRPENDING = "api/orders/GetOrdersByStatus/PR PENDING";
+    private const string _URIPOPROFORMAPENDING = "api/orders/GetOrdersByStatus/WAITING PROFORMA";
+    private const string _URITOTALCOSTBYCURRENCY_XOF = "api/orders/GetTotalCostByCurrency/XOF";
+    private const string _URITOTALCOSTBYCURRENCY_USD = "api/orders/GetTotalCostByCurrency/USD";
+    private const string _URITOTALCOSTBYCURRENCY_EUR = "api/orders/GetTotalCostByCurrency/EUR";
+    private int CountNumberOrderProformaPending;
+    private int CountNumberPrPending;
+    private int _rowParPage = 5;
+    private decimal _totalCostLocal;
+    private decimal _totalCostEurope;
+    private decimal _totalCostUSD;
 
-    private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
-    private async Task GetClaimsPrincipalData()
+    protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _user = authState.User;
-        if (_user.Identity.IsAuthenticated)
+        //PR PENDING LOADING...
+        var orderspendingLoading = _client.GetFromJsonAsync<List<Order>>(_URIPRPENDING);
+        if(!orderspendingLoading.IsCompleted)
         {
-            _isAuthenticate = true;
+            _prPendingLoading = true;
         }
+        _prPending = await orderspendingLoading;
+        CountNumberPrPending = _prPending.Count;
+        _prPendingTable.DataLoaded(true, _prPending.Take(5).ToList());
+        _prPendingLoading = false;
+
+        //PO PROFORMAPENDING LOADING...
+        var ordersProformaPendingLoading = _client.GetFromJsonAsync<List<Order>>(_URIPOPROFORMAPENDING);
+        if(!ordersProformaPendingLoading.IsCompleted)
+        {
+            _poProformaPendingLoading = true;
+        }
+        _poProformaPending = await ordersProformaPendingLoading;
+        CountNumberOrderProformaPending = _poProformaPending.Count;
+        _poProformaPendingTable.DataLoaded(true, _poProformaPending.Take(5).ToList());
+        _poProformaPendingLoading = false;
+
+        //Get total cost by cuurency XOF
+        var totalCostLocalLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_XOF);
+        _totalCostLocal = await totalCostLocalLoading;
+        //Get total cost by cuurency EUR
+        var totalCostEuropeLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_EUR);
+        _totalCostEurope = await totalCostEuropeLoading;
+        //Get total cost by cuurency USD
+        var totalCostUsdLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD);
+        _totalCostUSD = await totalCostUsdLoading;
     }
+
 }
