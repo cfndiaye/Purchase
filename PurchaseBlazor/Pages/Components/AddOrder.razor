@@ -42,7 +42,7 @@
                             <MudTextField @bind-Value="_addOrder.Type" Label="Type" For="@(() => _addOrder.Type)"
                                           Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
                             <MudDatePicker @bind-Date="_addOrder.PrDate" Culture="CultureInfo.CurrentCulture" Label="Date PR"
-                                                                                    For="@(() => _addOrder.PrDate)"
+                                           For="@(() => _addOrder.PrDate)"
                                            Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
                         </div>
 
@@ -61,7 +61,7 @@
                             <MudTextField @bind-Value="_addOrder.PurchaseOrder" Label="PO" For="@(() => _addOrder.PurchaseOrder)"
                                           Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
                             <MudDatePicker Culture="CultureInfo.CurrentCulture" @bind-Date="_addOrder.DatePo" Label="Date PO"
-                                        For="@(() => _addOrder.DatePo)"
+                                           For="@(() => _addOrder.DatePo)"
                                            Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
                         </div>
                         <div class="d-flex justify-space-between py-2">
@@ -75,16 +75,19 @@
                                            For="@(() => _addOrder.DateLivraison)"
                                            Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
                             <MudSwitch @bind-Value="_addOrder.Livree" Label="Livrée?" For="@(() => _addOrder.Livree)"
-                                           Class="ml-2" Color="Color.Primary" />
+                                       Class="ml-2" Color="Color.Primary" />
                         </div>
-                        <MudAutocomplete @bind-Value="_selectedVendor" Label="Fournisseur" Margin="MarginDense" Variant="Variant.Outlined"
-                                         For="@(() => _addOrder.VendorId)" Class="d-flex py-2" 
+                        <MudAutocomplete @bind-Value="_addOrder.VendorId" Label="Fournisseur" Margin="MarginDense" Variant="Variant.Outlined"
+                                         For="@(() => _addOrder.VendorId)" Class="d-flex py-2"
                                          ToStringFunc="FindDescription"
                                          SearchFunc="FindVendorsAsync" />
                         @*TODO: Enlever l'id de l'affichage*@
+                        <MudChip>@_addOrder.VendorId</MudChip>
+
+                        @*TODO: Enlever l'id de l'affichage*@
                         <MudHidden @bind-Value="_addOrder.VendorId"></MudHidden><MudChip>@_addOrder.VendorId</MudChip>
                         <MudTextField @bind-Value="_addOrder.Commentaires" Label="Commentaires" Margin="MarginDense"
-                                For="@(() => _addOrder.Commentaires)"
+                                      For="@(() => _addOrder.Commentaires)"
                                       Class="d-flex mb-2" Variant="Variant.Outlined" />
                     </MudCardContent>
 
@@ -94,14 +97,17 @@
         </div>
     </DialogContent>
     <DialogActions>
-        @* <MudButton OnClick="CloseAddDialog" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel"
-                   Color="Color.Warning">
-            Annuler
-        </MudButton> *@
-        <MudButton ButtonType="ButtonType.Submit"  Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add"
-                   Color="Color.Success">
-            Ajouter
-        </MudButton>
+        <div class="d-flex px-6 justify-space-between py-6">
+            <MudButton OnClick="CloseAddDialog" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel"
+                       Color="Color.Warning">
+                Annuler
+            </MudButton> 
+            <MudButton OnClick="() => OnValidSubmit(_addForm.EditContext)" Disabled="@buttonActive" ButtonType="ButtonType.Submit"  Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add"
+                       Color="Color.Success">
+                Ajouter
+            </MudButton>
+        </div>
+        
     </DialogActions>
 
 </MudDialog>
@@ -111,6 +117,7 @@
     @inject IDialogService DialogService
 
     private bool _success;
+    private bool buttonActive;
 
     private Order _addOrder;
     [Parameter]
@@ -138,29 +145,37 @@
     public HttpClient Client { get; set; }
     [Parameter]
     public Margin MarginDense { get; set; } = Margin.Dense;
+    public EventCallback<string> _selectedVendorChanged { get; set; }
 
     //Post order
     private async Task OnValidSubmit(EditContext context)
     {
         _success = true;
-        if (_selectedVendor.Length > 24)
+        /*if (_selectedVendor.Length > 24)
         {
             _selectedVendorId = _selectedVendor.Substring(0, 24);
             _addOrder.VendorId = _selectedVendorId;
+            await AddNewOrder(_addOrder);
+            _addMudDialog.Close();
+        }*/
+        if (_addOrder.VendorId.Length > 24)
+        {
+            _addOrder.VendorId = _addOrder.VendorId.Substring(0, 24);
+            
             await AddNewOrder(_addOrder);
             _addMudDialog.Close();
         }
 
     }
 
-    private void OnVendorChange()
+    private async Task On_selectedvendorChanged()
     {
-        Console.WriteLine(_selectedVendor);
+        await _selectedVendorChanged.InvokeAsync(_selectedVendor);
         if (_selectedVendor.Length > 24)
         {
             _selectedVendorId = _selectedVendor.Substring(0, 24);
             _addOrder.VendorId = _selectedVendorId;
-            
+
         }
     }
 
@@ -168,7 +183,7 @@
     public void Show()
     {
         _addOrder = new Order();
-        _addMudDialog.ClassActions = "d-flex px-6 justify-space-between py-6";
+        // _addMudDialog.ClassActions = "d-flex px-6 justify-space-between py-6";
 
         _addMudDialog.Show("Ajouter une commande");
 
