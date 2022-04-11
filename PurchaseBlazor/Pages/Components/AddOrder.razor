@@ -1,22 +1,10 @@
 ﻿@using System.ComponentModel.DataAnnotations
 <MudDialog @ref="_addMudDialog">
+
     <DialogContent>
         <div style="min-width: 400px;">
             <EditForm @ref="_addForm" Model="_addOrder" OnValidSubmit="OnValidSubmit">
-                <DataAnnotationsValidator/>
-                @{
-                    if(_success)
-                    {
-                        
-                    }
-                    else
-                    {
-                        <MudText Color="@Color.Error">
-                            <ValidationSummury/>
-                        </MudText>
-                    }
-                }
-                
+                <DataAnnotationsValidator />
                 <MudCard>
                     <MudCardContent>
                         <MudTextField Class="d-flex mb-2" @bind-Value="_addOrder.AgentName" Label="Nom agent" For="@(() => _addOrder.AgentName)"
@@ -85,39 +73,41 @@
                         <MudChip>@_addOrder.VendorId</MudChip>
 
                         @*TODO: Enlever l'id de l'affichage*@
-                        <MudHidden @bind-Value="_addOrder.VendorId"></MudHidden><MudChip>@_addOrder.VendorId</MudChip>
+                        <MudHidden @bind-Value="_addOrder.VendorId"></MudHidden>
                         <MudTextField @bind-Value="_addOrder.Commentaires" Label="Commentaires" Margin="MarginDense"
                                       For="@(() => _addOrder.Commentaires)"
                                       Class="d-flex mb-2" Variant="Variant.Outlined" />
                     </MudCardContent>
-
-
                 </MudCard>
+                <div class="d-flex justify-space-between py-6">
+                    <div>
+                        <MudButton OnClick="CloseAddDialog" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel"
+                                   Color="Color.Warning">
+                            Annuler
+                        </MudButton>
+                    </div>
+
+                    <div>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add"
+                                   Color="Color.Success">
+                            Ajouter
+                        </MudButton>
+                    </div>
+                </div>
             </EditForm>
         </div>
     </DialogContent>
-    <DialogActions>
-        <div class="d-flex px-6 justify-space-between py-6">
-            <MudButton OnClick="CloseAddDialog" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel"
-                       Color="Color.Warning">
-                Annuler
-            </MudButton> 
-            <MudButton OnClick="() => OnValidSubmit(_addForm.EditContext)" Disabled="@buttonActive" ButtonType="ButtonType.Submit"  Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add"
-                       Color="Color.Success">
-                Ajouter
-            </MudButton>
-        </div>
-        
-    </DialogActions>
+
+
 
 </MudDialog>
 @code {
     @using System.Globalization
-    
+
     @inject IDialogService DialogService
 
-    private bool _success;
-    private bool buttonActive;
+    
+    
 
     private Order _addOrder;
     [Parameter]
@@ -150,34 +140,17 @@
     //Post order
     private async Task OnValidSubmit(EditContext context)
     {
-        _success = true;
-        /*if (_selectedVendor.Length > 24)
-        {
-            _selectedVendorId = _selectedVendor.Substring(0, 24);
-            _addOrder.VendorId = _selectedVendorId;
-            await AddNewOrder(_addOrder);
-            _addMudDialog.Close();
-        }*/
+       
         if (_addOrder.VendorId.Length > 24)
         {
-            _addOrder.VendorId = _addOrder.VendorId.Substring(0, 24);
-            
-            await AddNewOrder(_addOrder);
+            _addOrder.VendorId = _addOrder.VendorId.Substring(0, 24);            
+        }
+        await AddNewOrder(_addOrder);
             _addMudDialog.Close();
-        }
 
     }
 
-    private async Task On_selectedvendorChanged()
-    {
-        await _selectedVendorChanged.InvokeAsync(_selectedVendor);
-        if (_selectedVendor.Length > 24)
-        {
-            _selectedVendorId = _selectedVendor.Substring(0, 24);
-            _addOrder.VendorId = _selectedVendorId;
-
-        }
-    }
+    
 
     //Open MudDialog Add Order
     public void Show()
