@@ -14,6 +14,10 @@ workflows:
             docker-password: DOCKER_PASSWORD 
             docker-username: DOCKER_LOGIN 
             docker-context: . 
+        - docker/publish:
+            dockerfile: PurchaseBlazor/Dockerfile 
+            docker-context: . 
+            image: cfndiaye/purchaseblazor-stage 
 
 
 
