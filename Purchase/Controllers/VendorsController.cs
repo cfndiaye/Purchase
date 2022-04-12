@@ -12,154 +12,168 @@ using Purchase.Services.Contract;
 using Purchase.Services.Implementation;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
+
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Purchase.Controllers
 {
-  [Route("api/[controller]/[action]")]
-  public class VendorsController : ControllerBase
-  {
-    private readonly ILogger _logger;
-    private readonly IVendorService _vendorService;
-
-    public VendorsController(VendorService vendorService, ILogger<VendorsController> logger)
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    //[Authorize]
+    public class VendorsController : ControllerBase
     {
-      _vendorService = vendorService;
-      _logger = logger;
-    }
+        private readonly ILogger _logger;
+        private readonly IVendorService _vendorService;
 
-    // GET: api/values
-    [HttpGet]
-    public async Task<IActionResult> Get()
-    {
-      var vendors = await _vendorService.GetVendorsAsync();
-      var vendorsOrdered = vendors.OrderBy(v => v.Name);
-      return Ok(vendorsOrdered);
-    }
-
-    // GET api/values/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Vendor>> Get(string id)
-    {
-      var vendor = await _vendorService.GetVendorByIdAsync(id);
-      if (vendor is null) return NotFound();
-      return vendor;
-    }
-
-    // GET api/values/5
-    [HttpGet("{vendorname}")]
-    public async Task<IEnumerable<Vendor>> GetByName(string vendorname)
-    {
-      var vendor = await _vendorService.GetVendorsAsync(vendorname);
-      return vendor;
-    }
-
-    // POST api/values
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Vendor vendor)
-    {
-      if (ModelState.IsValid)
-      {
-        try
+        public VendorsController(VendorService vendorService, ILogger<VendorsController> logger)
         {
-          await _vendorService.AddVendorAsync(vendor);
-          _logger.LogInformation($"{vendor.Name} ajouté avec succés.");
-          return Ok(vendor);
+            _vendorService = vendorService;
+            _logger = logger;
         }
-        catch (Exception ex)
+
+        // GET: api/values
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
-          _logger.LogError(ex.Message);
-          return StatusCode(500, vendor);
+            var vendors = await _vendorService.GetVendorsAsync();
+            var vendorsOrdered = vendors.OrderBy(v => v.Name);
+            return Ok(vendorsOrdered);
         }
-      }
 
-      return StatusCode(500, vendor);
-    }
-
-    // PUT api/values/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(string id, [FromBody] Vendor updatedVendor)
-    {
-      var vendor = await _vendorService.GetVendorByIdAsync(id);
-      if (vendor is null) return NotFound();
-      //updatedVendor.Id = vendor.Id;
-
-      try
-      {
-        await _vendorService.UpdateVendorAsync(id, updatedVendor);
-        _logger.LogInformation($"{updatedVendor.Id} modifié avec succés.");
-      }
-      catch (Exception ex)
-      {
-        _logger.LogError(ex.Message);
-        return StatusCode(500, updatedVendor);
-      }
-
-      return Ok(updatedVendor);
-    }
-
-    // DELETE api/values/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(string id)
-    {
-      var vendor = await _vendorService.GetVendorByIdAsync(id);
-      if (vendor is null) return NotFound();
-      try
-      {
-        await _vendorService.DeleteVendorAsync(id);
-        _logger.LogInformation($" vendor id: {id} supprimé avec succés.");
-      }
-      catch (Exception ex)
-      {
-        _logger.LogError(ex.Message);
-      }
-
-      return Ok(id);
-    }
-
-    //upload vendor POST api/values
-    [HttpPost]
-    public async Task<IActionResult> UploadVendors(IFormFile file)
-    {
-      if (file is null) 
-        return StatusCode(500, "file not found");
-      var vendors = new List<Vendor>();
-
-      using (var streamReader = new StreamReader((file.OpenReadStream())))
-      {
-        while (!streamReader.EndOfStream)
+        // GET api/values/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Vendor>> Get(string id)
         {
-          var line = await streamReader.ReadLineAsync();
-          string[] vendorLigne = line.Split(';');
-          var vendor = new Vendor
-          {
-            Name = vendorLigne[0],
-            EmailId = vendorLigne[1],
-            Telephone = vendorLigne[3],
-            Comments = vendorLigne[5]
-          };
-          vendors.Add(vendor);
+            var vendor = await _vendorService.GetVendorByIdAsync(id);
+            if (vendor is null) return NotFound();
+            return vendor;
         }
-      }
-      if (vendors.Count > 0)
-        foreach (var vendor in vendors)
+
+        // GET api/values/5
+        [HttpGet("{vendorname}")]
+        public async Task<IEnumerable<Vendor>> GetByName(string vendorname)
         {
-          try
-          {
-            await _vendorService.AddVendorAsync(vendor);
-          }
-          catch (Exception ex)
-          {
-            _logger.LogError(ex.Message);
+            var vendor = await _vendorService.GetVendorsAsync(vendorname);
+            return vendor;
+        }
+
+        // POST api/values
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Vendor vendor)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _vendorService.AddVendorAsync(vendor);
+                    _logger.LogInformation($"{vendor.Name} ajouté avec succés.");
+                    return Ok(vendor);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                    return StatusCode(500, vendor);
+                }
+            }
 
             return StatusCode(500, vendor);
-
-          }
-
         }
 
+        // PUT api/values/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(string id, [FromBody] Vendor updatedVendor)
+        {
+            var vendor = await _vendorService.GetVendorByIdAsync(id);
+            if (vendor is null) return NotFound();
+            //updatedVendor.Id = vendor.Id;
 
-      return Ok(vendors);
+            try
+            {
+                await _vendorService.UpdateVendorAsync(id, updatedVendor);
+                _logger.LogInformation($"{updatedVendor.Id} modifié avec succés.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, updatedVendor);
+            }
+
+            return Ok(updatedVendor);
+        }
+
+        // DELETE api/values/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var vendor = await _vendorService.GetVendorByIdAsync(id);
+            if (vendor is null) return NotFound();
+            try
+            {
+                await _vendorService.DeleteVendorAsync(id);
+                _logger.LogInformation($" vendor id: {id} supprimé avec succés.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+
+            return Ok(id);
+        }
+
+        //upload vendor POST api/values
+        [HttpPost]
+        public async Task<IActionResult> UploadVendors(IFormFile file)
+        {
+            if (file is null)
+                return StatusCode(500, "file not found");
+            var vendors = new List<Vendor>();
+
+            using (var streamReader = new StreamReader((file.OpenReadStream())))
+            {
+                while (!streamReader.EndOfStream)
+                {
+                    var line = await streamReader.ReadLineAsync();
+                    string[] vendorLigne = line.Split(';');
+                    var vendor = new Vendor
+                    {
+                        Name = vendorLigne[0],
+                        EmailId = vendorLigne[1],
+                        Telephone = vendorLigne[3],
+                        Comments = vendorLigne[5]
+                    };
+                    vendors.Add(vendor);
+                }
+            }
+            if (vendors.Count > 0)
+                foreach (var vendor in vendors)
+                {
+                    try
+                    {
+                        await _vendorService.AddVendorAsync(vendor);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex.Message);
+
+                        return StatusCode(500, vendor);
+
+                    }
+
+                }
+
+
+            return Ok(vendors);
+        }
+        [HttpGet("{top}")]
+        public async Task<List<object>> GetTopVendorsAsync(int top)
+        {
+            var vendors = await _vendorService.GetVendorsWithOrdersAsync();
+
+            var topVendors = vendors.Select(v => new { Id = v.Id, Name = v.Name, TotalOrders = v.OrderList?.Sum(o => o.Amount) })
+                .OrderByDescending(obj => obj.TotalOrders).Take(top).ToList<object>();
+
+            return topVendors;
+        }
     }
-  }
+
 }

@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Purchase.Models
+namespace Purchase.Infrastructure.Models
 {
     public class PurchaseStoreDatabaseSettings
     {
@@ -11,5 +11,6 @@ namespace Purchase.Models
         public string Password { get; set; }
         public string VendorsCollectionName { get; set; }
         public string OrdersCollectionName { get; set; }
+        public string UsersCollectionName { get; set; }
     }
 }

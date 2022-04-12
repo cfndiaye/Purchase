@@ -1,12 +1,8 @@
-@page "/orderspendingapprobation"
-
-@using System.Globalization
-@using System.IO
-@using PurchaseBlazor.Pages.Components
-@inject HttpClient _client
-@inject IDialogService DialogService
+﻿@page "/ordersclean"
 @inject NavigationManager NavigationManager
-<h1>Suivi des commandes en attente d'approbation</h1>
+@inject HttpClient _client
+
+<h1>Suivi des commandes</h1>
 <MudCard>
     <MudCardHeader>
         <CardHeaderAvatar>
@@ -21,43 +17,34 @@
         </CardHeaderActions>
     </MudCardHeader>
     @*intégration du composant OrderTable*@
-    <OrderTable @ref="@_orderTable" Client="@_client" Message="@_message" Dense="@_dense" Loading="@_loading"
-        MarginDense="@_marginDense" Severity="@_severity" SelectedOrder="@_selectedOrder" />
-    @*intégration du composant AddOrder*@
-    <AddOrder @ref="_addOrder" Client="_client" @bind-OrdersList="_ordersList" MarginDense="_marginDense"
-        @bind-Message="_message" @bind-Loading="@_loading" @bind-Severity="@_severity" />
-
+    <OrderTable @ref="@_orderTable"
+                Client="@_client"
+                Message="@_message" Dense="@_dense" Loading="@_loading"
+                MarginDense="@_marginDense" Severity="@_severity" 
+                SelectedOrder="@_selectedOrder" />
 </MudCard>
-
+@*intégration du composant AddOrder*@
+<AddOrder @ref="_addOrder" Client="_client" @bind-OrdersList="@_ordersList"
+          MarginDense="_marginDense"
+          @bind-Message="_message"
+          @bind-Loading="@_loading"
+          @bind-Severity="@_severity" />
 
 
 @code {
-
-    private OrderTable _orderTable;
     private string _message = "";
-    private Severity _severity = Severity.Info;
-    private List<Order> _ordersList = new List<Order>();
-    private MudTable<Order> _mudTable;
+    private OrderTable _orderTable;
+    private AddOrder _addOrder;
+    private Order _selectedOrder;
+    protected const string URL = "api/orders/Get";
+    protected const string PAGETOGO = "importorders";
     private bool _dense = true;
     private Margin _marginDense = Margin.Dense;
-    private Order _selectedOrder;
-    private AddOrder _addOrder;
     private bool _loading = false;
-    private string _searchTexte = "";
     private Task<List<Order>> _ordersLoading;
-    private Task<HttpResponseMessage> _orderLoading;
-
-
-
-    protected const string URL = "api/orders/GetOrdersByStatus/PO APPROVAL";
-    protected const string PAGETOGO = "importorders";
-
-
-    //goto import page
-    private void OpenImportPage()
-    {
-        NavigationManager.NavigateTo(PAGETOGO);
-    }
+    private List<Order> _ordersList = new List<Order>();
+    public string Url { get; set; } = URL;
+    private Severity _severity = Severity.Info;
 
     //open add dialog
     private void OpenAddDialog()
@@ -65,17 +52,20 @@
         _addOrder.Show();
     }
 
+    //goto import page
+    private void OpenImportPage()
+    {
+        NavigationManager.NavigateTo(PAGETOGO);
+    }
 
-
-
-
-
+    //initialize component
     protected override async Task OnInitializedAsync()
     {
         _loading = true;
         try
         {
-            _ordersLoading = _client.GetFromJsonAsync<List<Order>>(URL);
+
+            _ordersLoading = _client.GetFromJsonAsync<List<Order>>(Url);
             _loading = !_ordersLoading.IsCompleted;
             _ordersList = await _ordersLoading;
             if (_ordersLoading.IsCompleted)
@@ -83,6 +73,7 @@
                 _loading = false;
                 _orderTable.DataLoaded(true, _ordersList);
             }
+            
         }
         catch (Exception ex)
         {
@@ -91,12 +82,6 @@
             _loading = false;
         }
     }
-    private void CloseAlert()
-    {
-        _message = "";
-    }
 
-
-
-
+    
 }

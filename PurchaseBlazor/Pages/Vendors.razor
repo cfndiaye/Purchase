@@ -19,7 +19,8 @@
         </CardHeaderContent>
         <CardHeaderActions>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Inherit" OnClick="OpenAddMessageBox" />
-            <MudIconButton Icon="@Icons.Material.Outlined.ImportExport" Color="Color.Inherit" OnClick="OpenImportDialog" />
+            <MudIconButton Icon="@Icons.Material.Outlined.ImportExport" Color="Color.Inherit"
+                OnClick="OpenImportDialog" />
         </CardHeaderActions>
     </MudCardHeader>
 
@@ -29,8 +30,6 @@
         {
             <MessageAlert CloseAlert="CloseAlert" Message="@_message" Severity="@_severity"></MessageAlert>
         }
-
-
 
         <MudTable Items="@_vendorList" Dense="@_dense" Striped="true" Hover="true" Breakpoint="Breakpoint.Sm"
             @bind-SelectedItem="_selectedVendor" @ref="_mudTable" Filter="new Func<Vendor, bool>(FilterFuncInAction)"
@@ -46,6 +45,7 @@
                 <MudTh>Nom</MudTh>
                 <MudTh>Email</MudTh>
                 <MudTh>Téléphone</MudTh>
+                <MudTh>Type</MudTh>
                 <MudTh>Orders</MudTh>
                 <MudTh>Commentaires</MudTh>
 
@@ -57,6 +57,7 @@
                 <MudTd DataLabel="Nom">@context.Name</MudTd>
                 <MudTd DataLabel="E-mail">@context.EmailId</MudTd>
                 <MudTd DataLabel="Téléphone">@context.Telephone</MudTd>
+                <MudTd DataLabel="Type">@context.Type</MudTd>
                 <MudTd DataLabel="Orders">@context.Orders?.Count</MudTd>
                 <MudTd DataLabel="Commentaires">@context.Comments</MudTd>
                 <MudTd>
@@ -97,6 +98,12 @@
                             @bind-Value="_addVendor.EmailId" />
                         <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420"
                             For="@(() => _addVendor.Telephone)" @bind-Value="_addVendor.Telephone" />
+                        <MudSelect @bind-Value="_addVendor.Type" Label="Type" For="() => _addVendor.Type" T="string">
+                            @foreach (var type in Types)
+                            {
+                                <MudSelectItem Value="@type">@type</MudSelectItem>
+                            }
+                        </MudSelect>
                         <MudTextField Label="Commentaires" HelperText="fournisseur local"
                             For="@(() => _addVendor.Comments)" @bind-Value="_addVendor.Comments" />
                     </MudCardContent>
@@ -126,6 +133,13 @@
                             @bind-Value="_selectedVendor.EmailId" />
                         <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420"
                             For="@(() => _selectedVendor.Telephone)" @bind-Value="_selectedVendor.Telephone" />
+                        <MudSelect @bind-Value="_selectedVendor.Type" Label="Type" For="() => _selectedVendor.Type"
+                            T="string">
+                            @foreach (var type in Types)
+                            {
+                                <MudSelectItem Value="@type">@type</MudSelectItem>
+                            }
+                        </MudSelect>
                         <MudTextField Label="Commentaires" HelperText="fournisseur local"
                             For="@(() => _selectedVendor.Comments)" @bind-Value="_selectedVendor.Comments" />
                     </MudCardContent>
@@ -160,19 +174,19 @@
 @*
     Dialog for import Vendors
 *@
-<MudDialog @ref="_importDialog" >
+<MudDialog @ref="_importDialog">
     <DialogContent>
         <MudPaper Class="d-flex align-center py-2 px-1" Elevation="0" Style="min-width: 400px; min-height: 100px">
             <InputFile id="fileInput" OnChange="ImportVendors" accept=".csv" hidden />
-            <MudButton  htmlTag="label" Variant="Variant.Filled" Color="Color.Primary"
-                        StartIcon="@Icons.Material.Filled.AttachFile" For="fileInput">
+            <MudButton htmlTag="label" Variant="Variant.Filled" Color="Color.Primary"
+                StartIcon="@Icons.Material.Filled.AttachFile" For="fileInput">
                 Importer
-                @* <MudProgressLinear  Color="Color.Warning" Indeterminate="true" /> *@
-            
+                @* <MudProgressLinear Color="Color.Warning" Indeterminate="true" /> *@
+
             </MudButton>
             <MudText>@_fileName</MudText>
-            <MudSpacer/>
-            <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="_loading"/>
+            <MudSpacer />
+            <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="_loading" />
 
         </MudPaper>
     </DialogContent>
@@ -216,7 +230,7 @@
                         _message = "Fournisseur importés avec succés.";
                         _severity = Severity.Success;
                         _importDialog.Close();
-                        
+
                     }
                     else
                     {
@@ -250,7 +264,7 @@
     private bool _dense = true;
     private MudTable<Vendor> _mudTable;
     private HashSet<Vendor> selectedItems = new HashSet<Vendor>();
-
+    private List<string> Types = new List<string> { "Locale", "Europe", "Asie" };
     protected override async Task OnInitializedAsync()
     {
         _vendorList = new List<Vendor>();
@@ -403,4 +417,4 @@
     }
 
 
-} 
+}
