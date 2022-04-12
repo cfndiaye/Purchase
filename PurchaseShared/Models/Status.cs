@@ -8,7 +8,7 @@ namespace PurchaseShared.Models
         //list status
         public static List<string> PoStatus = new List<string>
         {
-            "PR PENDING",
+            "PR PENDING","PO CANCELED",
             "INQUERY SEND", "TECHNICAL CLEARANCE",
             "PO APPROVAL", "PO RELEASED",
             "WAITING PROFORMA", "DPI-AC", "COMPLETED"

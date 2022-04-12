@@ -9,3 +9,10 @@ docker run -p 8080:80 --name purchase-blazor cfndiaye/purchase-api
 
 #create user on MongoDB
 db.createUser({ user: "cfndiaye", pwd: passwordPrompt(), roles: [{ role: 'readWrite', db: "purchaseproductiondb" }]})
+
+
+#run mongodb on mac
+To start mongodb/brew/mongodb-community now and restart at login:
+  brew services start mongodb/brew/mongodb-community
+Or, if you don't want/need a background service you can just run:
+  mongod --config /opt/homebrew/etc/mongod.conf

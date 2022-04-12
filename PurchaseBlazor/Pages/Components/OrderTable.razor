@@ -1,0 +1,201 @@
+﻿<MudCardContent>
+    @if (!string.IsNullOrWhiteSpace(Message))
+    {
+        <MessageAlert Message="@Message" Severity="@Severity" CloseAlert="CloseAlert" />
+    }
+
+    <MudTable @ref="_mudTable" Items="@OrdersFiltered" Dense="@Dense"
+              Striped="true" Hover="false" Breakpoint="Breakpoint.Sm"
+              @bind-SelectedItem="SelectedOrder" Loading="@Loading" 
+              RowClassFunc="@SelectedRowClassFunc" T="Order"
+              
+              LoadingProgressColor="Color.Success">
+        <ToolBarContent>
+            <MudText Inline="true" Typo="Typo.h6">Liste des commandes</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="SearchTexte" Placeholder="Recherche..." TextChanged="() => OnFilter()"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          IconSize="Size.Medium" 
+                          Class="mt-0" />
+           
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>PR</MudTh>
+            <MudTh>Vendor</MudTh>
+            <MudTh>Description</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.ApprovedDate)">Date Approbation</MudTableSortLabel></MudTh>
+            <MudTh>PO</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.DatePo)">Age</MudTableSortLabel></MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh></MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.ReqNumber.ToString()</MudTd>
+            <MudTd>@context.Vendor?.Name</MudTd>
+            <MudTd>@context.Description</MudTd>
+            <MudTd>@context.ApprovedDate.Value.ToString(format: "dd/MM/yyyy")</MudTd>
+            <MudTd>@context.PurchaseOrder</MudTd>
+            <MudTd>@CalculeAge(DateTime.Now, context.ApprovedDate.Value).ToString()</MudTd>
+            <MudTd>@context.Status</MudTd>
+            <MudTd>
+                <MudIconButton Class="pa-0" OnClick="() => OpenUpdateDialog(context)" Icon="@Icons.Material.Filled.Edit" aria-label="Modifier" Color="Color.Inherit" />
+            </MudTd>
+            <MudTd>
+                <MudIconButton Class="pa-0" OnClick="() => OpenDeleteDialog(context)" Icon="@Icons.Material.Filled.Delete" aria-label="Supprimer" Color="Color.Inherit" />
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="SizeOptions" RowsPerPageString="Commandes par page" />
+        </PagerContent>
+
+    </MudTable>
+</MudCardContent>
+
+
+
+@* Dialog update order*@
+<UpdateOrder @ref="_updateOrder" @bind-Message="@Message"
+             @bind-Severity="@Severity"
+             
+             Client="Client" />
+
+@* Dialog delete order*@
+<DeleteOrder @ref="_deleteOrder" OrdersList="OrdersFiltered"
+             Client="Client"
+             @bind-Message="@Message" 
+             @bind-Severity="@Severity"
+             @bind-Loading="@Loading" />
+
+@code {
+
+    [Parameter] public int[] SizeOptions{ get; set; } = { 5, 10, 15, 20, 30, 40, 50 };
+    private UpdateOrder _updateOrder;
+    private DeleteOrder _deleteOrder;
+
+    public string SearchTexte { get; set; } = "";
+    public EventCallback<string> SearchTexteChanged { get; set; }
+    public async Task OnSearchTexteChanged()
+    {
+        OnFilter();
+        await SearchTexteChanged.InvokeAsync(SearchTexte);
+    }
+
+
+    [Parameter]
+    public HttpClient Client { get; set; }
+
+
+    [Parameter]
+    public string Message { get; set; } = "";
+    [Parameter]
+    public Severity Severity { get; set; } = Severity.Info;
+
+    private List<Order> OrdersFiltered = new List<Order>();
+    private List<Order> OrdersList = new List<Order>();
+
+    private MudTable<Order> _mudTable;
+
+    [Parameter]
+    public bool Dense { get; set; } = true;
+
+    [Parameter]
+    public Margin MarginDense { get; set; } = Margin.Dense;
+
+    [Parameter]
+    public Order SelectedOrder { get; set; }
+    [Parameter]
+    public bool Loading { get; set; }
+
+
+
+    private int CalculeAge(DateTime d2, DateTime d1) => Age(d1, d2);
+
+    //Delegate for calcul aging or Pr
+    private int Age(DateTime dateDebut, DateTime dateFin)
+    {
+        return (dateFin - dateDebut).Days;
+    }
+
+
+    private void CloseAlert()
+    {
+        Message = "";
+    }
+
+    //open update Dialog
+    private void OpenUpdateDialog(Order order)
+    {
+        _updateOrder.Show(order);
+    }
+
+    //open delete Dialog
+    private async Task OpenDeleteDialog(Order order)
+    {
+
+        await _deleteOrder.Show(order);
+    }
+
+
+
+    //set color to the selected order
+    private string SelectedRowClassFunc(Order order, int i)
+    {
+        if (_mudTable.SelectedItem != null && _mudTable.SelectedItem.Equals(order))
+        {
+            return "selected";
+        }
+
+        string rowClass = "";
+        switch (order.Status)
+        {
+            case "PO RELEASED":
+                rowClass = "success-po-released";
+                break;
+            case "PR PENDING":
+                rowClass = "warning";
+                break;
+            case "TECHNICAL CLEARANCE":
+                rowClass = "info";
+                break;
+            case "WAITING PROFORMA":
+                rowClass = "info";
+                break;
+            case "DPI&AC":
+                rowClass = "info";
+                break;
+        }
+        // return rowClass;
+        rowClass = "";
+        return rowClass;
+    }
+
+
+
+    //delegate pour le filtrage
+    private bool FilterInAction(Order order) => Filters.FilterFunction(order, SearchTexte);
+
+    private void FilterOrders(List<Order> orders)
+    {
+        OrdersFiltered = orders.FindAll(o => FilterInAction(o));
+    }
+
+    private void OnFilter()
+    {
+        FilterOrders(OrdersList);
+    }
+
+    //initiliser les données de la table
+    public void DataLoaded(bool charged, List<Order> orders)
+    {
+        if (charged)
+        {
+            OrdersList = orders;
+            OrdersFiltered = orders;
+        }
+    }
+
+
+
+}

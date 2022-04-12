@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using PurchaseShared.Models;
 using Purchase.Services.Contract;
-using Purchase.Models;
+using Purchase.Infrastructure.Models;
 
 namespace Purchase.Services.Implementation
 {
@@ -81,6 +81,19 @@ namespace Purchase.Services.Implementation
       await _ordersCollection.InsertManyAsync(orders);
     }
 
-       
-  }
+        //Get Total cost off orders
+        public async Task<double> GetTotalCostAsync(string devise)
+        {
+           var orders = await _ordersCollection.Find(_ => true).ToListAsync();
+
+            return orders.Where(o => o.Devise == devise).Sum(o => o.Amount);
+        }
+        //Get Total Cost By Vendor
+        public async Task<double> GetTotalCostByVendorIdAsync(string vendorId, string devise)
+        {
+            var orders = await _ordersCollection.Find(_ => true).ToListAsync();
+
+            return orders.Where(o => o.VendorId == vendorId).Where(o => o.Devise == devise).Sum(o => o.Amount);
+        }
+    }
 }

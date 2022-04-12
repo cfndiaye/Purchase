@@ -1,0 +1,41 @@
+﻿    <MudCard Style="width: 300px; height: 250px;">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">@Title</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@CustomIcon" Color="@CustomColor" />
+            </CardHeaderActions>
+
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudText>@Description</MudText>
+        </MudCardContent>
+        <MudGrid Spacing="4" Justify="Justify.SpaceBetween">
+            <MudItem>
+                <MudDivider DividerType="DividerType.FullWidth" />
+            </MudItem>
+            <MudItem>
+                <MudIcon Icon="@CustomContentIcon" Style="font-size: 4rem;"/>
+            </MudItem>
+        </MudGrid>
+        
+        <MudCardActions>
+
+        </MudCardActions>
+    </MudCard>
+
+
+@code {
+
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Description { get; set; }
+    [Parameter] public string CustomIcon { get; set; }
+    [Parameter] public string CustomContentIcon { get; set; }
+    [Parameter] public Color CustomColor { get; set; }
+
+
+
+}
+

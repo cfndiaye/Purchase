@@ -28,7 +28,7 @@
                    Striped="false" Hover="false" Breakpoint="Breakpoint.Sm"
                    @bind-SelectedItem="_selectedOrder" Loading="@_loading"
                    RowClassFunc="@SelectedRowClassFunc" T="Order"
-                   Filter="@FilterInAction"
+                  
                    LoadingProgressColor="Color.Success">
             <ToolBarContent>
                 <MudText Inline="true" Typo="Typo.h6">Liste des commandes</MudText>
@@ -66,6 +66,8 @@
                 </MudTd>
             </RowTemplate>
             <PagerContent>
+                <MudChip>@OrdersFiltered.Count</MudChip>
+                <MudButton OnClick="OnFilter">Test</MudButton>
                 <MudTablePager/>
             </PagerContent>
 
@@ -517,5 +519,15 @@
 
     //delegate pour le filtrage
     private bool FilterInAction(Order order) => Filters.FilterFunction(order, _searchTexte);
+    private void FilterOrders(List<Order> orders)
+    {
+        OrdersFiltered = orders.FindAll(o => FilterInAction(o));
+    }
+
+    private List<Order> OrdersFiltered = new List<Order>();
+    private void OnFilter()
+    {
+        FilterOrders(_ordersList);
+    }
 
 }

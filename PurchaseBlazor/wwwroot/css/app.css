@@ -73,3 +73,9 @@ a, .btn-link {
 .success-po-released > td .mud-input {
     color: white !important;
 }
+
+.center-logo{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

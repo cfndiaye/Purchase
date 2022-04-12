@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Purchase.Models;
+using Purchase.Infrastructure.Models;
 using PurchaseShared.Models;
 
 namespace Purchase.Controllers

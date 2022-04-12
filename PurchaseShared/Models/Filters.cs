@@ -31,7 +31,7 @@ namespace PurchaseShared.Models
             if (order.Amount != 0)
                 if (order.Amount.ToString().Contains(query.ToLower()))
                     return true;
-            if (order.Vendor.Name != null)
+            if (order.Vendor?.Name != null)
                 if (order.Vendor.Name.ToLower().Contains(query.ToLower()))
                     return true;
             return false;
