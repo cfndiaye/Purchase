@@ -34,9 +34,9 @@ WORKDIR /usr/share/nginx/html
 #COPY bin/Release/net5.0/browser-wasm/publish/wwwroot  ./  
 COPY --from=publish /app/publish/wwwroot  ./ 
 # Copy the nginx configuration file  
-COPY nginx.conf /etc/nginx/nginx.conf  
+COPY PurchaseBlazor/nginx.conf /etc/nginx/nginx.conf  
 # Copy the start script  
-COPY start.sh ./  
+COPY PurchaseBlazor/start.sh ./  
 # This command is optional,   
 # it is just used to make sure all the EOL unix compliant  
 RUN sed -i -e "s/\r$//" start.sh  
