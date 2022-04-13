@@ -10,14 +10,16 @@ workflows:
       jobs:
         - docker/publish:
             dockerfile: Dockerfile 
-            image: cfndiaye/purchase-api-test 
+            tag: latest
+            image: cfndiaye/purchase-api-stage
             docker-password: DOCKER_PASSWORD 
             docker-username: DOCKER_LOGIN 
             docker-context: . 
         - docker/publish:
             dockerfile: PurchaseBlazor/Dockerfile 
             docker-context: . 
-            image: cfndiaye/purchaseblazor-stage 
+            tag: latest
+            image: cfndiaye/purchase-blazor-stage 
 
 
 
