@@ -3,7 +3,7 @@
 
     <DialogContent>
         <div style="min-width: 400px;">
-            <EditForm @ref="_updateForm" Model="@_selectedOrder" OnValidSubmit="OnValidUpdateSubmit">
+            @* <EditForm @ref="_updateForm" Model="@_selectedOrder" OnValidSubmit="OnValidUpdateSubmit">
                 <DataAnnotationsValidator />
                 <MudCard>
                     <MudCardContent>
@@ -72,7 +72,7 @@
                                          For="@(() => _selectedOrder.VendorId)" Class="d-flex py-2"
                                          ToStringFunc="FindDescription"
                                          SearchFunc="FindVendorsAsync" />
-                        @*TODO: Enlever l'id de l'affichage*@
+                        @*TODO: Enlever l'id de l'affichage*/@
                         <MudChip>@_selectedOrder.Vendor?.Name</MudChip><MudChip>@_selectedOrder.VendorId</MudChip>
                         <MudHidden @bind-Value="_selectedOrder.VendorId"></MudHidden>
                         <MudTextField @bind-Value="_selectedOrder.Commentaires" Label="Commentaires" Margin="_marginDense"
@@ -90,7 +90,12 @@
                         Modifier
                     </MudButton>
                 </div>
-            </EditForm>
+            </EditForm> *@
+
+            <FormOrder OrderForm="_updateForm" CloseDialog="CloseUpdateDialog" MarginDense="_marginDense"
+                       OnValidSubmit="() => OnValidUpdateSubmit(_updateForm.EditContext)" OrderModel="_selectedOrder"
+                       BtnLabel = "Modifier" BtnIcon="@Icons.Material.Filled.Edit"
+                       FindDescription="FindDescription" FindVendorsAsync="FindVendorsAsync" />
         </div>
     </DialogContent>
 
@@ -126,7 +131,7 @@
 
     private bool _loading = false;
 
-    private EditForm _updateForm;
+    private EditForm _updateForm  = new EditForm();
     private MudDialog _updateMudDialog;
 
     private Task<List<Order>> _ordersLoading;

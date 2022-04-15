@@ -3,7 +3,7 @@
 
     <DialogContent>
         <div style="min-width: 400px;">
-            <EditForm @ref="_addForm" Model="_addOrder" OnValidSubmit="OnValidSubmit">
+            @* <EditForm @ref="_addForm" Model="_addOrder" OnValidSubmit="OnValidSubmit">
                 <DataAnnotationsValidator />
                 <MudCard>
                     <MudCardContent>
@@ -69,10 +69,10 @@
                                          For="@(() => _addOrder.VendorId)" Class="d-flex py-2"
                                          ToStringFunc="FindDescription"
                                          SearchFunc="FindVendorsAsync" />
-                        @*TODO: Enlever l'id de l'affichage*@
+                        @*TODO: Enlever l'id de l'affichage*//@
                         <MudChip>@_addOrder.VendorId</MudChip>
 
-                        @*TODO: Enlever l'id de l'affichage*@
+                        @*TODO: Enlever l'id de l'affichage*//@
                         <MudHidden @bind-Value="_addOrder.VendorId"></MudHidden>
                         <MudTextField @bind-Value="_addOrder.Commentaires" Label="Commentaires" Margin="MarginDense"
                                       For="@(() => _addOrder.Commentaires)"
@@ -94,7 +94,11 @@
                         </MudButton>
                     </div>
                 </div>
-            </EditForm>
+            </EditForm> *@
+            <FormOrder OrderForm="_addForm" CloseDialog="CloseAddDialog" MarginDense="MarginDense"
+                       OnValidSubmit="() => OnValidSubmit(_addForm.EditContext)" OrderModel="_addOrder"
+                       BtnLabel = "Ajouter"
+                       FindDescription="FindDescription" FindVendorsAsync="FindVendorsAsync" />
         </div>
     </DialogContent>
 
@@ -114,7 +118,7 @@
     public bool Loading { get; set; }
     [Parameter]
     public EventCallback<bool> LoadingChanged { get; set; }
-    private EditForm _addForm;
+    private EditForm _addForm = new EditForm();
     private string _selectedVendor = "";
     private string _selectedVendorId = "";
     private MudDialog _addMudDialog;

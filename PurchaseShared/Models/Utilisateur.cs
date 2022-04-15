@@ -10,6 +10,14 @@ namespace PurchaseShared.Models
 {
     public class Utilisateur
     {
+        public Utilisateur(string id, string userName, string prenom, string nom)
+        {
+            Id = id;
+            UserName = userName;
+            Prenom = prenom;
+            Nom = nom;
+
+        }
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
