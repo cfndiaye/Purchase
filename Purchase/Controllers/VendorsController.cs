@@ -168,10 +168,18 @@ namespace Purchase.Controllers
         public async Task<List<VendorStat>> GetTopVendorsAsync(int top)
         {
             var vendors = await _vendorService.GetVendorsWithOrdersAsync();
+            var topVendors = new List<VendorStat>();
+            try
+            {
 
-            var topVendors = vendors.Select(v => new VendorStat{ Id = v.Id, Name = v.Name, TotalAmounts = ((double)v.OrderList?.Sum(o => o.Amount)) })
-                .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<VendorStat>();
+                topVendors = vendors.Select(v => new VendorStat { Id = v.Id, Name = v.Name, TotalAmounts = ((double)v.OrderList?.Sum(o => o.Amount)) })
+                        .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<VendorStat>();
 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+            }
             return topVendors;
         }
     }
