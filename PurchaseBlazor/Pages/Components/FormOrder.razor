@@ -5,11 +5,11 @@
         <MudCardContent>
             @* <MudTextField Class="d-flex mb-2" @bind-Value="OrderModel.AgentName" Label="Nom agent"
                 For="@(() => OrderModel.AgentName)" Margin="MarginDense" Variant="Variant.Outlined" /> *@
-            <MudSelect @bind-Value="OrderModel.AgentName" Class="ml-2" Label="Agent"
+            <MudSelect @bind-Value="OrderModel.AgentName"  Label="Agent"
                 For="@(() => OrderModel.AgentName)" T="string" Variant="Variant.Outlined" Margin="MarginDense">
                 @foreach (var agent in Agents)
                 {
-                    <MudSelectItem Value="@agent.Id">@(agent.Prenom + " " + agent.Nom)</MudSelectItem>
+                    <MudSelectItem Value="@agent.Id">@(agent.Prenom.ToUpper() + " " + agent.Nom.ToUpper())</MudSelectItem>
                 }
             </MudSelect>
             <div class="d-flex justify-space-between py-2">
@@ -31,8 +31,6 @@
 
 
             <div class="d-flex justify-space-between py-2">
-                @* <MudTextField @bind-Value="OrderModel.Type" Label="Type" For="@(() => OrderModel.Type)"
-                    Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" /> *@
                 <MudSelect @bind-Value="OrderModel.Type" T="string" Label="Type" For="@(() => OrderModel.Type)" T="string" Variant="Variant.Outlined" Margin="MarginDense">
                     <MudSelectItem Value="@(OrderType.Non_Tam)">@OrderType.Non_Tam</MudSelectItem>
                     <MudSelectItem Value="@(OrderType.Tam)">@OrderType.Tam</MudSelectItem>

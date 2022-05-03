@@ -169,8 +169,8 @@ namespace Purchase.Controllers
         {
             var vendors = await _vendorService.GetVendorsWithOrdersAsync();
 
-            var topVendors = vendors.Select(v => new { Id = v.Id, Name = v.Name, TotalOrders = v.OrderList?.Sum(o => o.Amount) })
-                .OrderByDescending(obj => obj.TotalOrders).Take(top).ToList<object>();
+            var topVendors = vendors.Select(v => new VendorStat{ Id = v.Id, Name = v.Name, TotalAmounts = ((double)v.OrderList?.Sum(o => o.Amount)) })
+                .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<object>();
 
             return topVendors;
         }

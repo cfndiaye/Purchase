@@ -3,98 +3,7 @@
 
     <DialogContent>
         <div style="min-width: 400px;">
-            @* <EditForm @ref="_addForm" Model="_addOrder" OnValidSubmit="OnValidSubmit">
-                <DataAnnotationsValidator />
-                <MudCard>
-                    <MudCardContent>
-                        <MudTextField Class="d-flex mb-2" @bind-Value="_addOrder.AgentName" Label="Nom agent" For="@(() => _addOrder.AgentName)"
-                                      Margin="MarginDense" Variant="Variant.Outlined" />
-                        <div class="d-flex justify-space-between py-2">
-                            <MudTextField Class="mr-2" @bind-Value="_addOrder.NoLigne" Label="Nombre de ligne" For="@(() => _addOrder.NoLigne)"
-                                          Margin="MarginDense" Variant="Variant.Outlined" />
-
-                            <MudTextField @bind-Value="_addOrder.UnitName" Label="Unité" For="@(() => _addOrder.UnitName)"
-                                          Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
-                        </div>
-                        <MudTextField @bind-Value="_addOrder.Description" Label="Description" For="@(() => _addOrder.Description)"
-                                      Margin="MarginDense" Class="d-flex py-2" Variant="Variant.Outlined" />
-                        <div class="d-flex justify-space-between py-2">
-                            <MudTextField @bind-Value="_addOrder.ReqNumber" Label="PR" For="@(() => _addOrder.ReqNumber)"
-                                          Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
-                            <MudTextField @bind-Value="_addOrder.Localisation" Label="Localisation" For="@(() => _addOrder.Localisation)"
-                                          Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
-                        </div>
-
-
-                        <div class="d-flex justify-space-between py-2">
-                            <MudTextField @bind-Value="_addOrder.Type" Label="Type" For="@(() => _addOrder.Type)"
-                                          Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
-                            <MudDatePicker @bind-Date="_addOrder.PrDate" Culture="CultureInfo.CurrentCulture" Label="Date PR"
-                                           For="@(() => _addOrder.PrDate)"
-                                           Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
-                        </div>
-
-                        <div class="d-flex justify-space-between py-2">
-                            <MudDatePicker @bind-Date="_addOrder.ApprovedDate" Culture="CultureInfo.CurrentCulture" Label="Date Approbation"
-                                           For="@(() => _addOrder.ApprovedDate)"
-                                           Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
-                            <MudSelect @bind-Value="_addOrder.Status" Class="ml-2" Label="Status" For="@(() => _addOrder.Status)" T="string" Variant="Variant.Outlined" Margin="MarginDense">
-                                @foreach (var status in Status.PoStatus)
-                                {
-                                    <MudSelectItem Value="@status">@status</MudSelectItem>
-                                }
-                            </MudSelect>
-                        </div>
-                        <div class="d-flex justify-space-between py-2">
-                            <MudTextField @bind-Value="_addOrder.PurchaseOrder" Label="PO" For="@(() => _addOrder.PurchaseOrder)"
-                                          Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
-                            <MudDatePicker Culture="CultureInfo.CurrentCulture" @bind-Date="_addOrder.DatePo" Label="Date PO"
-                                           For="@(() => _addOrder.DatePo)"
-                                           Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
-                        </div>
-                        <div class="d-flex justify-space-between py-2">
-                            <MudTextField @bind-Value="_addOrder.Amount" Label="Montant" For="@(() => _addOrder.Amount)"
-                                          Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
-                            <MudTextField @bind-Value="_addOrder.Devise" Label="Devise" For="@(() => _addOrder.Devise)"
-                                          Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
-                        </div>
-                        <div class="d-flex justify-space-between py-2">
-                            <MudDatePicker @bind-Date="_addOrder.DateLivraison" Culture="CultureInfo.CurrentCulture" Label="Date Livraison"
-                                           For="@(() => _addOrder.DateLivraison)"
-                                           Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
-                            <MudSwitch @bind-Value="_addOrder.Livree" Label="Livrée?" For="@(() => _addOrder.Livree)"
-                                       Class="ml-2" Color="Color.Primary" />
-                        </div>
-                        <MudAutocomplete @bind-Value="_addOrder.VendorId" Label="Fournisseur" Margin="MarginDense" Variant="Variant.Outlined"
-                                         For="@(() => _addOrder.VendorId)" Class="d-flex py-2"
-                                         ToStringFunc="FindDescription"
-                                         SearchFunc="FindVendorsAsync" />
-                        @*TODO: Enlever l'id de l'affichage*//@
-                        <MudChip>@_addOrder.VendorId</MudChip>
-
-                        @*TODO: Enlever l'id de l'affichage*//@
-                        <MudHidden @bind-Value="_addOrder.VendorId"></MudHidden>
-                        <MudTextField @bind-Value="_addOrder.Commentaires" Label="Commentaires" Margin="MarginDense"
-                                      For="@(() => _addOrder.Commentaires)"
-                                      Class="d-flex mb-2" Variant="Variant.Outlined" />
-                    </MudCardContent>
-                </MudCard>
-                <div class="d-flex justify-space-between py-6">
-                    <div>
-                        <MudButton OnClick="CloseAddDialog" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel"
-                                   Color="Color.Warning">
-                            Annuler
-                        </MudButton>
-                    </div>
-
-                    <div>
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add"
-                                   Color="Color.Success">
-                            Ajouter
-                        </MudButton>
-                    </div>
-                </div>
-            </EditForm> *@
+            
             <FormOrder OrderForm="_addForm" CloseDialog="CloseAddDialog" MarginDense="MarginDense"
                        OnValidSubmit="() => OnValidSubmit(_addForm.EditContext)" OrderModel="_addOrder"
                        BtnLabel = "Ajouter"
@@ -110,8 +19,8 @@
 
     @inject IDialogService DialogService
 
-    
-    
+
+
 
     private Order _addOrder;
     [Parameter]
@@ -119,8 +28,8 @@
     [Parameter]
     public EventCallback<bool> LoadingChanged { get; set; }
     private EditForm _addForm = new EditForm();
-    private string _selectedVendor = "";
-    private string _selectedVendorId = "";
+    //private string _selectedVendor = "";
+    //private string _selectedVendorId = "";
     private MudDialog _addMudDialog;
     private Task<HttpResponseMessage> _orderLoading;
     [Parameter]
@@ -141,20 +50,23 @@
     public Margin MarginDense { get; set; } = Margin.Dense;
     public EventCallback<string> _selectedVendorChanged { get; set; }
 
+    private const string URLPOSTORDER = "api/orders/Post";
+    private const string URLGETVENDOR = "api/vendors/Get/";
+
     //Post order
     private async Task OnValidSubmit(EditContext context)
     {
-       
+
         if (_addOrder.VendorId.Length > 24)
         {
-            _addOrder.VendorId = _addOrder.VendorId.Substring(0, 24);            
+            _addOrder.VendorId = _addOrder.VendorId.Substring(0, 24);
         }
         await AddNewOrder(_addOrder);
-            _addMudDialog.Close();
+        _addMudDialog.Close();
 
     }
 
-    
+
 
     //Open MudDialog Add Order
     public void Show()
@@ -173,7 +85,7 @@
 
         try
         {
-            _orderLoading = Client.PostAsJsonAsync("api/orders/Post", order);
+            _orderLoading = Client.PostAsJsonAsync(URLPOSTORDER, order);
             Loading = !_orderLoading.IsCompleted;
             await LoadingChanged.InvokeAsync(Loading);
 
@@ -185,8 +97,11 @@
                 await MessageChanged.InvokeAsync(Message);
                 Severity = Severity.Success;
                 await SeverityChanged.InvokeAsync(Severity);
+                //Récupération du nom du vendor
+                order.Vendor = await Client.GetFromJsonAsync<Vendor>(URLGETVENDOR + order.VendorId);
                 OrdersList.Add(order);
                 await OrdersListChanged.InvokeAsync(OrdersList);
+
             }
             else
             {
