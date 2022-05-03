@@ -61,7 +61,7 @@
     </MudItem>
 
 </MudGrid>
-<MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
+<MudDivider DividerType="DividerType.FullWidth" Class="mb-4 mt-4" />
 
 <MudText Typo="Typo.h6">PR PENDING</MudText>
 <OrderTable @ref="_prPendingTable" Client="_client" Loading="_prPendingLoading"
@@ -90,7 +90,7 @@
     private const string _URITOTALCOSTBYCURRENCY_XOF = "api/orders/GetTotalCostByCurrency/XOF";
     private const string _URITOTALCOSTBYCURRENCY_USD = "api/orders/GetTotalCostByCurrency/USD";
     private const string _URITOTALCOSTBYCURRENCY_EUR = "api/orders/GetTotalCostByCurrency/EUR";
-    private string _URITOPVENDORS;
+    private string _URITOPVENDORS =  $"api/Vendors/GetTopVendors/";
     private int CountNumberOrderProformaPending;
     private int CountNumberPrPending;
     private int _rowParPage = 5;
@@ -144,8 +144,17 @@
     private async  Task LoadCharts(int count)
     {
         //Loading series for graph top vendor
-        _URITOPVENDORS = $"api/vendors/GetTopVendors/{count}";
-        _topVendors = await _client.GetFromJsonAsync<List<VendorStat>>(_URITOPVENDORS);
+        _URITOPVENDORS += count;
+        try
+        {
+
+            _topVendors = await _client.GetFromJsonAsync<List<VendorStat>>(_URITOPVENDORS);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR: {ex.Message}");
+        }
 
         for (int i = 0; i < _top; i++)
         {
