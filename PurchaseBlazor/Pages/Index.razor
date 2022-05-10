@@ -34,32 +34,73 @@
 </MudGrid>
 
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
-<MudGrid Spacing="@spacing" Justify="Justify.SpaceBetween" Class="ml-2">
-    <MudItem>
-        <MudPaper>
-            <MudChart ChartType="ChartType.Donut" InputData="@_datas" InputLabels="_xAxisLabels" Width="100%" Height="300px">
-
-            </MudChart>
-        </MudPaper>
-    </MudItem>
+<MudGrid Spacing="@spacing" Class="ml-2">
     <MudItem>
         <MudCard>
-            @foreach (var vendor in _topVendors)
-            {
-                <div class="d-flex justify-space-between">
-                    <div>@vendor.Name</div><div>@vendor.TotalAmounts</div>
-                </div>
-            }
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Top Vendors</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudTable Items="_topVendors" Dense="true" Hover="true">
+                    <HeaderContent>
+                        <MudTh>Nom vendor</MudTh>
+                        <MudTh>Total</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Nom vendor">@context.Name</MudTd>
+                        <MudTd DataLabel="Total">@($"{context.TotalAmounts:n0} XOF")</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudCardContent>
+
         </MudCard>
     </MudItem>
     <MudItem>
-        <MudPaper>
-            <MudChart ChartType="ChartType.Donut" InputData="@_datas" InputLabels="_xAxisLabels" Width="100%" Height="300px">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Top Vendors Europe</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudTable Items="_topVendorsEuro" Dense="true" Hover="true">
+                    <HeaderContent>
+                        <MudTh>Nom vendor</MudTh>
+                        <MudTh>Total</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Nom vendor">@context.Name</MudTd>
+                        <MudTd DataLabel="Total">@($"{context.TotalAmounts:C0} ")</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudCardContent>
 
-            </MudChart>
-        </MudPaper>
+        </MudCard>
     </MudItem>
+    <MudItem>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Top Vendors USD</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudTable Items="_topVendorsUsd" Dense="true" Hover="true">
+                    <HeaderContent>
+                        <MudTh>Nom vendor</MudTh>
+                        <MudTh>Total</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Nom vendor">@context.Name</MudTd>
+                        <MudTd DataLabel="Total">@($"{context.TotalAmounts:n0} USD")</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudCardContent>
 
+        </MudCard>
+    </MudItem>
 </MudGrid>
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4 mt-4" />
 
@@ -90,7 +131,8 @@
     private const string _URITOTALCOSTBYCURRENCY_XOF = "api/orders/GetTotalCostByCurrency/XOF";
     private const string _URITOTALCOSTBYCURRENCY_USD = "api/orders/GetTotalCostByCurrency/USD";
     private const string _URITOTALCOSTBYCURRENCY_EUR = "api/orders/GetTotalCostByCurrency/EUR";
-    private string _URITOPVENDORS =  "api/Vendors/GetTopVendors/";
+    private string _URITOPVENDORS =  "api/Vendors/GetTopVendors";
+
     private int CountNumberOrderProformaPending;
     private int CountNumberPrPending;
     private int _rowParPage = 5;
@@ -98,6 +140,8 @@
     private decimal _totalCostEurope;
     private decimal _totalCostUSD;
     private List<VendorStat> _topVendors = new List<VendorStat>();
+    private List<VendorStat> _topVendorsEuro = new List<VendorStat>();
+    private List<VendorStat> _topVendorsUsd = new List<VendorStat>();
 
     private string[] _xAxisLabels = new string[_top];
     private double[] _datas =  new double[_top];
@@ -137,39 +181,17 @@
         _totalCostUSD = await totalCostUsdLoading;
 
         //Loading series for graph top vendor
-        await LoadCharts(_top);
+        _topVendors = await LoadCharts(_top, "XOF");
+        _topVendorsEuro = await LoadCharts(_top, "EURO");
+        _topVendorsUsd = await LoadCharts(_top, "USD");
 
     }
 
-    private async  Task LoadCharts(int count)
+    private async  Task<List<VendorStat>> LoadCharts(int count, string currency)
     {
-        //Loading series for graph top vendor
-        _URITOPVENDORS += count;
-        try
-        {
-
-            _topVendors = await _client.GetFromJsonAsync<List<VendorStat>>(_URITOPVENDORS);
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"ERROR: {ex.Message}");
-        }
-
-        for (int i = 0; i < _topVendors.Count; i++)
-        {
-            if(_topVendors[i].Name.Length > 10)
-            {
-                _xAxisLabels[i] = _topVendors[i].Name.Substring(0, 10);
-            }
-            else
-            {
-                _xAxisLabels[i] = _topVendors[i].Name;
-            }
-
-            _datas[i] = _topVendors[i].TotalAmounts;
-        }
-
+       
+            var url = _URITOPVENDORS + "/" + count + "/" + currency;
+            return await _client.GetFromJsonAsync<List<VendorStat>>(url);
     }
 
 }

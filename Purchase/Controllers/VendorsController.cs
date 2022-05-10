@@ -164,15 +164,15 @@ namespace Purchase.Controllers
 
             return Ok(vendors);
         }
-        [HttpGet("{top}")]
-        public async Task<List<VendorStat>> GetTopVendorsAsync(int top)
+        [HttpGet("{top}/{currency}")]
+        public async Task<List<VendorStat>> GetTopVendorsAsync(int top, string currency)
         {
             var vendors = await _vendorService.GetVendorsWithOrdersAsync();
             var topVendors = new List<VendorStat>();
             try
             {
 
-                topVendors = vendors.Select(v => new VendorStat { Id = v.Id, Name = v.Name, TotalAmounts = ((double)v.OrderList?.Sum(o => o.Amount)) })
+                topVendors = vendors.Select(v => new VendorStat { Id = v.Id, Name = v.Name, TotalAmounts = ((double)v.OrderList.Where(o => o.Devise == currency)?.Sum(o => o.Amount)) })
                         .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<VendorStat>();
 
             }

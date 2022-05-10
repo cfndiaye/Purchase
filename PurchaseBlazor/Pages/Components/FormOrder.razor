@@ -58,7 +58,7 @@
                     For="@(() => OrderModel.DatePo)" Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
             </div>
             <div class="d-flex justify-space-between py-2">
-                <MudTextField @bind-Value="OrderModel.Amount" Label="Montant" For="@(() => OrderModel.Amount)"
+                <MudTextField @bind-Value="OrderModel.Amount" Format="n2" Culture="CultureInfo.CurrentCulture" Label="Montant" For="@(() => OrderModel.Amount)"
                     Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
                 <MudTextField @bind-Value="OrderModel.Devise" Label="Devise" For="@(() => OrderModel.Devise)"
                     Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
