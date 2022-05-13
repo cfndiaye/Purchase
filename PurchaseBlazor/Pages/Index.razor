@@ -131,7 +131,10 @@
     private const string _URITOTALCOSTBYCURRENCY_XOF = "api/orders/GetTotalCostByCurrency/XOF";
     private const string _URITOTALCOSTBYCURRENCY_USD = "api/orders/GetTotalCostByCurrency/USD";
     private const string _URITOTALCOSTBYCURRENCY_EUR = "api/orders/GetTotalCostByCurrency/EUR";
-    private string _URITOPVENDORS =  "api/Vendors/GetTopVendors";
+    private const string _XOF = "XOF";
+    private const string _EUR = "EUR";
+    private const string _USD = "USD";
+    private string _URITOPVENDORS = "api/Vendors/GetTopVendors";
 
     private int CountNumberOrderProformaPending;
     private int CountNumberPrPending;
@@ -181,9 +184,9 @@
         _totalCostUSD = await totalCostUsdLoading;
 
         //Loading series for graph top vendor
-        _topVendors = await LoadCharts(_top, "XOF");
-        _topVendorsEuro = await LoadCharts(_top, "EURO");
-        _topVendorsUsd = await LoadCharts(_top, "USD");
+        _topVendors = await LoadCharts(_top, _XOF);
+        _topVendorsEuro = await LoadCharts(_top, _EUR);
+        _topVendorsUsd = await LoadCharts(_top, _USD);
 
     }
 

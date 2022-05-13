@@ -69,7 +69,8 @@ namespace Purchase.Services.Implementation
     public async Task<IEnumerable<Order>> GetOrdersAsync(bool includeVendor)
     {
       var orders = (await _ordersCollection.Find(_ => true).ToListAsync());
-      orders.ForEach(async o => o.Vendor = await _vendorService.GetVendorByIdAsync(o.VendorId));
+      if(includeVendor)
+        orders.ForEach(async o => o.Vendor = await _vendorService.GetVendorByIdAsync(o.VendorId));
       return orders;
     }
 

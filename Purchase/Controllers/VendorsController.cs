@@ -172,13 +172,13 @@ namespace Purchase.Controllers
             try
             {
 
-                topVendors = vendors.Select(v => new VendorStat { Id = v.Id, Name = v.Name, TotalAmounts = ((double)v.OrderList.Where(o => o.Devise == currency)?.Sum(o => o.Amount)) })
+                topVendors = vendors.Select(v => new VendorStat { Id = v.Id, Name = v.Name, TotalAmounts = ((double)v.OrderList.Where(o => o.Devise != null && o.Devise == currency).Sum(o => o.Amount)) })
                         .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<VendorStat>();
 
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex.Message);
+                _logger.LogCritical(ex.StackTrace) ;
             }
             return topVendors;
         }
