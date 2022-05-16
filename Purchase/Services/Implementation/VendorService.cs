@@ -113,8 +113,12 @@ namespace Purchase.Services.Implementation
                 //ajouter de l'orderId dans la collection des orders
                 if (vendor.Orders != null)
                 {
-                    vendor.Orders.Add(orderId);
-                    await _vendorsCollection.ReplaceOneAsync(v => v.Id == vendorId, vendor);
+                    if(vendor.Orders.Find(o => o == orderId) == "")
+                    {
+                        vendor.Orders.Add(orderId);
+                        await _vendorsCollection.ReplaceOneAsync(v => v.Id == vendorId, vendor);
+                    }
+                    
                 }
                 else
                 {

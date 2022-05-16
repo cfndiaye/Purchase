@@ -110,6 +110,7 @@ namespace Purchase.Controllers
         {
             var order = await _orderService.GetOrderByIdAsync(id);
             if (order is null) return NotFound();
+
             orderUpdated.Id = order.Id;
             if (orderUpdated.VendorId != order.VendorId)
             {
