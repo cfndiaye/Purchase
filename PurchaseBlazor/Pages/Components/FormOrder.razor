@@ -58,10 +58,16 @@
                     For="@(() => OrderModel.DatePo)" Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
             </div>
             <div class="d-flex justify-space-between py-2">
-                <MudTextField @bind-Value="OrderModel.Amount" Format="n2" Culture="CultureInfo.CurrentCulture" Label="Montant" For="@(() => OrderModel.Amount)"
+                <MudTextField @bind-Value="OrderModel.Amount" TextChanged="@(() => {OrderModel.Commentaires = "M"+(OrderModel.Amount*0.05);})" Format="n2" Culture="CultureInfo.CurrentCulture" Label="Montant" For="@(() => OrderModel.Amount)"
                     Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
-                <MudTextField @bind-Value="OrderModel.Devise" Label="Devise" For="@(() => OrderModel.Devise)"
-                    Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
+                <MudSelect @bind-Value="OrderModel.Devise" T="string" Label="Devise" For="@(() => OrderModel.Devise)" T="string" Variant="Variant.Outlined" Margin="MarginDense">
+                    <MudSelectItem Value="@(Devise.XOF)">XOF</MudSelectItem>
+                    <MudSelectItem Value="@(Devise.EUR)">EUR</MudSelectItem>
+                    <MudSelectItem Value="@(Devise.USD)">EUR</MudSelectItem>
+                    <MudSelectItem Value="@(Devise.GBP)">GBP</MudSelectItem>
+                </MudSelect>
+                @**<MudTextField @bind-Value="OrderModel.Devise" Label="Devise" For="@(() => OrderModel.Devise)"
+                    Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />*@
             </div>
             <div class="d-flex justify-space-between py-2">
                 <MudDatePicker @bind-Date="OrderModel.DateLivraison" Culture="CultureInfo.CurrentCulture"
