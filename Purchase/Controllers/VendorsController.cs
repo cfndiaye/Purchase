@@ -172,7 +172,7 @@ namespace Purchase.Controllers
             try
             {
 
-                topVendors = vendors.Where(v => v.OrderList.Count != 0).Select(v => new VendorStat { Id = v.Id, Name = v.Name, TotalAmounts = ((double)v.OrderList.Where(o => o.Devise != null && o.Devise == currency).Sum(o => o.Amount)) })
+                topVendors = vendors.Where(v => v.Orders != null).Select(v => new VendorStat { Id = v.Id, Name = v.Name, TotalAmounts = ((double)v.OrderList.Where(o => o.Devise != null && o.Devise == currency).Sum(o => o.Amount)) })
                         .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<VendorStat>();
 
             }
