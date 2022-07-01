@@ -49,6 +49,21 @@ namespace Purchase.Services.Implementation
             await _vendorsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
         /// <summary>
+        /// Retourne le vendor suivant son Id méthode Asynchrone
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="includeOrder"></param>
+        /// <returns></returns>
+        public async Task<Vendor> GetVendorByIdAsync(string id, bool include)
+        {
+            var vendor = await _vendorsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+            if(include)
+            vendor.Orders.ForEach(o => vendor.OrderList.Add( _ordersCollection.Find(s => s.Id == o).FirstOrDefault()));
+
+            return vendor;
+        }
+
+        /// <summary>
         /// Retourne le vendor suivant son Id méthode synchrone
         /// </summary>
         /// <param name="id"></param>

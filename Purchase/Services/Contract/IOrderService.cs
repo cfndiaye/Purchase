@@ -12,6 +12,9 @@ namespace Purchase.Services.Contract
         Task<IEnumerable<Order>> GetOrdersAsync();
         Task<Order> GetOrderByIdAsync(string id);
         Task<Order> GetOrderByPrAsync(int pr);
+
+        Task<IEnumerable<Order>> GetOrdersByStatusAsync(string status);
+        Task<IEnumerable<Order>> GetOrdersByVendorIdAsync(string vendorId);
         Task AddOrderAsync(Order order);
         Task UpdateOrderAsync(string id, Order order);
         Task DeleteOrderAsync(string orderId);

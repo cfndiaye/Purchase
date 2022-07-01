@@ -96,5 +96,10 @@ namespace Purchase.Services.Implementation
 
             return orders.Where(o => o.VendorId == vendorId).Where(o => o.Devise == devise).Sum(o => o.Amount);
         }
+
+        public async Task<IEnumerable<Order>> GetOrdersByVendorIdAsync(string vendorId)
+        {
+            return await _ordersCollection.Find(o => o.VendorId == vendorId).ToListAsync();
+        }
     }
 }

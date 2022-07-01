@@ -1,0 +1,54 @@
+﻿@page "/vendordetails/{id}"
+@inject HttpClient _client
+@inject NavigationManager NavigationManager
+
+<h1>Details </h1>
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudIcon Icon="@Icons.Material.Outlined.Details"/>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.body1">Tableau de bord Vendor </MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="() => {}"/>
+            <MudIconButton Icon="@Icons.Material.Outlined.Refresh" OnClick="() => {}"/>
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudCard>
+            <MudText>Nom du vendor</MudText>
+        </MudCard>
+        <MudSpacer/>
+        <OrderTable @ref="@_orderTable"
+                Client="@_client"
+                Message="@_message" Dense="@_dense" Loading="@_loading"
+                MarginDense="@_marginDense" Severity="@_severity" 
+                SelectedOrder="@_selectedOrder" />
+    </MudCardContent>
+</MudCard>
+
+@code {
+    public Vendor Vendor { get; set; }
+    private OrderTable _orderTable;
+
+    public string _message { get; set; }
+
+    public bool _dense = true;
+    public Margin _marginDense = Margin.Dense;
+    public Order _selectedOrder { get; set; }
+    public bool _loading = false;
+    public Severity _severity = Severity.Normal;
+    private string URL = $"api/vendors/Get/id/true";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var vendor = await _client.GetFromJsonAsync<Vendor>(URL);
+        if(vendor == null) {}
+        Vendor = vendor;
+        _orderTable.DataLoaded(true, Vendor.OrderList);
+       
+    }
+
+}

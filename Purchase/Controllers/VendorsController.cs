@@ -50,6 +50,15 @@ namespace Purchase.Controllers
         }
 
         // GET api/values/5
+        [HttpGet("{id}/{include}")]
+        public async Task<ActionResult<Vendor>> Get(string id, bool include)
+        {
+            var vendor = await _vendorService.GetVendorByIdAsync(id, include);
+            if (vendor is null) return NotFound();
+            return vendor;
+        }
+
+        // GET api/values/5
         [HttpGet("{vendorname}")]
         public async Task<IEnumerable<Vendor>> GetByName(string vendorname)
         {
