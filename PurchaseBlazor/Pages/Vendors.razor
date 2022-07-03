@@ -2,6 +2,7 @@
 @using System.Net.Http.Headers
 @using System.IO
 @inject HttpClient _client
+@inject NavigationManager NavigationManager
 @*inject IDialogService DialogService*@
 
 <h1>Gestion des fournisseurs</h1>
@@ -60,6 +61,10 @@
                 <MudTd DataLabel="Type">@context.Type</MudTd>
                 <MudTd DataLabel="Orders">@context.Orders?.Count</MudTd>
                 <MudTd DataLabel="Commentaires">@context.Comments</MudTd>
+                <MudTd>
+                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Details"
+                        OnClick="() => OpenPageDetail(context.Id)" aria-label="Détails" Color="Color.Inherit" />
+                </MudTd>
                 <MudTd>
                     <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Edit"
                         OnClick="() => OpenUpdateMessageBox(context)" aria-label="Modifier" Color="Color.Inherit" />
@@ -406,6 +411,10 @@
         StateHasChanged();
     }
 
+    private void OpenPageDetail(string id)
+    {
+        NavigationManager.NavigateTo($"vendordetails/{id}");
+    }
     private string SelectedRowClassFunc(Vendor vendor, int i)
     {
         if (_mudTable.SelectedItem != null && _mudTable.SelectedItem.Equals(vendor))

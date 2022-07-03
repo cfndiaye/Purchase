@@ -23,7 +23,7 @@ namespace Purchase.Controllers
     public class VendorsController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IVendorService _vendorService;
+        private readonly VendorService _vendorService;
 
         public VendorsController(VendorService vendorService, ILogger<VendorsController> logger)
         {

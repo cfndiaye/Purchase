@@ -38,6 +38,7 @@ namespace Purchase
             services.Configure<PurchaseStoreDatabaseSettings>(Configuration.GetSection("PurchaseStoreDatabase"));
             services.AddSingleton<VendorService>();
             services.AddSingleton<OrderService>();
+            
             services.AddSingleton<IUserService, UserService>();
             services.AddCors(option => {
                 option.AddPolicy(name: MyPolicy, builder => {

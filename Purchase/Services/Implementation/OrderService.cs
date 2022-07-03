@@ -14,7 +14,7 @@ namespace Purchase.Services.Implementation
   {
     private readonly IMongoCollection<Order> _ordersCollection;
     private readonly VendorService _vendorService;
-        private readonly MongoContext  _mongoContext;
+    private readonly MongoContext  _mongoContext;
 
     public OrderService(IOptions<PurchaseStoreDatabaseSettings> storeSettings, 
         

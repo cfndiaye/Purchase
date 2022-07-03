@@ -1,54 +1,157 @@
-﻿@page "/vendordetails/{id}"
+﻿@page "/vendordetails/{Id}"
 @inject HttpClient _client
 @inject NavigationManager NavigationManager
 
-<h1>Details </h1>
+
+<MudText Typo="Typo.h5">Tableau de bord Vendor</MudText>
+<MudText Typo="Typo.subtitle1">Détails Vendor: @Vendor?.Name</MudText>
+<MudSpacer />
+<MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
+<MudGrid Spacing="@spacing" Justify="Justify.Center" Class="mb-4">
+    <MudItem>
+        <WidgetCounter Counter="@_totalCostCurrentYear" Currency="@_currency" Description="Cout total Cette année"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.DeepPurple.Darken3" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess" Width="@Width" Height="@Height" />
+    </MudItem>
+    <MudItem>
+        <WidgetCounter Counter="@_countOrdersCurrentYear" Description="Total commande cette année"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.Pink.Darken3" TextColor="@Colors.BlueGrey.Lighten5"
+                       CustomContentIcon="@Icons.Material.Outlined.AddShoppingCart" Width="@Width" Height="@Height" />
+    </MudItem>
+    <MudItem>
+        <WidgetCounter Counter="@_totalCostLastYear" Currency="@_currency" Description="Cout total An-1"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.DeepOrange.Darken3" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess" Width="@Width" Height="@Height" />
+    </MudItem>
+    <MudItem>
+        <WidgetCounter Counter="@_countOrdersLastYear" Description="Total commande An-1"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.Yellow.Darken3" TextColor="@Colors.BlueGrey.Lighten5"
+                       CustomContentIcon="@Icons.Material.Outlined.AddShoppingCart" Width="@Width" Height="@Height" />
+    </MudItem>
+
+</MudGrid>
+<MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
+<MudGrid Spacing="@spacing" Justify="Justify.Center" Class="mb-4">
+    
+    <MudItem>
+        <WidgetCounter Counter="@_totalCost" Currency="@_currency" Description="Cout total"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.LightGreen.Darken3" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess" Width="@Width" Height="@Height" />
+    </MudItem>
+    <MudItem>
+        <WidgetCounter Counter="@_countOrders" Description="Total commande"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.Indigo.Darken3" TextColor="@Colors.BlueGrey.Lighten5"
+                       CustomContentIcon="@Icons.Material.Outlined.AddShoppingCart" Width="@Width" Height="@Height" />
+    </MudItem>
+</MudGrid>
 <MudCard>
     <MudCardHeader>
         <CardHeaderAvatar>
-            <MudIcon Icon="@Icons.Material.Outlined.Details"/>
+            <MudIcon Icon="@Icons.Material.Outlined.Details" />
         </CardHeaderAvatar>
         <CardHeaderContent>
             <MudText Typo="Typo.body1">Tableau de bord Vendor </MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="() => {}"/>
-            <MudIconButton Icon="@Icons.Material.Outlined.Refresh" OnClick="() => {}"/>
+            <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="() => { _addOrder.Show(); }" />
+            <MudIconButton Icon="@Icons.Material.Outlined.Refresh" OnClick="async () => { await OnInitializedAsync(); }" />
         </CardHeaderActions>
     </MudCardHeader>
-    <MudCardContent>
-        <MudCard>
-            <MudText>Nom du vendor</MudText>
-        </MudCard>
-        <MudSpacer/>
-        <OrderTable @ref="@_orderTable"
-                Client="@_client"
-                Message="@_message" Dense="@_dense" Loading="@_loading"
-                MarginDense="@_marginDense" Severity="@_severity" 
-                SelectedOrder="@_selectedOrder" />
-    </MudCardContent>
+
+
+    <OrderTable @ref="@_orderTable" Client="@_client" Message="@_message" Dense="@_dense" Loading="@_loading"
+                MarginDense="@_marginDense" Severity="@_severity" SelectedOrder="@_selectedOrder" />
+    @*intégration du composant AddOrder*@
+    <AddOrder @ref="_addOrder" Client="_client" @bind-OrdersList="_ordersList" MarginDense="_marginDense"
+              @bind-Message="_message" @bind-Loading="@_loading" @bind-Severity="@_severity" />
+
 </MudCard>
 
 @code {
+
+    [Parameter]
+    public string Id { get; set; }
     public Vendor Vendor { get; set; }
     private OrderTable _orderTable;
+    private AddOrder _addOrder;
+    private List<Order> _ordersList = new List<Order>();
 
-    public string _message { get; set; }
+    private int spacing { get; set; } = 4;
+
+    public string _message = "";
+    public string _currency = "";
 
     public bool _dense = true;
     public Margin _marginDense = Margin.Dense;
-    public Order _selectedOrder { get; set; }
+    public Order _selectedOrder;
     public bool _loading = false;
     public Severity _severity = Severity.Normal;
-    private string URL = $"api/vendors/Get/id/true";
+
+    private decimal _totalCost = 0;
+    private decimal _totalCostCurrentYear = 0;
+    private decimal _totalCostLastYear = 0;
+    private int _countOrders = 0;
+    private int _countOrdersCurrentYear = 0;
+    private int _countOrdersLastYear = 0;
+
+    private string Width = "250px";
+    private string Height = "140px";
 
     protected override async Task OnInitializedAsync()
     {
-        var vendor = await _client.GetFromJsonAsync<Vendor>(URL);
-        if(vendor == null) {}
-        Vendor = vendor;
-        _orderTable.DataLoaded(true, Vendor.OrderList);
-       
+        var URL = $"api/vendors/Get/{Id}/true";
+
+        try
+        {
+            _loading = true;
+            var vendor = await _client.GetFromJsonAsync<Vendor>(URL);
+
+            if (vendor != null)
+            {
+                Vendor = vendor;
+                if (Vendor.OrderList != null)
+                {
+                    _ordersList = vendor.OrderList;
+                    switch (Vendor.Type)
+                    {
+                        case "Local":
+                            _currency = "XOF";
+                            break;
+                        case "Asie":
+                            _currency = "USD";
+                            break;
+                        case "Europe":
+                            _currency = "EURO";
+                            break;
+
+                        default:
+                            _currency = "XOF";
+                            break;
+                    }
+                    _totalCost = (decimal)vendor.OrderList.Sum(o => o.Amount);
+                    _totalCostCurrentYear = (decimal)vendor.OrderList.Where(o => o.DatePo.Value.Year == DateTime.Now.Year).Sum(o => o.Amount);
+                    _totalCostLastYear = (decimal)vendor.OrderList.Where(o => o.DatePo.Value.Year == DateTime.Now.Year - 1).Sum(o => o.Amount);
+                    _countOrders = vendor.OrderList.Count;
+                    _countOrdersCurrentYear = vendor.OrderList.Where(o => o.DatePo.Value.Year == DateTime.Now.Year).Count();
+                    _countOrdersLastYear = vendor.OrderList.Where(o => o.DatePo.Value.Year == DateTime.Now.Year - 1).Count();
+
+                    //include vendor name
+                    var orders = vendor.OrderList;
+                    orders.ForEach(o => o.Vendor = new Vendor {Id = vendor.Id, Name = vendor.Name}) ;
+                    _orderTable.DataLoaded(true, Vendor.OrderList);
+                }
+            }
+            _loading = false;
+
+
+        }
+        catch (Exception ex)
+        {
+            _message = ex.Message;
+            _severity = Severity.Error;
+        }
+
+
     }
 
 }

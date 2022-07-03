@@ -12,6 +12,7 @@ namespace Purchase.Services.Contract
       
         Task<Vendor> GetVendorByIdAsync(string id);
         Task<Vendor> GetVendorByIdAsync(string id, bool include);
+
         Task AddVendorAsync(Vendor vendor);
         Task UpdateVendorAsync(string id, Vendor vendor);
         Task UpdateVendorOrdersAsync(string id, string orderId);
