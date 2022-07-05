@@ -11,7 +11,7 @@
               
               LoadingProgressColor="Color.Success">
         <ToolBarContent>
-            <MudText Inline="true" Typo="Typo.h6">Liste des commandes</MudText>
+            <MudText Inline="true" Typo="Typo.h6">@TitreTable</MudText>
             <MudSpacer />
             <MudTextField @bind-Value="SearchTexte" Placeholder="Recherche..." TextChanged="() => OnFilter()"
                           Adornment="Adornment.Start"
@@ -21,24 +21,26 @@
            
         </ToolBarContent>
         <HeaderContent>
-            <MudTh>PR</MudTh>
+            <MudTh>PO</MudTh>
+            <MudTh>DA</MudTh>
             <MudTh>Vendor</MudTh>
             <MudTh>Description</MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.ApprovedDate)">Date Approbation</MudTableSortLabel></MudTh>
-            <MudTh>PO</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.ApprovedDate)">Date PO</MudTableSortLabel></MudTh>
+            
             <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.DatePo)">Age</MudTableSortLabel></MudTh>
             <MudTh>Status</MudTh>
             <MudTh></MudTh>
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd>@context.ReqNumber.ToString()</MudTd>
-            <MudTd>@context.Vendor?.Name</MudTd>
-            <MudTd>@context.Description</MudTd>
-            <MudTd>@context.ApprovedDate.Value.ToString(format: "dd/MM/yyyy")</MudTd>
-            <MudTd>@context.PurchaseOrder</MudTd>
-            <MudTd>@CalculeAge(DateTime.Now, context.ApprovedDate.Value).ToString()</MudTd>
-            <MudTd>@context.Status</MudTd>
+            <MudTd DataLabel="PO">@context.PurchaseOrder</MudTd>
+            <MudTd DataLabel="DA">@context.ReqNumber.ToString()</MudTd>
+            <MudTd DataLabel="Vendor">@context.Vendor?.Name</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+            <MudTd DataLabel="Date PO">@context.DatePo.Value.ToString(format: "dd/MM/yyyy")</MudTd>
+            
+            <MudTd DataLabel="Age">@CalculeAge(DateTime.Now, context.ApprovedDate.Value).ToString()</MudTd>
+            <MudTd DataLabel="Status">@context.Status</MudTd>
             <MudTd>
                 <MudIconButton Class="pa-0" OnClick="() => OpenUpdateDialog(context)" Icon="@Icons.Material.Filled.Edit" aria-label="Modifier" Color="Color.Inherit" />
             </MudTd>
@@ -73,6 +75,7 @@
     [Parameter] public int[] SizeOptions{ get; set; } = { 5, 10, 15, 20, 30, 40, 50 };
     private UpdateOrder _updateOrder;
     private DeleteOrder _deleteOrder;
+    [Parameter] public string TitreTable { get; set; } = "Liste des commandes";
 
     public string SearchTexte { get; set; } = "";
     public EventCallback<string> SearchTexteChanged { get; set; }
