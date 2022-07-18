@@ -35,7 +35,7 @@
         <RowTemplate>
             <MudTd DataLabel="PO">@context.PurchaseOrder</MudTd>
             <MudTd DataLabel="DA">@context.ReqNumber.ToString()</MudTd>
-            <MudTd DataLabel="Vendor">@context.Vendor?.Name</MudTd>
+            <MudTd HideSmall="true" DataLabel="Vendor">@context.Vendor?.Name</MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
             <MudTd DataLabel="Date PO">@context.DatePo.Value.ToString(format: "dd/MM/yyyy")</MudTd>
             

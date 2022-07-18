@@ -14,11 +14,13 @@
         <CardHeaderActions>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="OpenAddDialog" Color="Color.Inherit" />
             <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" OnClick="OpenImportPage" Color="Color.Inherit" />
+            <MudIconButton Icon="@Icons.Material.Outlined.Refresh" OnClick="async () => await OnInitializedAsync()" Color="Color.Inherit" />
         </CardHeaderActions>
     </MudCardHeader>
     @*intégration du composant OrderTable*@
     <OrderTable @ref="@_orderTable"
                 Client="@_client"
+                TitreTable="All Orders"
                 Message="@_message" Dense="@_dense" Loading="@_loading"
                 MarginDense="@_marginDense" Severity="@_severity" 
                 SelectedOrder="@_selectedOrder" />
