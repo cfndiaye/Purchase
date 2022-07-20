@@ -1,0 +1,65 @@
+﻿<MudCard Class="@BgColor" Elevation="2" Style="@($"width: {Width}; height: {Height}; color:{TextColor}; background:{BgColor};")">
+    
+    <MudCardContent>
+        <MudText Typo="Typo.h6">@Title</MudText>
+        <MudGrid Spacing="@_spacing" Justify="Justify.Center">
+            <MudItem>
+                <div class="d-flex align-items-center flex-column py-2">
+                    <div class="mx-auto p-2">
+                        <MudText Class="text-secondary">@DescriptionAmount</MudText>
+                    </div>
+                    <div class="mx-auto p-2">
+
+                        <MudIcon Icon="@CustomContentIcon" Class="@CustomColor" Size="Size.Large" />
+
+                    </div>
+                    <div class="mx-auto p-2">
+                        <MudText Typo="Typo.h6">@($"{Amount:N0} {Currency}")</MudText>
+                    </div>
+                </div>
+            </MudItem>
+            <MudItem>
+                <div class="d-flex align-items-center flex-column py-2">
+                    <div class="mx-auto p-2">
+                        <MudText Class="text-secondary">@DescriptionCounter</MudText>
+                    </div>
+                    <div class="mx-auto p-2">
+
+                        <MudIcon Icon="@CustomContentCounterIcon" Class="@CustomColor" Size="Size.Large" />
+
+                    </div>
+                    <div class="mx-auto p-2">
+                        <MudText Typo="Typo.h6">@($"{Counter:N0}")</MudText>
+                    </div>
+
+
+                </div>
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+    <MudCardActions>
+
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string SubTitle { get; set; }
+    [Parameter] public int Counter { get; set; }
+    [Parameter] public decimal Amount { get; set; }
+    [Parameter] public string DescriptionAmount { get; set; }
+    [Parameter] public string DescriptionCounter { get; set; }
+    [Parameter] public string CustomContentIcon { get; set; }
+    [Parameter] public string CustomContentCounterIcon { get; set; }
+    [Parameter] public string CustomHeaderIcon { get; set; }
+    [Parameter] public string CustomColor { get; set; }
+    [Parameter] public Color CustomHeaderIconColor { get; set; }
+
+    [Parameter] public string BgColor { get; set; } = Colors.BlueGrey.Darken4;
+    [Parameter] public string TextColor { get; set; } = Colors.LightGreen.Accent3;
+    [Parameter] public string Currency { get; set; }
+    [Parameter] public string Width { get; set; } = "500px";
+    [Parameter] public string Height { get; set; } = "200px";
+    private int _spacing = 3;
+}
+
