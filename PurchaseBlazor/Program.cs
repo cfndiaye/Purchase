@@ -21,7 +21,7 @@ namespace PurchaseBlazor
             builder.RootComponents.Add<App>("#app");
             if (builder.HostEnvironment.IsProduction())
             {
-                builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://dakar-hightech.com:8080") });
+                builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://dakar-hightech.com:11443") });
             }
             else
             {

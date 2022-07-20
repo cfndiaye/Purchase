@@ -9,9 +9,9 @@ services:
        - 11443:443
     environment:
        - ASPNETCORE_ENVIRONMENT=Production
-       #- ASPNETCORE_URLS=https://+;http://+
-       #- ASPNETCORE_Kestrel__Certificates__Default__Password=password
-       #- ASPNETCORE_Kestrel__Certificates__Default__Path=/Logs/ssl.cert
+       - ASPNETCORE_URLS=https://+;http://+
+       - ASPNETCORE_Kestrel__Certificates__Default__Password=58781681
+       - ASPNETCORE_Kestrel__Certificates__Default__Path=/Logs/cert.pfx
     volumes:
        - type: bind
          source: /home/dakar-hightech/homes/PurchaseManagerStage/Prod-api
