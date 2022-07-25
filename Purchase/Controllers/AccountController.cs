@@ -30,16 +30,16 @@ namespace Purchase.Controllers
         [HttpPost]
         public async Task<IActionResult> PostLogin([FromBody] LoginModel login)
         {
-            IActionResult response = Unauthorized();
+           
             var result = await AuthenticateUser(login);
             if(result)
             {
                 _logger.LogInformation("user login in success.");
                 var tokenString = GenerateJWT(login);
-                return Ok( new { token = tokenString});
+                return Ok( new AuthenticatedUserModel{ Access_Token = tokenString, UserName = login.UserName});
             }
             _logger.LogWarning("user login failed");
-            return response;
+            return BadRequest();
         }
 
         private string GenerateJWT(LoginModel loginModel)
@@ -49,7 +49,7 @@ namespace Purchase.Controllers
 
             var token = new JwtSecurityToken(_configuration["Jwt:Issuer"],
                     _configuration["Jwt:Issuer"],
-                    null,
+                    null,//IEnumerable<Claims>
                     expires: DateTime.UtcNow.AddMinutes(60),
                     signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);

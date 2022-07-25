@@ -3,51 +3,66 @@
     <MudNavLink Icon="@Icons.Filled.Dashboard" IconColor="Color.Inherit" Href="home">
         Tableau de Bord
     </MudNavLink>
-    <MudNavLink Icon="@Icons.Filled.Calculate" IconColor="Color.Inherit" Href="/counter">Compteur</MudNavLink>
-    <MudNavLink Icon="@Icons.Filled.List" IconColor="Color.Inherit" Href="/vendors">Fournisseurs</MudNavLink>
+  
     <MudDivider />
-    <MudNavGroup Expanded="true" Icon="@Icons.Material.Filled.List" IconColor="Color.Inherit" Title="Commandes">
-        <MudNavLink Icon="@Icons.Filled.Checklist" IconColor="Color.Inherit" Href="ordersclean">
-            Toutes les
-            Commandes
-        </MudNavLink>
-        <MudNavLink Icon="@Icons.Filled.FilterList" IconColor="Color.Inherit" Href="orderspending">
-            PR pending
-        </MudNavLink>
-        <MudNavLink Icon="@Icons.Filled.SettingsOverscan" IconColor="Color.Inherit" Href="orderspendingtech">
-            En
-            Validation Technique
-        </MudNavLink>
-        <MudNavLink Icon="@Icons.Filled.Inventory" IconColor="Color.Inherit" Href="orderspendingproforma">
-            En
-            Attente
-            Proforma
-        </MudNavLink>
-        <MudNavLink Icon="@Icons.Filled.PanTool" IconColor="Color.Inherit" Href="orderspendingdpi">
-            En Attente
-            DPI&AC
-        </MudNavLink>
-        <MudNavLink Icon="@Icons.Filled.Approval" IconColor="Color.Inherit" Href="orderspendingapprobation">
-            En
-            Attente
-            Approbation
-        </MudNavLink>
-        <MudNavLink Icon="@Icons.Filled.DoneAll" IconColor="Color.Inherit" Href="orderscompletes">
-            Commandes
-            completes
-        </MudNavLink>
-    </MudNavGroup>
-    <MudDivider />
-    <MudNavGroup Icon="@Icons.Filled.Settings" IconColor="Color.Inherit" Title="Settings" Expanded="true">
-        <MudNavLink Icon="@Icons.Filled.People" IconColor="Color.Inherit" Href="/users">
-            Utilisateurs
-        </MudNavLink>
-        <MudNavLink Icon="@Icons.Filled.Security" IconColor="Color.Inherit" Href="/security">
-            Politiques sécurité
-        </MudNavLink>
-    </MudNavGroup>
-    <MudNavLink Href="/about">A propos</MudNavLink>
-    <MudNavLink  Href="/login">Connexion</MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavGroup Expanded="true" Icon="@Icons.Material.Filled.List" IconColor="Color.Inherit" Title="Fournisseurs">
+                <MudNavLink Icon="@Icons.Filled.List" IconColor="Color.Inherit" Href="/vendors">Fournisseurs</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Expanded="true" Icon="@Icons.Material.Filled.List" IconColor="Color.Inherit" Title="Commandes">
+                
+                <MudNavLink Icon="@Icons.Filled.Checklist" IconColor="Color.Inherit" Href="ordersclean">
+                    Toutes les
+                    Commandes
+                </MudNavLink>
+                <MudNavLink Icon="@Icons.Filled.FilterList" IconColor="Color.Inherit" Href="orderspending">
+                    PR pending
+                </MudNavLink>
+                <MudNavLink Icon="@Icons.Filled.SettingsOverscan" IconColor="Color.Inherit" Href="orderspendingtech">
+                    Validation Technique
+                </MudNavLink>
+                <MudNavLink Icon="@Icons.Filled.Inventory" IconColor="Color.Inherit" Href="orderspendingproforma">
+                    Attente
+                    Proforma
+                </MudNavLink>
+                <MudNavLink Icon="@Icons.Filled.PanTool" IconColor="Color.Inherit" Href="orderspendingdpi">
+                    Attente
+                    DPI&AC
+                </MudNavLink>
+                <MudNavLink Icon="@Icons.Filled.Approval" IconColor="Color.Inherit" Href="orderspendingapprobation">
+                    Attente
+                    Approbation
+                </MudNavLink>
+                <MudNavLink Icon="@Icons.Filled.DoneAll" IconColor="Color.Inherit" Href="orderscompletes">
+                    Commandes
+                    completes
+                </MudNavLink>
+            </MudNavGroup>
+            <MudDivider />
+           
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Icon="@Icons.Filled.Info" Href="/about">A propos</MudNavLink>
+            <MudNavLink Icon="@Icons.Filled.Login" Href="/logintoapi">Connexion</MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <MudNavGroup Icon="@Icons.Filled.Settings" IconColor="Color.Inherit" Title="Settings" Expanded="true">
+                <MudNavLink Icon="@Icons.Filled.People" IconColor="Color.Inherit" Href="/users">
+                    Utilisateurs
+                </MudNavLink>
+                <MudNavLink Icon="@Icons.Filled.Group" IconColor="Color.Inherit" Href="/roles">
+                    Roles
+                </MudNavLink>
+                <MudNavLink Icon="@Icons.Filled.Security" IconColor="Color.Inherit" Href="/security">
+                    Politiques sécurité
+                </MudNavLink>
+            </MudNavGroup>
+        </Authorized>
+    </AuthorizeView>
+   
 </MudNavMenu>
    
      

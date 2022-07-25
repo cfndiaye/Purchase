@@ -1,5 +1,6 @@
 ﻿@page "/home"
 @inject HttpClient _client
+@attribute [Authorize]
 
 <MudText Typo="Typo.h5">Tableau de bord</MudText>
 <MudText Typo="Typo.subtitle1">Suivi des demandes d'achat et commandes</MudText>

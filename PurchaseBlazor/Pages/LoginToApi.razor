@@ -1,0 +1,92 @@
+﻿@page "/logintoapi"
+
+@inject IAuthenticationService AuthService
+@inject NavigationManager NavigationManager
+
+<MudSpacer />
+<div class="d-flex justify-center flex-wrap pa-8">
+    <MudPaper Class="d-flex align-content-center flex-wrap gap-4"  Height="400px"  Width="400px" Square="false">
+
+        <MudContainer MaxWidth="MaxWidth.Medium">
+            @if (_showAuthenticationError)
+            {
+                <MessageAlert Message="@_authenticationErrorText" Severity="@_severity" CloseAlert="CloseAlert" />
+            }
+            <MudText Typo="Typo.h6">Connexion</MudText>
+            <EditForm @ref="_loginForm" Model="_model" OnValidSubmit="OnValidSubmit">
+
+                <MudCard Elevation="0">
+                    
+                    <MudCardContent>
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <MudTextField Label="Login" @bind-Value="_model.Email" Variant="Variant.Outlined" Class="py-2"
+                                      For="@(() => _model.Email)" />
+                        <MudTextField Label="Mot de passe" @bind-Value="_model.Password" InputType="InputType.Password"
+                                      Variant="Variant.Outlined" For="@(() => _model.Password)" />
+
+                    </MudCardContent>
+                    <MudSpacer />
+                    <MudCardActions class="d-flex px-6 justify-space-between py-6">
+                        <MudButton OnClick="GotoHomePage" Variant="Variant.Filled"
+                                   EndIcon="@Icons.Material.Filled.Cancel" Color="Color.Warning">
+                            Annuler
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit"
+                                   EndIcon="@Icons.Material.Filled.Login" Color="Color.Success">
+                            Login
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </EditForm>
+        </MudContainer>
+    </MudPaper>
+</div>
+
+@code {
+    private AuthenticationUserModel _model = new();
+    private bool _showAuthenticationError = false;
+    private string _authenticationErrorText = "";
+
+    private EditForm _loginForm;
+
+    private const string _homePage = "home";
+    private string _message = "";
+    private Severity _severity;
+
+    private async Task ExecuteLogin()
+    {
+
+        _showAuthenticationError = false;
+        var result = await AuthService.Login(_model);
+        if (result is not null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            _severity = Severity.Error;
+            _authenticationErrorText = "Erreur lors de la connexion";
+            _showAuthenticationError = true;
+
+        }
+    }
+
+    private void CloseAlert()
+    {
+        _message = "";
+        _severity = Severity.Normal;
+    }
+
+    private void GotoHomePage()
+    {
+        NavigationManager.NavigateTo(_homePage);
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+         await ExecuteLogin();
+    }
+
+
+}

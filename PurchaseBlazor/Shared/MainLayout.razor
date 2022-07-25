@@ -1,45 +1,76 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager NavigationManager
+@*inject SignOutSessionStateManager SignOutManager*@
 
 <MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudLayout>
+
+   
     <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(DrawerToggle)"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(DrawerToggle)" />
         @_pageTitlePrincipal
+        <MudSpacer />
+        <AuthorizeView>
+            <Authorized>
+                <MudText>Welcome @UserName</MudText>
+                <MudIconButton Color="Color.Inherit" Icon="@Icons.Material.Filled.Logout" OnClick="() => { NavigationManager.NavigateTo(_logout); }">Déconnexion</MudIconButton>
+            </Authorized>
+            <NotAuthorized>
+                <MudIconButton Color="Color.Inherit" Icon="@Icons.Material.Filled.Login" OnClick="() => { NavigationManager.NavigateTo(_uriLogin); }">Login</MudIconButton>
+            </NotAuthorized>
+        </AuthorizeView>
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
-        <MudDrawerHeader>
-            <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Size="Size.Large" Color="Color.Primary"></MudIcon>
-            
-        </MudDrawerHeader>
-        <NavMenu/>
-    </MudDrawer>
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
-            @Body
-        </MudContainer>
-        
-    </MudMainContent>
+            <MudDrawer @bind-Open="@_drawerOpen">
+                <MudDrawerHeader>
+                    <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Size="Size.Large" Color="Color.Primary"></MudIcon>
+
+                </MudDrawerHeader>
+                <NavMenu />
+            </MudDrawer>
+            <MudMainContent>
+                <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
+                    @Body
+                </MudContainer>
+
+            </MudMainContent>
+    
+            <MudAppBar Dense="true" Bottom="true" Elevation="1">
+                <MudSpacer />
+                <MudText Color="Color.Inherit">Version: 1.0.1</MudText>
+            </MudAppBar>
+  
 </MudLayout>
 
 @code
 {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+    private bool isAuthenticated;
+    [CascadingParameter]
+    public string UserName { get; set; }
+
     bool _drawerOpen = true;
     string _pageTitle = "";
     string _pageTitlePrincipal = "Purchase Manager";
+    private string _uriLogin = "logintoapi";
+    private string _logout = "logout";
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
-        /*if (!_drawerOpen)
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState;
+        if (authState.User.Identity.IsAuthenticated)
         {
-            _pageTitle = "";
-            _pageTitlePrincipal = "Purchase Manager";
+            UserName = authState.User.Identity.Name;
+            isAuthenticated = true;
         }
-        else
-        {
-            _pageTitle = "Purchase Manager";
-            _pageTitlePrincipal = "";
-        }*/
+
     }
 }

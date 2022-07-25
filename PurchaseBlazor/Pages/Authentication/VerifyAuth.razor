@@ -1,0 +1,39 @@
+﻿@page "/verifyauth"
+
+<h3>Component1</h3>
+@if (isAuthenticated)
+{
+    <MudText><MudChip Color="Color.Success">Utilisateur authentifié</MudChip></MudText>
+}
+else
+{
+    <MudText><MudChip Color="Color.Warning">Utilisateur non authentifié</MudChip></MudText>
+}
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+
+    private bool isAuthenticated = false;
+    private string _username;
+    private bool _isAdminUser = false;
+    private bool _isCashier = false;
+    private bool _isManager = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            isAuthenticated = true;
+
+            _isAdminUser = authState.User.IsInRole("Admin");
+            _isCashier = authState.User.IsInRole("Cashier");
+            _isManager = authState.User.IsInRole("Manager");
+            _username = authState.User.FindFirst(System.Security.Claims.ClaimTypes.Name).Value;
+
+        }
+    }
+
+}
+
