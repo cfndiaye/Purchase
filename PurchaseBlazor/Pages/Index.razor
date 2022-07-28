@@ -26,12 +26,7 @@
                        BgColor="@Colors.Yellow.Darken3" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Filled.AttachMoney" />
     </MudItem>
-    <MudItem>
-        <WidgetCounter Counter="@_totalCostLocal" Description="Commandes locales"
-                       CustomColor="@Colors.Grey.Darken4" 
-                       BgColor="@Colors.LightGreen.Lighten5" TextColor="@Colors.Grey.Darken4"
-                       CustomContentIcon="@Icons.Material.Filled.Money" />
-    </MudItem>
+    
 </MudGrid>
 
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
@@ -117,7 +112,7 @@
 @code {
 
     private const int _top = 5;
-
+    [CascadingParameter] public MainLayout Layout{get; set;}
     private bool _isAuthenticate;
     private int spacing { get; set; } = 4;
     private Order _selectedOrder;
@@ -152,6 +147,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Layout.TitlePlus = "Tableau de bord";
         //PR PENDING LOADING...
         var orderspendingLoading = _client.GetFromJsonAsync<List<Order>>(_URIPRPENDING);
         if(!orderspendingLoading.IsCompleted)

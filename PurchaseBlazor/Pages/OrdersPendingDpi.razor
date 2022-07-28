@@ -7,8 +7,9 @@
 @inject HttpClient _client
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
+@attribute [Authorize]
 
-<h1>Suivi des commandes en attente DPI&AC</h1>
+<h1>Commandes en attente DPI&AC</h1>
 <MudCard>
     <MudCardHeader>
         <CardHeaderAvatar>
@@ -24,10 +25,10 @@
     </MudCardHeader>
     @*intégration du composant OrderTable*@
     <OrderTable @ref="@_orderTable" Client="@_client" Message="@_message" Dense="@_dense" Loading="@_loading"
-        MarginDense="@_marginDense" Severity="@_severity" SelectedOrder="@_selectedOrder" />
+                MarginDense="@_marginDense" Severity="@_severity" SelectedOrder="@_selectedOrder" />
     @*intégration du composant AddOrder*@
     <AddOrder @ref="_addOrder" Client="_client" @bind-OrdersList="_ordersList" MarginDense="_marginDense"
-        @bind-Message="_message" @bind-Loading="@_loading" @bind-Severity="@_severity" />
+              @bind-Message="_message" @bind-Loading="@_loading" @bind-Severity="@_severity" />
 
 </MudCard>
 

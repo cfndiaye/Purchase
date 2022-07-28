@@ -1,0 +1,47 @@
+﻿@inject NavigationManager NavigationManager
+<AuthorizeView>
+    <Authorized>
+
+        <MudText>Welcome @context.User.Identity.Name</MudText>
+        <MudBadge Color="Color.Success" Overlap="true" Visible="false" Bordered="true">
+            <MudAvatar Color="Color.Inherit" Variant="Variant.Filled" Class="ml-2">
+                <MudIcon Color="Color.Inherit" Icon="@Icons.Material.Filled.Notifications" />
+            </MudAvatar>
+        </MudBadge>
+        <MudIconButton Color="Color.Inherit" Title="Déconnexion" Icon="@Icons.Material.Filled.Logout"
+            OnClick="() => { NavigationManager.NavigateTo(_logout); }"></MudIconButton>
+    </Authorized>
+    <NotAuthorized>
+        <MudIconButton Color="Color.Inherit" Title="Login" Icon="@Icons.Material.Filled.Login"
+            OnClick="() => { NavigationManager.NavigateTo(_uriLogin); }"></MudIconButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+    private bool isAuthenticated;
+    private string _uriLogin = "login";
+    private string _logout = "logout";
+
+    public string UserName { get; set; }
+
+    public async Task<string> GetUsername()
+    {
+        var authState = await AuthState;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            var claim = authState.User.Claims.FirstOrDefault();
+            UserName = claim.Value;
+            isAuthenticated = true;
+            Console.WriteLine($"Number of claims: {authState.User.Claims.Count()}");
+        }
+
+        return UserName;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUsername();
+    }
+}

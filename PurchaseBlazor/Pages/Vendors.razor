@@ -45,11 +45,9 @@
 
                 <MudTh>Nom</MudTh>
                 <MudTh>Email</MudTh>
-                <MudTh>Téléphone</MudTh>
                 <MudTh>Type</MudTh>
                 <MudTh>Orders</MudTh>
-                <MudTh>Commentaires</MudTh>
-
+                <MudTh></MudTh>
                 <MudTh></MudTh>
                 <MudTh></MudTh>
             </HeaderContent>
@@ -57,10 +55,8 @@
 
                 <MudTd DataLabel="Nom">@context.Name</MudTd>
                 <MudTd DataLabel="E-mail">@context.EmailId</MudTd>
-                <MudTd DataLabel="Téléphone">@context.Telephone</MudTd>
                 <MudTd DataLabel="Type">@context.Type</MudTd>
-                <MudTd DataLabel="Orders">@context.Orders?.Count</MudTd>
-                <MudTd DataLabel="Commentaires">@context.Comments</MudTd>
+                <MudTd DataLabel="Orders">@if (context.Orders?.Count > 0) {<MudChip Color="Color.Info">@context.Orders?.Count</MudChip> }</MudTd>
                 <MudTd>
                     <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Source"
                         OnClick="() => OpenPageDetail(context.Id)" aria-label="Détails" Color="Color.Inherit" />
@@ -202,6 +198,7 @@
 </MudDialog>
 @code {
 
+   
     private string _fileName = "";
     private void OpenImportDialog()
     {
@@ -270,8 +267,10 @@
     private MudTable<Vendor> _mudTable;
     private HashSet<Vendor> selectedItems = new HashSet<Vendor>();
     private List<string> Types = new List<string> { "Locale", "Europe", "Asie" };
+
     protected override async Task OnInitializedAsync()
     {
+        
         _vendorList = new List<Vendor>();
         _loading = true;
         try

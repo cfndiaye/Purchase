@@ -1,7 +1,7 @@
 ﻿@page "/vendordetails/{Id}"
 @inject HttpClient _client
 @inject NavigationManager NavigationManager
-
+@attribute [Authorize]
 
 <MudText Typo="Typo.h5">Tableau de bord Vendor</MudText>
 <MudText Typo="Typo.subtitle1">Détails Vendor: @Vendor?.Name</MudText>
@@ -38,7 +38,7 @@
                      CustomContentCounterIcon="@Icons.Material.Outlined.AddShoppingCart"
                      Width="@Width" Height="@Height" />
     </MudItem>
-   
+
 
 </MudGrid>
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />

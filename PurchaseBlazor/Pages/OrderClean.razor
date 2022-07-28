@@ -1,36 +1,43 @@
 ﻿@page "/ordersclean"
 @inject NavigationManager NavigationManager
 @inject HttpClient _client
+@attribute [Authorize]
+
 
 <h1>Suivi des commandes</h1>
-<MudCard>
-    <MudCardHeader>
-        <CardHeaderAvatar>
-            <MudIcon Icon="@Icons.Material.Outlined.List"></MudIcon>
-        </CardHeaderAvatar>
-        <CardHeaderContent>
-            <MudText Typo="Typo.body1">Liste des commandes</MudText>
-        </CardHeaderContent>
-        <CardHeaderActions>
-            <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="OpenAddDialog" Color="Color.Inherit" />
-            <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" OnClick="OpenImportPage" Color="Color.Inherit" />
-            <MudIconButton Icon="@Icons.Material.Outlined.Refresh" OnClick="async () => await OnInitializedAsync()" Color="Color.Inherit" />
-        </CardHeaderActions>
-    </MudCardHeader>
-    @*intégration du composant OrderTable*@
-    <OrderTable @ref="@_orderTable"
-                Client="@_client"
-                TitreTable="All Orders"
-                Message="@_message" Dense="@_dense" Loading="@_loading"
-                MarginDense="@_marginDense" Severity="@_severity" 
-                SelectedOrder="@_selectedOrder" />
-</MudCard>
-@*intégration du composant AddOrder*@
-<AddOrder @ref="_addOrder" Client="_client" @bind-OrdersList="@_ordersList"
-          MarginDense="_marginDense"
-          @bind-Message="_message"
-          @bind-Loading="@_loading"
-          @bind-Severity="@_severity" />
+<AuthorizeView>
+    <Authorized>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudIcon Icon="@Icons.Material.Outlined.List"></MudIcon>
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.body1">Liste des commandes</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="OpenAddDialog" Color="Color.Inherit" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" OnClick="OpenImportPage" Color="Color.Inherit" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Refresh" OnClick="async () => await OnInitializedAsync()" Color="Color.Inherit" />
+                </CardHeaderActions>
+            </MudCardHeader>
+            @*intégration du composant OrderTable*@
+            <OrderTable @ref="@_orderTable"
+                        Client="@_client"
+                        TitreTable="All Orders"
+                        Message="@_message" Dense="@_dense" Loading="@_loading"
+                        MarginDense="@_marginDense" Severity="@_severity"
+                        SelectedOrder="@_selectedOrder" />
+        </MudCard>
+        @*intégration du composant AddOrder*@
+        <AddOrder @ref="_addOrder" Client="_client" @bind-OrdersList="@_ordersList"
+                  MarginDense="_marginDense"
+                  @bind-Message="_message"
+                  @bind-Loading="@_loading"
+                  @bind-Severity="@_severity" />
+    </Authorized>
+</AuthorizeView>
+
 
 
 @code {
@@ -75,7 +82,7 @@
                 _loading = false;
                 _orderTable.DataLoaded(true, _ordersList);
             }
-            
+
         }
         catch (Exception ex)
         {
@@ -85,5 +92,5 @@
         }
     }
 
-    
+
 }
