@@ -4,6 +4,7 @@
 @inject HttpClient _client
 @inject NavigationManager NavigationManager
 @*inject IDialogService DialogService*@
+@attribute [Authorize]
 
 <h1>Gestion des fournisseurs</h1>
 <MudPaper Class="mb-5 mt-5" Elevation="0">
@@ -21,7 +22,7 @@
         <CardHeaderActions>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Inherit" OnClick="OpenAddMessageBox" />
             <MudIconButton Icon="@Icons.Material.Outlined.ImportExport" Color="Color.Inherit"
-                OnClick="OpenImportDialog" />
+                           OnClick="OpenImportDialog" />
         </CardHeaderActions>
     </MudCardHeader>
 
@@ -33,13 +34,13 @@
         }
 
         <MudTable Items="@_vendorList" Dense="@_dense" Striped="true" Hover="true" Breakpoint="Breakpoint.Sm"
-            @bind-SelectedItem="_selectedVendor" @ref="_mudTable" Filter="new Func<Vendor, bool>(FilterFuncInAction)"
-            RowClassFunc="@SelectedRowClassFunc" T="Vendor" Loading="@_loading" LoadingProgressColor="Color.Info">
+                  @bind-SelectedItem="_selectedVendor" @ref="_mudTable" Filter="new Func<Vendor, bool>(FilterFuncInAction)"
+                  RowClassFunc="@SelectedRowClassFunc" T="Vendor" Loading="@_loading" LoadingProgressColor="Color.Info">
             <ToolBarContent>
                 <MudText Inline="true" Typo="Typo.h6">Liste des fournisseurs</MudText>
                 <MudSpacer />
                 <MudTextField @bind-Value="_searchTexte" Placeholder="Recherche..." Adornment="Adornment.Start"
-                    AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
             </ToolBarContent>
             <HeaderContent>
 
@@ -56,18 +57,19 @@
                 <MudTd DataLabel="Nom">@context.Name</MudTd>
                 <MudTd DataLabel="E-mail">@context.EmailId</MudTd>
                 <MudTd DataLabel="Type">@context.Type</MudTd>
-                <MudTd DataLabel="Orders">@if (context.Orders?.Count > 0) {<MudChip Color="Color.Info">@context.Orders?.Count</MudChip> }</MudTd>
+                <MudTd DataLabel="Orders">@if (context.Orders?.Count > 0)
+                {<MudChip Color="Color.Info">@context.Orders?.Count</MudChip>}</MudTd>
                 <MudTd>
                     <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Source"
-                        OnClick="() => OpenPageDetail(context.Id)" aria-label="Détails" Color="Color.Inherit" />
+                                   OnClick="() => OpenPageDetail(context.Id)" aria-label="Détails" Color="Color.Inherit" />
                 </MudTd>
                 <MudTd>
                     <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Edit"
-                        OnClick="() => OpenUpdateMessageBox(context)" aria-label="Modifier" Color="Color.Inherit" />
+                                   OnClick="() => OpenUpdateMessageBox(context)" aria-label="Modifier" Color="Color.Inherit" />
                 </MudTd>
                 <MudTd>
                     <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Delete"
-                        OnClick="() => OpenDeleteMessageBox(context)" aria-label="Supprimer" Color="Color.Inherit" />
+                                   OnClick="() => OpenDeleteMessageBox(context)" aria-label="Supprimer" Color="Color.Inherit" />
                 </MudTd>
             </RowTemplate>
             <PagerContent>
@@ -94,11 +96,11 @@
                 <MudCard>
                     <MudCardContent>
                         <MudTextField Label="Nom" Helpertext="Min 3 caractères" For="@(() => _addVendor.Name)"
-                            @bind-Value="_addVendor.Name" />
+                                      @bind-Value="_addVendor.Name" />
                         <MudTextField Label="E-mail" HelperText="Adresse e-mail" For="@(() => _addVendor.EmailId )"
-                            @bind-Value="_addVendor.EmailId" />
+                                      @bind-Value="_addVendor.EmailId" />
                         <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420"
-                            For="@(() => _addVendor.Telephone)" @bind-Value="_addVendor.Telephone" />
+                                      For="@(() => _addVendor.Telephone)" @bind-Value="_addVendor.Telephone" />
                         <MudSelect @bind-Value="_addVendor.Type" Label="Type" For="() => _addVendor.Type" T="string">
                             @foreach (var type in Types)
                             {
@@ -106,7 +108,7 @@
                             }
                         </MudSelect>
                         <MudTextField Label="Commentaires" HelperText="fournisseur local"
-                            For="@(() => _addVendor.Comments)" @bind-Value="_addVendor.Comments" />
+                                      For="@(() => _addVendor.Comments)" @bind-Value="_addVendor.Comments" />
                     </MudCardContent>
 
                 </MudCard>
@@ -115,7 +117,7 @@
     </MessageContent>
     <YesButton>
         <MudButton OnClick="() => AddNewVendor(_addVendor)" Variant="Variant.Filled"
-            EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary">Ajouter</MudButton>
+                   EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary">Ajouter</MudButton>
     </YesButton>
 </MudMessageBox>
 @*
@@ -129,20 +131,20 @@
                 <MudCard>
                     <MudCardContent>
                         <MudTextField Label="Nom" Helpertext="Min 3 caractères" For="@(() => _selectedVendor.Name)"
-                            @bind-Value="_selectedVendor.Name" />
+                                      @bind-Value="_selectedVendor.Name" />
                         <MudTextField Label="E-mail" HelperText="Adresse e-mail" For="@(() => _selectedVendor.EmailId )"
-                            @bind-Value="_selectedVendor.EmailId" />
+                                      @bind-Value="_selectedVendor.EmailId" />
                         <MudTextField Label="Téléphone" HelperText="Exemple: +221775422420"
-                            For="@(() => _selectedVendor.Telephone)" @bind-Value="_selectedVendor.Telephone" />
+                                      For="@(() => _selectedVendor.Telephone)" @bind-Value="_selectedVendor.Telephone" />
                         <MudSelect @bind-Value="_selectedVendor.Type" Label="Type" For="() => _selectedVendor.Type"
-                            T="string">
+                                   T="string">
                             @foreach (var type in Types)
                             {
                                 <MudSelectItem Value="@type">@type</MudSelectItem>
                             }
                         </MudSelect>
                         <MudTextField Label="Commentaires" HelperText="fournisseur local"
-                            For="@(() => _selectedVendor.Comments)" @bind-Value="_selectedVendor.Comments" />
+                                      For="@(() => _selectedVendor.Comments)" @bind-Value="_selectedVendor.Comments" />
                     </MudCardContent>
                     <MudCardActions>
 
@@ -153,7 +155,7 @@
     </MessageContent>
     <YesButton>
         <MudButton OnClick="() => UpdateSelectedVendor(_selectedVendor)" Variant="Variant.Filled"
-            StartIcon="@Icons.Material.Filled.Check" Color="Color.Primary">Modifier</MudButton>
+                   StartIcon="@Icons.Material.Filled.Check" Color="Color.Primary">Modifier</MudButton>
     </YesButton>
 </MudMessageBox>
 
@@ -168,7 +170,7 @@
     </MessageContent>
     <YesButton>
         <MudButton OnClick="() => DeleteSelectedVendor(_selectedVendor)" Variant="Variant.Filled"
-            EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Supprimer</MudButton>
+                   EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Supprimer</MudButton>
     </YesButton>
 </MudMessageBox>
 
@@ -180,7 +182,7 @@
         <MudPaper Class="d-flex align-center py-2 px-1" Elevation="0" Style="min-width: 400px; min-height: 100px">
             <InputFile id="fileInput" OnChange="ImportVendors" accept=".csv" hidden />
             <MudButton htmlTag="label" Variant="Variant.Filled" Color="Color.Primary"
-                StartIcon="@Icons.Material.Filled.AttachFile" For="fileInput">
+                       StartIcon="@Icons.Material.Filled.AttachFile" For="fileInput">
                 Importer
                 @* <MudProgressLinear Color="Color.Warning" Indeterminate="true" /> *@
 
@@ -198,7 +200,7 @@
 </MudDialog>
 @code {
 
-   
+
     private string _fileName = "";
     private void OpenImportDialog()
     {
@@ -270,7 +272,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        
+
         _vendorList = new List<Vendor>();
         _loading = true;
         try

@@ -3,7 +3,7 @@
 <h3>Component1</h3>
 @if (isAuthenticated)
 {
-    <MudText><MudChip Color="Color.Success">Utilisateur authentifié</MudChip></MudText>
+    <MudText><MudChip Color="Color.Success">Utilisateur @_username authentifié</MudChip></MudText>
 }
 else
 {
@@ -30,7 +30,7 @@ else
             _isAdminUser = authState.User.IsInRole("Admin");
             _isCashier = authState.User.IsInRole("Cashier");
             _isManager = authState.User.IsInRole("Manager");
-            _username = authState.User.FindFirst(System.Security.Claims.ClaimTypes.Name).Value;
+            _username = authState.User.Identity.Name;
 
         }
     }

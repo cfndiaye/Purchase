@@ -2,7 +2,7 @@
 <AuthorizeView>
     <Authorized>
 
-        <MudText>Welcome @context.User.Identity.Name</MudText>
+        <MudText>Welcome @UserName</MudText>
         <MudBadge Color="Color.Success" Overlap="true" Visible="false" Bordered="true">
             <MudAvatar Color="Color.Inherit" Variant="Variant.Filled" Class="ml-2">
                 <MudIcon Color="Color.Inherit" Icon="@Icons.Material.Filled.Notifications" />
@@ -23,18 +23,23 @@
     private bool isAuthenticated;
     private string _uriLogin = "login";
     private string _logout = "logout";
-
+    [CascadingParameter]
     public string UserName { get; set; }
 
     public async Task<string> GetUsername()
     {
         var authState = await AuthState;
+
         if (authState.User.Identity.IsAuthenticated)
         {
             var claim = authState.User.Claims.FirstOrDefault();
             UserName = claim.Value;
             isAuthenticated = true;
             Console.WriteLine($"Number of claims: {authState.User.Claims.Count()}");
+            foreach (var cl in authState.User.Claims)
+            {
+                Console.WriteLine($"claim => Type: {cl.Type} : Value: {cl.Value}");
+            }
         }
 
         return UserName;

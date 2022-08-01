@@ -29,13 +29,14 @@
 
         <MudAppBar Dense="true" Bottom="true" Elevation="1">
             <MudSpacer />
-            <MudText Color="Color.Inherit">Version: 1.0.1</MudText>
+            <MudText Color="Color.Inherit">Version: @_clientVersion</MudText>
         </MudAppBar>
 
     </MudLayout>
 </CascadingValue>
 @code
 {
+    private string _clientVersion = "";
 
     public LoginDisplay LoginDisplay { get; set; }
     public string TitlePlus { get; set; } = "";
@@ -48,7 +49,12 @@
         _drawerOpen = !_drawerOpen;
 
     }
-
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _clientVersion = typeof(Program).Assembly.GetName().Version.ToString();
+        //await LoginDisplay.GetUsername();
+    }
 
 
 
