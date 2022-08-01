@@ -8,7 +8,7 @@
 <MudSpacer />
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
 <MudGrid Spacing="@spacing" Justify="Justify.Center" Class="mb-4">
-    <MudItem>
+    <MudItem xs="4">
         <OrderWidget Title="Situation Année encours" Amount="@_totalCostCurrentYear"
                      Counter="_countOrdersCurrentYear" Currency="@_currency"
                      DescriptionCounter="Total commandes"
@@ -16,9 +16,9 @@
                      CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.Blue.Darken1" TextColor="@Colors.BlueGrey.Lighten5"
                      CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess"
                      CustomContentCounterIcon="@Icons.Material.Outlined.AddShoppingCart"
-                     Width="@Width" Height="@Height" />
+                      Height="@Height" />
     </MudItem>
-    <MudItem>
+    <MudItem xs="4">
         <OrderWidget Title="Situation Année Précédente" Amount="@_totalCostLastYear"
                      Counter="_countOrdersLastYear" Currency="@_currency"
                      DescriptionCounter="Total commandes"
@@ -26,9 +26,9 @@
                      CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.Yellow.Darken3" TextColor="@Colors.BlueGrey.Lighten5"
                      CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess"
                      CustomContentCounterIcon="@Icons.Material.Outlined.AddShoppingCart"
-                     Width="@Width" Height="@Height" />
+                      Height="@Height" />
     </MudItem>
-    <MudItem>
+    <MudItem xs="4">
         <OrderWidget Title="Situation Totale" Amount="@_totalCost"
                      Counter="_countOrders" Currency="@_currency"
                      DescriptionCounter="Total commandes"
@@ -36,7 +36,7 @@
                      CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.LightGreen.Darken3" TextColor="@Colors.BlueGrey.Lighten5"
                      CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess"
                      CustomContentCounterIcon="@Icons.Material.Outlined.AddShoppingCart"
-                     Width="@Width" Height="@Height" />
+                      Height="@Height" />
     </MudItem>
 
 

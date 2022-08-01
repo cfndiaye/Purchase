@@ -1,4 +1,4 @@
-﻿<MudCard Class="@BgColor" Elevation="2" Style="@($"width: {Width}; height: {Height}; color:{TextColor}; background:{BgColor};")">
+﻿<MudCard Class="@($"{BgColor} mud-width-full")" Elevation="2" Style="@($"height: {Height}; color:{TextColor}; background:{BgColor};")">
     <MudCardContent>
         <div class="d-flex align-items-center flex-column py-4">
             <div class="mx-auto p-2">
@@ -28,7 +28,7 @@
     [Parameter] public string BgColor { get; set; } = Colors.BlueGrey.Darken4;
     [Parameter] public string TextColor { get; set; } = Colors.LightGreen.Accent3;
     [Parameter] public string Currency { get; set; }
-    [Parameter] public string Width { get; set; } = "100%";
+    [Parameter] public string Width { get; set; }
     [Parameter] public string Height { get; set; } = "160px";
 
 }

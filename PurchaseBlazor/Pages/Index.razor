@@ -7,20 +7,20 @@
 <MudSpacer />
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
 
-<MudGrid Spacing="@spacing" Justify="Justify.Center" Class="mb-4">
-    <MudItem>
+<MudGrid Spacing="@spacing" Justify="Justify.Center"  Class="mb-4">
+    <MudItem xs="4">
         <WidgetCounter Counter="@_totalCostLocal" Currency="XOF" Description="Commandes locales"
                        CustomColor="@Colors.Grey.Lighten5" 
                        BgColor="@Colors.LightGreen.Darken3" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess" />
     </MudItem>
-    <MudItem>
+    <MudItem xs="4">
         <WidgetCounter Counter="@_totalCostEurope" Currency="€" Description="Commandes Europe"
                        CustomColor="@Colors.Grey.Lighten5" 
                        BgColor="@Colors.LightBlue.Darken3" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Material.Filled.Euro" />
     </MudItem>
-    <MudItem>
+    <MudItem xs="4">
         <WidgetCounter Counter="@_totalCostUSD" Currency="$" Description="Commandes en Dollar"
                        CustomColor="@Colors.Grey.Lighten5" 
                        BgColor="@Colors.Yellow.Darken3" TextColor="@Colors.Grey.Lighten5"
@@ -31,11 +31,11 @@
 
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
 <MudGrid Spacing="@spacing" Justify="Justify.Center" Class="mb-4">
-    <MudItem>
+    <MudItem xs="4">
         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h6">Top Vendors</MudText>
+                    <MudText Typo="Typo.h6">Top Vendors Local</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
@@ -53,7 +53,7 @@
 
         </MudCard>
     </MudItem>
-    <MudItem>
+    <MudItem xs="4">
         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>
@@ -61,7 +61,7 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudTable Items="_topVendorsEuro" Dense="true" Hover="true">
+                <MudTable Items="_topVendorsEurope" Dense="true" Hover="true">
                     <HeaderContent>
                         <MudTh>Nom vendor</MudTh>
                         <MudTh>Total</MudTh>
@@ -75,15 +75,37 @@
 
         </MudCard>
     </MudItem>
-    <MudItem>
+    <MudItem xs="4">
         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h6">Top Vendors USD</MudText>
+                    <MudText Typo="Typo.h6">Top Vendors Asie</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudTable Items="_topVendorsUsd" Dense="true" Hover="true">
+                <MudTable Items="_topVendorsAsie" Dense="true" Hover="true">
+                    <HeaderContent>
+                        <MudTh>Nom vendor</MudTh>
+                        <MudTh>Total</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Nom vendor">@context.Name</MudTd>
+                        <MudTd DataLabel="Total">@($"{context.TotalAmounts:n0} USD")</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudCardContent>
+
+        </MudCard>
+    </MudItem>
+    <MudItem xs="4">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Top Vendors USA</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudTable Items="_topVendorsUsa" Dense="true" Hover="true">
                     <HeaderContent>
                         <MudTh>Nom vendor</MudTh>
                         <MudTh>Total</MudTh>
@@ -127,9 +149,10 @@
     private const string _URITOTALCOSTBYCURRENCY_XOF = "api/orders/GetTotalCostByCurrency/XOF";
     private const string _URITOTALCOSTBYCURRENCY_USD = "api/orders/GetTotalCostByCurrency/USD";
     private const string _URITOTALCOSTBYCURRENCY_EUR = "api/orders/GetTotalCostByCurrency/EUR";
-    private const string _XOF = "XOF";
-    private const string _EUR = "EUR";
-    private const string _USD = "USD";
+    private const string _LOCAL = "Locale";
+    private const string _EUROPE = "Europe";
+    private const string _ASIE = "Asie";
+    private const string _USA = "Usa";
     private string _URITOPVENDORS = "api/Vendors/GetTopVendors";
 
     private int CountNumberOrderProformaPending;
@@ -139,8 +162,9 @@
     private decimal _totalCostEurope;
     private decimal _totalCostUSD;
     private List<VendorStat> _topVendors = new List<VendorStat>();
-    private List<VendorStat> _topVendorsEuro = new List<VendorStat>();
-    private List<VendorStat> _topVendorsUsd = new List<VendorStat>();
+    private List<VendorStat> _topVendorsEurope = new List<VendorStat>();
+    private List<VendorStat> _topVendorsAsie = new List<VendorStat>();
+    private List<VendorStat> _topVendorsUsa = new List<VendorStat>();
 
     private string[] _xAxisLabels = new string[_top];
     private double[] _datas =  new double[_top];
@@ -181,16 +205,17 @@
         _totalCostUSD = await totalCostUsdLoading;
 
         //Loading series for graph top vendor
-        _topVendors = await LoadCharts(_top, _XOF);
-        _topVendorsEuro = await LoadCharts(_top, _EUR);
-        _topVendorsUsd = await LoadCharts(_top, _USD);
+        _topVendors = await LoadCharts(_top, _LOCAL);
+        _topVendorsEurope = await LoadCharts(_top, _EUROPE);
+        _topVendorsAsie = await LoadCharts(_top, _ASIE);
+        _topVendorsUsa = await LoadCharts(_top, _USA);
 
     }
 
-    private async  Task<List<VendorStat>> LoadCharts(int count, string currency)
+    private async  Task<List<VendorStat>> LoadCharts(int count, string type)
     {
        
-            var url = _URITOPVENDORS + "/" + count + "/" + currency;
+            var url = _URITOPVENDORS + "/" + count + "/" + type;
             return await _client.GetFromJsonAsync<List<VendorStat>>(url);
     }
 

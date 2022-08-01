@@ -173,21 +173,32 @@ namespace Purchase.Controllers
 
             return Ok(vendors);
         }
-        [HttpGet("{top}/{currency}")]
-        public async Task<List<VendorStat>> GetTopVendorsAsync(int top, string currency)
+        [HttpGet("{top}/{type}")]
+        public async Task<List<VendorStat>> GetTopVendorsAsync(int top, string type)
         {
             var vendors = await _vendorService.GetVendorsWithOrdersAsync();
             var topVendors = new List<VendorStat>();
             try
             {
 
-                topVendors = vendors.Where(v => v.Orders != null).Select(v => new VendorStat { Id = v.Id, Name = v.Name, TotalAmounts = ((double)v.OrderList.Where(o => o.Devise != null && o.Devise == currency).Sum(o => o.Amount)) })
-                        .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<VendorStat>();
+                //topVendors = vendors.Where(v => v.Orders != null).Select(vs => new VendorStat { Id = vs.Id, Name = vs.Name, TotalAmounts = ((double)vs.OrderList.Where(o => o.Devise != null && o.Devise == currency).Sum(o => o.Amount)) })
+                 //       .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<VendorStat>();
+                
+                var vendorsWithOrders = vendors.Where(v =>  v.Orders is not null && v.Orders.Any());
+                var vendorsStat = vendorsWithOrders.Select(vs => new VendorStat(vs.Id, vs.Name, 0, vs.Type));
+                foreach (var vo in vendorsWithOrders)
+                {
+                    foreach (var o in vo.OrderList)
+                    {
+                        vendorsStat.First(v => v.Id == o.VendorId).TotalAmounts += o.Amount;
+                    }
+                }
 
+                topVendors = vendorsStat.Where(v => v.Type == type).OrderByDescending( vs => vs.TotalAmounts).Take(top).ToList();
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex.StackTrace) ;
+                _logger.LogCritical(ex.Source.ToString()) ;
             }
             return topVendors;
         }
