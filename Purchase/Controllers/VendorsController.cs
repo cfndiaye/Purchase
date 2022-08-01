@@ -182,19 +182,19 @@ namespace Purchase.Controllers
             {
 
                 //topVendors = vendors.Where(v => v.Orders != null).Select(vs => new VendorStat { Id = vs.Id, Name = vs.Name, TotalAmounts = ((double)vs.OrderList.Where(o => o.Devise != null && o.Devise == currency).Sum(o => o.Amount)) })
-                 //       .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<VendorStat>();
+                //       .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<VendorStat>();
+
+                var vendorsWithOrders = vendors.Where(v => v.Orders is not null && v.Orders.Any()).ToList() ;
                 
-                var vendorsWithOrders = vendors.Where(v =>  v.Orders is not null && v.Orders.Any());
-                var vendorsStat = vendorsWithOrders.Select(vs => new VendorStat(vs.Id, vs.Name, 0, vs.Type));
+                var vendorStats = new List<VendorStat>();
+
                 foreach (var vo in vendorsWithOrders)
                 {
-                    foreach (var o in vo.OrderList)
-                    {
-                        vendorsStat.First(v => v.Id == o.VendorId).TotalAmounts += o.Amount;
-                    }
+                    var vendorStat = new VendorStat(vo.Id, vo.Name, vo.OrderList.Sum(o => o.Amount), vo.Type);
+                    vendorStats.Add(vendorStat);
                 }
 
-                topVendors = vendorsStat.Where(v => v.Type == type).OrderByDescending( vs => vs.TotalAmounts).Take(top).ToList();
+                topVendors = vendorStats.Where(v => v.Type == type).OrderByDescending( vs => vs.TotalAmounts).Take(top).ToList();
             }
             catch (Exception ex)
             {
