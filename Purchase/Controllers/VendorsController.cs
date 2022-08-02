@@ -178,27 +178,26 @@ namespace Purchase.Controllers
         {
             var vendors = await _vendorService.GetVendorsWithOrdersAsync();
             var topVendors = new List<VendorStat>();
+            var vendorStats = new List<VendorStat>();
+            var vendorsWithOrders = vendors.Where(v => v.OrderList is not null && v.OrderList.Any()).Where(v => v.Type == type).ToList();
             try
             {
-
-                //topVendors = vendors.Where(v => v.Orders != null).Select(vs => new VendorStat { Id = vs.Id, Name = vs.Name, TotalAmounts = ((double)vs.OrderList.Where(o => o.Devise != null && o.Devise == currency).Sum(o => o.Amount)) })
-                //       .OrderByDescending(v => v.TotalAmounts).Take(top).ToList<VendorStat>();
-
-                var vendorsWithOrders = vendors.Where(v => v.Orders is not null && v.Orders.Any()).ToList() ;
-                
-                var vendorStats = new List<VendorStat>();
-
-                foreach (var vo in vendorsWithOrders)
+                if (vendorsWithOrders.Any())
                 {
-                    var vendorStat = new VendorStat(vo.Id, vo.Name, vo.OrderList.Sum(o => o.Amount), vo.Type);
-                    vendorStats.Add(vendorStat);
+                    foreach (var vo in vendorsWithOrders)
+                    {
+                        var amount = vo.OrderList.Sum(o => o.Amount);
+                        var vendorStat = new VendorStat(vo.Id, vo.Name, amount, vo.Type);
+                        vendorStats.Add(vendorStat);
+                    }
                 }
 
-                topVendors = vendorStats.Where(v => v.Type == type).OrderByDescending( vs => vs.TotalAmounts).Take(top).ToList();
+
+                topVendors = vendorStats.OrderByDescending(vs => vs.TotalAmounts).Take(top).ToList();
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex.Source.ToString()) ;
+                _logger.LogCritical(ex.Message);
             }
             return topVendors;
         }
