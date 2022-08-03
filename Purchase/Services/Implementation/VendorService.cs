@@ -119,10 +119,16 @@ namespace Purchase.Services.Implementation
     {
       var vendors = await _vendorsCollection.Find(_ => true).ToListAsync();
 
-      vendors.ForEach(async (v) => v.OrderList = await _ordersCollection.Find(o => o.VendorId == v.Id).ToListAsync());
+      //vendors.ForEach(async (v) => v.OrderList = await _ordersCollection.Find(o => o.VendorId == v.Id).ToListAsync());
       //vendors.ForEach(async (v) => v.OrderList = (await _orderService.GetOrdersByVendorIdAsync(v.Id)).ToList());
+      var vendorResult = new List<Vendor>();
+      foreach (var vendor in vendors)
+      {
+        vendor.OrderList = await _ordersCollection.Find(o => o.VendorId == vendor.Id).ToListAsync();
+        vendorResult.Add(vendor);
+      }
 
-      return vendors;
+      return vendorResult;
     }
 
     /// <summary>

@@ -39,7 +39,7 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudTable Items="_topVendors" Dense="true" Hover="true">
+                <MudTable Height="@_heightTableTopVendor" Loading="@_loadingLocalTopVendor" Items="_topVendors" Dense="true" Hover="true">
                     <HeaderContent>
                         <MudTh>Nom vendor</MudTh>
                         <MudTh>Total</MudTh>
@@ -61,7 +61,7 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudTable Items="_topVendorsEurope" Dense="true" Hover="true">
+                <MudTable Height="@_heightTableTopVendor" Loading="@_loadingEuropeTopVendor" Items="_topVendorsEurope" Dense="true" Hover="true">
                     <HeaderContent>
                         <MudTh>Nom vendor</MudTh>
                         <MudTh>Total</MudTh>
@@ -83,7 +83,7 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudTable Items="_topVendorsAsie" Dense="true" Hover="true">
+                <MudTable Height="@_heightTableTopVendor" Loading="@_loadingAsieTopVendor" Items="_topVendorsAsie" Dense="true" Hover="true">
                     <HeaderContent>
                         <MudTh>Nom vendor</MudTh>
                         <MudTh>Total</MudTh>
@@ -105,7 +105,7 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudTable Items="_topVendorsUsa" Dense="true" Hover="true">
+                <MudTable  Height="@_heightTableTopVendor" Loading="@_loadingUsaTopVendor" Items="_topVendorsUsa" Dense="true" Hover="true">
                     <HeaderContent>
                         <MudTh>Nom vendor</MudTh>
                         <MudTh>Total</MudTh>
@@ -136,7 +136,7 @@
     private const int _top = 5;
     [CascadingParameter] public MainLayout Layout{get; set;}
     private bool _isAuthenticate;
-    private int spacing { get; set; } = 4;
+    private int spacing { get; set; } = 2;
     private Order _selectedOrder;
     private OrderTable _prPendingTable;
     private OrderTable _poProformaPendingTable;
@@ -166,15 +166,20 @@
     private List<VendorStat> _topVendorsAsie = new List<VendorStat>();
     private List<VendorStat> _topVendorsUsa = new List<VendorStat>();
 
-    private string[] _xAxisLabels = new string[_top];
-    private double[] _datas =  new double[_top];
+    private bool _loadingLocalTopVendor = false;
+    private bool _loadingEuropeTopVendor = false;
+    private bool _loadingAsieTopVendor = false;
+    private bool _loadingUsaTopVendor = false;
 
-    protected override async Task OnInitializedAsync()
+    private string _heightTableTopVendor = "300px";
+
+    //private string[] _xAxisLabels = new string[_top];
+    //private double[] _datas =  new double[_top];
+
+    private async Task LoadPrPending()
     {
-        Layout.TitlePlus = "Tableau de bord";
-        //PR PENDING LOADING...
         var orderspendingLoading = _client.GetFromJsonAsync<List<Order>>(_URIPRPENDING);
-        if(!orderspendingLoading.IsCompleted)
+        if (!orderspendingLoading.IsCompleted)
         {
             _prPendingLoading = true;
         }
@@ -183,9 +188,13 @@
         _prPendingTable.DataLoaded(true, _prPending.Take(5).ToList());
         _prPendingLoading = false;
 
-        //PO PROFORMAPENDING LOADING...
+        Console.WriteLine($"LoadPrPending : ...finish");
+    }
+
+    private async Task LoadProformaPending()
+    {
         var ordersProformaPendingLoading = _client.GetFromJsonAsync<List<Order>>(_URIPOPROFORMAPENDING);
-        if(!ordersProformaPendingLoading.IsCompleted)
+        if (!ordersProformaPendingLoading.IsCompleted)
         {
             _poProformaPendingLoading = true;
         }
@@ -194,29 +203,72 @@
         _poProformaPendingTable.DataLoaded(true, _poProformaPending.Take(5).ToList());
         _poProformaPendingLoading = false;
 
+        Console.WriteLine($"LoadProformaPending : ...finish");
+    }
+    private async Task LoadTotalXOFCost()
+    {
         //Get total cost by cuurency XOF
         var totalCostLocalLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_XOF);
         _totalCostLocal = await totalCostLocalLoading;
+        Console.WriteLine($"LoadTotalXOFCost : ...finish");
+    }
+
+    private async Task LoadTotalEURCost()
+    {
         //Get total cost by cuurency EUR
         var totalCostEuropeLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_EUR);
         _totalCostEurope = await totalCostEuropeLoading;
+        Console.WriteLine($"LoadTotalEURCost : ...finish");
+    }
+
+    private async Task LoadTotalUSDCost()
+    {
+
         //Get total cost by cuurency USD
         var totalCostUsdLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD);
         _totalCostUSD = await totalCostUsdLoading;
+        Console.WriteLine($"LoadTotalUSDCost : ...finish");
+    }
 
-        //Loading series for graph top vendor
-        _topVendors = await LoadCharts(_top, _LOCAL);
-        _topVendorsEurope = await LoadCharts(_top, _EUROPE);
-        _topVendorsAsie = await LoadCharts(_top, _ASIE);
-        _topVendorsUsa = await LoadCharts(_top, _USA);
+    private async Task LoadTopVendor()
+    {
+        _topVendors = await GetTopVendors(_top, _LOCAL, _loadingLocalTopVendor);
+        _topVendorsEurope = await GetTopVendors(_top, _EUROPE, _loadingEuropeTopVendor);
+        _topVendorsAsie = await GetTopVendors(_top, _ASIE, _loadingAsieTopVendor);
+        _topVendorsUsa = await GetTopVendors(_top, _USA, _loadingUsaTopVendor);
+
+        Console.WriteLine($"LoadTopVendor : ...finish");
+        //StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //Run All Tasks in Parallele
+        var tasks = new List<Task>();
+        tasks.Add(LoadPrPending());
+        tasks.Add(LoadProformaPending());
+        tasks.Add(LoadTotalUSDCost());
+        tasks.Add(LoadTotalEURCost());
+        tasks.Add(LoadTotalXOFCost());
+        tasks.Add(LoadTopVendor());
+
+        await Task.WhenAll(tasks);
+
+        Layout.TitlePlus = "Tableau de bord";
 
     }
 
-    private async  Task<List<VendorStat>> LoadCharts(int count, string type)
+    private async  Task<List<VendorStat>> GetTopVendors(int count, string type, bool loading)
     {
-       
-            var url = _URITOPVENDORS + "/" + count + "/" + type;
-            return await _client.GetFromJsonAsync<List<VendorStat>>(url);
+
+        var url = _URITOPVENDORS + "/" + count + "/" + type;
+        var request = _client.GetFromJsonAsync<List<VendorStat>>(url);
+        if(!request.IsCompleted)
+        {
+            loading = true;
+        }
+
+        return await request;
     }
 
 }
