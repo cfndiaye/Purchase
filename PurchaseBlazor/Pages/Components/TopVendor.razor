@@ -1,0 +1,58 @@
+﻿<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@Title</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        
+        <MudTable T="VendorStat" Height="@TableHeight" Loading="Loading" Items="@Data" Dense="true" Striped="true" Hover="true">
+            
+            <HeaderContent>
+                <MudTh>Nom vendor</MudTh>
+                <MudTh>Total</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Nom vendor">@RenderName(context.Name)</MudTd>
+                <MudTd DataLabel="Total">@($"{context.TotalAmounts:n0} {Currency}")</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudCardContent>
+
+</MudCard>
+
+@code {
+    [Parameter] public string Title { get; set; }
+    public List<VendorStat> Data { get; set; } = new List<VendorStat>();
+    public bool Loading { get; set; }
+    [Parameter] public string TableHeight { get; set; }
+    [Parameter] public string Currency { get; set; }
+    [Parameter] public string UrlTopVendors { get; set; }
+    [Parameter] public HttpClient Client { get; set; }
+
+    [Parameter] public int Count { get; set; }
+    [Parameter] public string Type { get; set; }
+
+
+    public string RenderName(string name) => name.Length > 12 ? name.Substring(0, 12) : name;
+
+    private async Task GetTopVendors()
+    {
+        var url = $"{UrlTopVendors}/{Count}/{Type}";
+        var request = Client.GetFromJsonAsync<List<VendorStat>>(url);
+        if (!request.IsCompleted)
+        {
+            Loading = true;
+        }
+
+        Data = await request;
+        Loading = false;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetTopVendors();
+    }
+
+}
+

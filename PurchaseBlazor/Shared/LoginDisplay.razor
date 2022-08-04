@@ -26,7 +26,7 @@
     [CascadingParameter]
     public string UserName { get; set; }
 
-    public async Task<string> GetUsername()
+    public async Task GetUsername()
     {
         var authState = await AuthState;
 
@@ -41,8 +41,8 @@
                 Console.WriteLine($"claim => Type: {cl.Type} : Value: {cl.Value}");
             }
         }
-
-        return UserName;
+        StateHasChanged();
+        
     }
 
     protected override async Task OnInitializedAsync()

@@ -32,92 +32,20 @@
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
 <MudGrid Spacing="@spacing" Justify="Justify.Center" Class="mb-4">
     <MudItem xs="3">
-        <MudCard>
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudText Typo="Typo.h6">Top Vendors Local</MudText>
-                </CardHeaderContent>
-            </MudCardHeader>
-            <MudCardContent>
-                <MudTable Height="@_heightTableTopVendor" Loading="@_loadingLocalTopVendor" Items="_topVendors" Dense="true" Hover="true">
-                    <HeaderContent>
-                        <MudTh>Nom vendor</MudTh>
-                        <MudTh>Total</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Nom vendor">@context.Name</MudTd>
-                        <MudTd DataLabel="Total">@($"{context.TotalAmounts:n0} XOF")</MudTd>
-                    </RowTemplate>
-                </MudTable>
-            </MudCardContent>
-
-        </MudCard>
+        <TopVendor Title="Top Vendors Local" Client="_client" Count="_top" Type="@_LOCAL" UrlTopVendors="@_URITOPVENDORS"   TableHeight="@_heightTableTopVendor" Currency="F"/>
+      
     </MudItem>
     <MudItem xs="3">
-        <MudCard>
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudText Typo="Typo.h6">Top Vendors Europe</MudText>
-                </CardHeaderContent>
-            </MudCardHeader>
-            <MudCardContent>
-                <MudTable Height="@_heightTableTopVendor" Loading="@_loadingEuropeTopVendor" Items="_topVendorsEurope" Dense="true" Hover="true">
-                    <HeaderContent>
-                        <MudTh>Nom vendor</MudTh>
-                        <MudTh>Total</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Nom vendor">@context.Name</MudTd>
-                        <MudTd DataLabel="Total">@($"{context.TotalAmounts:C0} ")</MudTd>
-                    </RowTemplate>
-                </MudTable>
-            </MudCardContent>
-
-        </MudCard>
+        <TopVendor Title="Top Vendors Europe" Client="_client" Count="_top" Type="@_EUROPE" UrlTopVendors="@_URITOPVENDORS"   TableHeight="@_heightTableTopVendor" Currency="€" />
+       
     </MudItem>
     <MudItem xs="3">
-        <MudCard>
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudText Typo="Typo.h6">Top Vendors Asie</MudText>
-                </CardHeaderContent>
-            </MudCardHeader>
-            <MudCardContent>
-                <MudTable Height="@_heightTableTopVendor" Loading="@_loadingAsieTopVendor" Items="_topVendorsAsie" Dense="true" Hover="true">
-                    <HeaderContent>
-                        <MudTh>Nom vendor</MudTh>
-                        <MudTh>Total</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Nom vendor">@context.Name</MudTd>
-                        <MudTd DataLabel="Total">@($"{context.TotalAmounts:n0} USD")</MudTd>
-                    </RowTemplate>
-                </MudTable>
-            </MudCardContent>
-
-        </MudCard>
+        <TopVendor Title="Top Vendors Asie" Client="_client" Count="_top" Type="@_ASIE" UrlTopVendors="@_URITOPVENDORS"  TableHeight="@_heightTableTopVendor" Currency="$" />
+        
     </MudItem>
     <MudItem xs="3">
-        <MudCard>
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudText Typo="Typo.h6">Top Vendors USA</MudText>
-                </CardHeaderContent>
-            </MudCardHeader>
-            <MudCardContent>
-                <MudTable  Height="@_heightTableTopVendor" Loading="@_loadingUsaTopVendor" Items="_topVendorsUsa" Dense="true" Hover="true">
-                    <HeaderContent>
-                        <MudTh>Nom vendor</MudTh>
-                        <MudTh>Total</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Nom vendor">@context.Name</MudTd>
-                        <MudTd DataLabel="Total">@($"{context.TotalAmounts:n0} USD")</MudTd>
-                    </RowTemplate>
-                </MudTable>
-            </MudCardContent>
-
-        </MudCard>
+        <TopVendor Title="Top Vendors Usa" Client="_client" Count="_top" Type="@_USA" UrlTopVendors="@_URITOPVENDORS"  TableHeight="@_heightTableTopVendor" Currency="$" />
+        
     </MudItem>
 </MudGrid>
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4 mt-4" />
@@ -161,20 +89,11 @@
     private decimal _totalCostLocal;
     private decimal _totalCostEurope;
     private decimal _totalCostUSD;
-    private List<VendorStat> _topVendors = new List<VendorStat>();
-    private List<VendorStat> _topVendorsEurope = new List<VendorStat>();
-    private List<VendorStat> _topVendorsAsie = new List<VendorStat>();
-    private List<VendorStat> _topVendorsUsa = new List<VendorStat>();
+   
 
-    private bool _loadingLocalTopVendor = false;
-    private bool _loadingEuropeTopVendor = false;
-    private bool _loadingAsieTopVendor = false;
-    private bool _loadingUsaTopVendor = false;
+    private string _heightTableTopVendor = "210px";
 
-    private string _heightTableTopVendor = "300px";
-
-    //private string[] _xAxisLabels = new string[_top];
-    //private double[] _datas =  new double[_top];
+    
 
     private async Task LoadPrPending()
     {
@@ -188,7 +107,7 @@
         _prPendingTable.DataLoaded(true, _prPending.Take(5).ToList());
         _prPendingLoading = false;
 
-        Console.WriteLine($"LoadPrPending : ...finish");
+        StateHasChanged();
     }
 
     private async Task LoadProformaPending()
@@ -202,15 +121,16 @@
         CountNumberOrderProformaPending = _poProformaPending.Count;
         _poProformaPendingTable.DataLoaded(true, _poProformaPending.Take(5).ToList());
         _poProformaPendingLoading = false;
-
-        Console.WriteLine($"LoadProformaPending : ...finish");
+        
+        StateHasChanged();
     }
     private async Task LoadTotalXOFCost()
     {
         //Get total cost by cuurency XOF
         var totalCostLocalLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_XOF);
         _totalCostLocal = await totalCostLocalLoading;
-        Console.WriteLine($"LoadTotalXOFCost : ...finish");
+       
+        StateHasChanged();
     }
 
     private async Task LoadTotalEURCost()
@@ -218,7 +138,8 @@
         //Get total cost by cuurency EUR
         var totalCostEuropeLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_EUR);
         _totalCostEurope = await totalCostEuropeLoading;
-        Console.WriteLine($"LoadTotalEURCost : ...finish");
+        
+        StateHasChanged();
     }
 
     private async Task LoadTotalUSDCost()
@@ -227,19 +148,11 @@
         //Get total cost by cuurency USD
         var totalCostUsdLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD);
         _totalCostUSD = await totalCostUsdLoading;
-        Console.WriteLine($"LoadTotalUSDCost : ...finish");
+        
+        StateHasChanged();
     }
 
-    private async Task LoadTopVendor()
-    {
-        _topVendors = await GetTopVendors(_top, _LOCAL, _loadingLocalTopVendor);
-        _topVendorsEurope = await GetTopVendors(_top, _EUROPE, _loadingEuropeTopVendor);
-        _topVendorsAsie = await GetTopVendors(_top, _ASIE, _loadingAsieTopVendor);
-        _topVendorsUsa = await GetTopVendors(_top, _USA, _loadingUsaTopVendor);
-
-        Console.WriteLine($"LoadTopVendor : ...finish");
-        //StateHasChanged();
-    }
+    
 
     protected override async Task OnInitializedAsync()
     {
@@ -250,25 +163,14 @@
         tasks.Add(LoadTotalUSDCost());
         tasks.Add(LoadTotalEURCost());
         tasks.Add(LoadTotalXOFCost());
-        tasks.Add(LoadTopVendor());
-
         await Task.WhenAll(tasks);
 
+
         Layout.TitlePlus = "Tableau de bord";
+        StateHasChanged();
 
     }
 
-    private async  Task<List<VendorStat>> GetTopVendors(int count, string type, bool loading)
-    {
-
-        var url = _URITOPVENDORS + "/" + count + "/" + type;
-        var request = _client.GetFromJsonAsync<List<VendorStat>>(url);
-        if(!request.IsCompleted)
-        {
-            loading = true;
-        }
-
-        return await request;
-    }
+    
 
 }

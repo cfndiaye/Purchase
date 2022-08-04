@@ -45,7 +45,7 @@
 
 @code {
     [CascadingParameter] public MainLayout Layout{get; set;}
-    [CascadingParameter] public string UserName { get; set; }
+    //[CascadingParameter] public string UserName { get; set; }
     private AuthenticationUserModel _model = new();
     private bool _showAuthenticationError = false;
     private string _authenticationErrorText = "";
@@ -64,12 +64,7 @@
         var result = await AuthService.Login(_model);
         if (result is not null)
         {
-            var loadingUserName = Layout.LoginDisplay.GetUsername();
-            if (loadingUserName.IsCompleted)
-            {
-                UserName = await loadingUserName;
-            }
-
+            await Layout.LoginDisplay.GetUsername();
             NavigationManager.NavigateTo(returnUrl);
         }
         else
