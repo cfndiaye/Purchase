@@ -7,22 +7,26 @@ using MongoDB.Driver;
 using PurchaseShared.Models;
 using Purchase.Services.Contract;
 using Purchase.Infrastructure.Models;
+using MongoDB.Bson;
 
 namespace Purchase.Services.Implementation
 {
   public class OrderService : IOrderService
   {
     private readonly IMongoCollection<Order> _ordersCollection;
+    private readonly IMongoCollection<Vendor> _vendorsCollection;
     private readonly VendorService _vendorService;
-    private readonly MongoContext  _mongoContext;
+    private readonly MongoContext _mongoContext;
 
     public OrderService(IOptions<PurchaseStoreDatabaseSettings> storeSettings, 
-        
+
         VendorService vendorService)
     {
-            _mongoContext = new MongoContext(storeSettings);
-            _ordersCollection = _mongoContext.GetDatabase().GetCollection<Order>(storeSettings.Value.OrdersCollectionName);
-            _vendorService = vendorService;
+      
+      _mongoContext = new MongoContext(storeSettings);
+      _ordersCollection = _mongoContext.GetDatabase().GetCollection<Order>(storeSettings.Value.OrdersCollectionName);
+      _vendorsCollection = _mongoContext.GetDatabase().GetCollection<Vendor>(storeSettings.Value.VendorsCollectionName);
+      _vendorService = vendorService;
     }
 
     public async Task AddOrderAsync(Order order) =>
@@ -34,8 +38,8 @@ namespace Purchase.Services.Implementation
     public async Task<Order> GetOrderByIdAsync(string orderId)
     {
       var order = await _ordersCollection.Find(x => x.Id == orderId).FirstOrDefaultAsync();
-            //include vendor reference
-            var vendor = await _vendorService.GetVendorByIdAsync(order.VendorId);
+      //include vendor reference
+      var vendor = await _vendorService.GetVendorByIdAsync(order.VendorId);
       order.Vendor = vendor;
       return order;
     }
@@ -56,7 +60,7 @@ namespace Purchase.Services.Implementation
     public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(string status)
     {
       var orders = (await _ordersCollection.Find(o => o.Status == status).ToListAsync());
-      orders.ForEach(o => o.Vendor =  _vendorService.GetVendorById(o.VendorId));
+      orders.ForEach(o => o.Vendor = _vendorService.GetVendorById(o.VendorId));
       return orders;
     }
 
@@ -68,10 +72,39 @@ namespace Purchase.Services.Implementation
 
     public async Task<IEnumerable<Order>> GetOrdersAsync(bool includeVendor)
     {
-      var orders = (await _ordersCollection.Find(_ => true).ToListAsync());
-      if(includeVendor)
-        orders.ForEach(async o => o.Vendor = await _vendorService.GetVendorByIdAsync(o.VendorId));
-      return orders;
+      /*var orders = (await _ordersCollection.Find(_ => true).ToListAsync());
+      if (includeVendor)
+        orders.ForEach(async o => o.Vendor = await _vendorService.GetVendorByIdAsync(o.VendorId));*/
+
+        var queryableOrder = _ordersCollection.AsQueryable();
+      var queryableVendor =  _vendorsCollection.AsQueryable();
+      var result = from order in queryableOrder
+                   join vendor in queryableVendor on order.VendorId equals vendor.Id
+                   select new Order
+                   {
+                     Id = order.Id,
+                     AgentName = order.AgentName,
+                     NoLigne = order.NoLigne,
+                     UnitName = order.UnitName,
+                     ReqNumber = order.ReqNumber,
+                     Description = order.Description,
+                     Localisation = order.Localisation,
+                     Type = order.Type,
+                     PrDate = order.PrDate,
+                     ApprovedDate = order.ApprovedDate,
+                     Status = order.Status,
+                     PurchaseOrder = order.PurchaseOrder,
+                     DatePo = order.DatePo,
+                     DateLivraison = order.DateLivraison,
+                     Amount = order.Amount,
+                     VendorId = order.VendorId, 
+                     Vendor = vendor,
+                     Devise = order.Devise,
+                     Commentaires = order.Commentaires,
+                     Livree = order.Livree
+
+                   };
+      return await  Task.Run(() => result.ToList());
     }
 
     public async Task UpdateOrderAsync(string id, Order order) =>
@@ -82,24 +115,62 @@ namespace Purchase.Services.Implementation
       await _ordersCollection.InsertManyAsync(orders);
     }
 
-        //Get Total cost off orders
-        public async Task<double> GetTotalCostAsync(string devise)
-        {
-           var orders = await _ordersCollection.Find(_ => true).ToListAsync();
+    //Get Total cost off orders
+    public async Task<double> GetTotalCostAsync(string devise)
+    {
+      var orders = await _ordersCollection.Find(_ => true).ToListAsync();
 
-            return orders.Where(o => o.Devise == devise).Sum(o => o.Amount);
-        }
-        //Get Total Cost By Vendor
-        public async Task<double> GetTotalCostByVendorIdAsync(string vendorId, string devise)
-        {
-            var orders = await _ordersCollection.Find(_ => true).ToListAsync();
-
-            return orders.Where(o => o.VendorId == vendorId).Where(o => o.Devise == devise).Sum(o => o.Amount);
-        }
-
-        public async Task<IEnumerable<Order>> GetOrdersByVendorIdAsync(string vendorId)
-        {
-            return await _ordersCollection.Find(o => o.VendorId == vendorId).ToListAsync();
-        }
+      return orders.Where(o => o.Devise == devise).Sum(o => o.Amount);
     }
+    //Get Total Cost By Vendor
+    public async Task<double> GetTotalCostByVendorIdAsync(string vendorId, string devise)
+    {
+      var orders = await _ordersCollection.Find(_ => true).ToListAsync();
+
+      return orders.Where(o => o.VendorId == vendorId).Where(o => o.Devise == devise).Sum(o => o.Amount);
+    }
+
+    public async Task<IEnumerable<Order>> GetOrdersByVendorIdAsync(string vendorId)
+    {
+      return await _ordersCollection.Find(o => o.VendorId == vendorId).ToListAsync();
+    }
+
+    public  async Task<double> GetTotalCostByVendorType(string type)
+    {
+      var queryableOrder = _ordersCollection.AsQueryable();
+      var queryableVendor =  _vendorsCollection.AsQueryable();
+      var result = from order in queryableOrder
+                   join vendor in queryableVendor on order.VendorId equals vendor.Id
+                   select new Order
+                   {
+                     Id = order.Id,
+                     AgentName = order.AgentName,
+                     NoLigne = order.NoLigne,
+                     UnitName = order.UnitName,
+                     ReqNumber = order.ReqNumber,
+                     Description = order.Description,
+                     Localisation = order.Localisation,
+                     Type = order.Type,
+                     PrDate = order.PrDate,
+                     ApprovedDate = order.ApprovedDate,
+                     Status = order.Status,
+                     PurchaseOrder = order.PurchaseOrder,
+                     DatePo = order.DatePo,
+                     DateLivraison = order.DateLivraison,
+                     Amount = order.Amount,
+                     VendorId = order.VendorId, 
+                     Vendor = vendor,
+                     Devise = order.Devise,
+                     Commentaires = order.Commentaires,
+                     Livree = order.Livree
+
+                   }; 
+
+      return await Task.Run(() => result.Where(x => x.Vendor.Type == type).Sum(o => o.Amount));
+
+    }
+
+    
+
+  }
 }

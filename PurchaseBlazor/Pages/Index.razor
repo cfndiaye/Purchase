@@ -8,25 +8,30 @@
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
 
 <MudGrid Spacing="@spacing" Justify="Justify.Center"  Class="mb-4">
-    <MudItem xs="4">
+    <MudItem xs="3">
         <WidgetCounter Counter="@_totalCostLocal" Currency="XOF" Description="Commandes locales"
                        CustomColor="@Colors.Grey.Lighten5" 
                        BgColor="@Colors.LightGreen.Darken3" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess" />
     </MudItem>
-    <MudItem xs="4">
+    <MudItem xs="3">
         <WidgetCounter Counter="@_totalCostEurope" Currency="€" Description="Commandes Europe"
                        CustomColor="@Colors.Grey.Lighten5" 
                        BgColor="@Colors.LightBlue.Darken3" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Material.Filled.Euro" />
     </MudItem>
-    <MudItem xs="4">
-        <WidgetCounter Counter="@_totalCostUSD" Currency="$" Description="Commandes en Dollar"
+    <MudItem xs="3">
+        <WidgetCounter Counter="@_totalCostUSD" Currency="$" Description="Commandes en ASIE"
                        CustomColor="@Colors.Grey.Lighten5" 
                        BgColor="@Colors.Yellow.Darken3" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Filled.AttachMoney" />
     </MudItem>
-    
+    <MudItem xs="3">
+        <WidgetCounter Counter="@_totalCostUSD_USA" Currency="$" Description="Commandes aux USA"
+                       CustomColor="@Colors.Grey.Lighten5" 
+                       BgColor="@Colors.Yellow.Darken3" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Filled.AttachMoney" />
+    </MudItem>
 </MudGrid>
 
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
@@ -74,9 +79,13 @@
     private bool _poProformaPendingLoading;
     private const string _URIPRPENDING = "api/orders/GetOrdersByStatus/PR PENDING";
     private const string _URIPOPROFORMAPENDING = "api/orders/GetOrdersByStatus/WAITING PROFORMA";
-    private const string _URITOTALCOSTBYCURRENCY_XOF = "api/orders/GetTotalCostByCurrency/XOF";
-    private const string _URITOTALCOSTBYCURRENCY_USD = "api/orders/GetTotalCostByCurrency/USD";
-    private const string _URITOTALCOSTBYCURRENCY_EUR = "api/orders/GetTotalCostByCurrency/EUR";
+    //private const string _URITOTALCOSTBYCURRENCY_XOF = "api/orders/GetTotalCostByCurrency/XOF";
+    private const string _URITOTALCOSTBYCURRENCY_XOF = "api/orders/GetTotalCostByType/Locale";
+    //private const string _URITOTALCOSTBYCURRENCY_USD = "api/orders/GetTotalCostByCurrency/USD";
+    private const string _URITOTALCOSTBYCURRENCY_USD = "api/orders/GetTotalCostByType/Asie";
+    //private const string _URITOTALCOSTBYCURRENCY_EUR = "api/orders/GetTotalCostByCurrency/EUR";
+    private const string _URITOTALCOSTBYCURRENCY_EUR = "api/orders/GetTotalCostByType/Europe";
+    private const string _URITOTALCOSTBYCURRENCY_USD_USA = "api/orders/GetTotalCostByType/Usa";
     private const string _LOCAL = "Locale";
     private const string _EUROPE = "Europe";
     private const string _ASIE = "Asie";
@@ -89,11 +98,12 @@
     private decimal _totalCostLocal;
     private decimal _totalCostEurope;
     private decimal _totalCostUSD;
-   
+    private decimal _totalCostUSD_USA;
+
 
     private string _heightTableTopVendor = "210px";
 
-    
+
 
     private async Task LoadPrPending()
     {
@@ -121,7 +131,7 @@
         CountNumberOrderProformaPending = _poProformaPending.Count;
         _poProformaPendingTable.DataLoaded(true, _poProformaPending.Take(5).ToList());
         _poProformaPendingLoading = false;
-        
+
         StateHasChanged();
     }
     private async Task LoadTotalXOFCost()
@@ -129,7 +139,7 @@
         //Get total cost by cuurency XOF
         var totalCostLocalLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_XOF);
         _totalCostLocal = await totalCostLocalLoading;
-       
+
         StateHasChanged();
     }
 
@@ -138,7 +148,17 @@
         //Get total cost by cuurency EUR
         var totalCostEuropeLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_EUR);
         _totalCostEurope = await totalCostEuropeLoading;
-        
+
+        StateHasChanged();
+    }
+
+    private async Task LoadTotalUSD_USACost()
+    {
+
+        //Get total cost by cuurency USD and Vendor in USA
+        var totalCostUsdLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD_USA);
+        _totalCostUSD = await totalCostUsdLoading;
+
         StateHasChanged();
     }
 
@@ -148,11 +168,11 @@
         //Get total cost by cuurency USD
         var totalCostUsdLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD);
         _totalCostUSD = await totalCostUsdLoading;
-        
+
         StateHasChanged();
     }
 
-    
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -171,6 +191,6 @@
 
     }
 
-    
+
 
 }

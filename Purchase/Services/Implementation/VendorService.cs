@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using Purchase.Infrastructure.Models;
 using PurchaseShared.Models;
 using Purchase.Services.Contract;
+using Microsoft.EntityFrameworkCore;
 
 namespace Purchase.Services.Implementation
 {
@@ -69,7 +70,7 @@ namespace Purchase.Services.Implementation
             //vendor.OrderList = (await _orderService.GetOrdersByVendorIdAsync(id)).ToList();
 
             vendor.Orders.ForEach(o => vendor.OrderList.Add(_ordersCollection.Find(s => s.Id == o).FirstOrDefault()));
-                       
+
           }
 
         }
@@ -117,11 +118,9 @@ namespace Purchase.Services.Implementation
     /// <returns></returns>
     public async Task<IEnumerable<Vendor>> GetVendorsWithOrdersAsync()
     {
-      var vendors = await _vendorsCollection.Find(_ => true).ToListAsync();
-
-      //vendors.ForEach(async (v) => v.OrderList = await _ordersCollection.Find(o => o.VendorId == v.Id).ToListAsync());
-      //vendors.ForEach(async (v) => v.OrderList = (await _orderService.GetOrdersByVendorIdAsync(v.Id)).ToList());
+      var vendors = await _vendorsCollection.Find(v => v.Orders.Any()).ToListAsync();
       var vendorResult = new List<Vendor>();
+
       foreach (var vendor in vendors)
       {
         vendor.OrderList = await _ordersCollection.Find(o => o.VendorId == vendor.Id).ToListAsync();

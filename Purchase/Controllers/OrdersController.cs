@@ -25,7 +25,7 @@ namespace Purchase.Controllers
         {
             _orderService = orderService;
             _logger = logger;
-            _vendorService = vendorService;
+           _vendorService = vendorService;
         }
         // GET: api/<OrdersController>
         [HttpGet]
@@ -195,6 +195,15 @@ namespace Purchase.Controllers
         public async Task<double> GetTotalCostByCurrency(string devise)
         {
             var cost = await _orderService.GetTotalCostAsync(devise);
+
+            return cost;
+        }
+
+        // GET total cost orders by Vendor type
+        [HttpGet("{type}")]
+        public async Task<double> GetTotalCostByType(string type)
+        {
+            var cost = await _orderService.GetTotalCostByVendorType(type);
 
             return cost;
         }

@@ -10,6 +10,7 @@ namespace Purchase.Services.Contract
     {
         Task<IEnumerable<Order>> GetOrdersAsync(string query);
         Task<IEnumerable<Order>> GetOrdersAsync();
+        Task<IEnumerable<Order>> GetOrdersAsync(bool includeVendor);
         Task<Order> GetOrderByIdAsync(string id);
         Task<Order> GetOrderByPrAsync(int pr);
 
@@ -19,5 +20,11 @@ namespace Purchase.Services.Contract
         Task UpdateOrderAsync(string id, Order order);
         Task DeleteOrderAsync(string orderId);
         Task BulkImportAsync(List<Order> orders);
+
+        Task<double> GetTotalCostByVendorIdAsync(string vendorId, string devise);
+        Task<double> GetTotalCostAsync(string devise);
+
+        Task<double> GetTotalCostByVendorType(string type);
+        
     }
 }

@@ -50,10 +50,9 @@
 
     }
     
-    protected override async Task OnInitializedAsync()
+    protected override void  OnInitialized()
     {
         _clientVersion = typeof(Program).Assembly.GetName().Version.ToString();
-        //await LoginDisplay.GetUsername();
     }
 
 
