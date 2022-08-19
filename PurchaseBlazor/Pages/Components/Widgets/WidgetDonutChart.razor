@@ -1,0 +1,30 @@
+﻿
+<RadzenCard Class="w-100">
+    <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
+    <RadzenLabel Text="Afficher les labels" For="dataLabels" Style="margin-left: 8px; vertical-align: middle;" />
+
+    <RadzenChart>
+        <RadzenDonutSeries Data="@VendorTypes" InnerRadius="80" Radius="100" CategoryProperty="VendorType" ValueProperty="Value">
+            <ChildContent>
+                <RadzenSeriesDataLabels Visible="@showDataLabels" />
+            </ChildContent>
+            <TitleTemplate>
+                <div class="rz-donut-content">
+                    <div>Répartition</div>
+                    <div>par zone</div>
+                </div>
+            </TitleTemplate>
+        </RadzenDonutSeries>
+    </RadzenChart>
+</RadzenCard>
+
+
+
+@code {
+    bool showDataLabels = false;
+
+    [Parameter] public List<TypeVendorStat> VendorTypes { get; set; }
+   
+
+}
+

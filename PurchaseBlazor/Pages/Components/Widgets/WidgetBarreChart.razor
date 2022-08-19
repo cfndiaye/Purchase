@@ -1,0 +1,49 @@
+﻿
+        
+            <RadzenCard Class="w-100">
+                <RadzenLabel For="dataLabels" Text="Top vendors année encours" Style="margin-left: 8px; vertical-align: middle;" />
+                <RadzenChart>
+                    <RadzenColumnSeries Data="@Data" CategoryProperty="ShortName"  Title="@CurrentYear.ToString()" LineType="LineType.Dashed" ValueProperty="TotalAmounts">
+
+                        <TooltipTemplate Context="data">
+                            
+                            <div>
+                                Valeur pour <span>@data.Name</span> @CurrentYear:
+                                <strong>@data.TotalAmounts</strong>
+                            </div>
+                        </TooltipTemplate>
+                       
+                    </RadzenColumnSeries>
+                   
+                    <RadzenColumnOptions Radius="5" />
+                    <RadzenValueAxis Formatter="@FormatAsUSD">
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="Value in USD" />
+                    </RadzenValueAxis>
+
+                </RadzenChart>
+            </RadzenCard>
+
+
+@code {
+
+
+    //bool ShowDataLabels = false;
+
+    private int CurrentYear => DateTime.UtcNow.Year;
+    //private int LastYear => DateTime.UtcNow.Year - 1;
+
+    [Parameter]
+    public List<VendorStat> Data { get; set; }
+
+   
+
+    string FormatAsUSD(object value)
+    {
+        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-US"));
+    }
+
+   
+
+}
+
