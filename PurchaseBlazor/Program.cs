@@ -13,34 +13,43 @@ using PurchaseShared.Models;
 using MudBlazor.Services;
 using PurchaseBlazor.Pages.Authentication;
 using Blazored.LocalStorage;
+using Radzen;
 
 namespace PurchaseBlazor
 {
-    public class Program
+  public class Program
+  {
+    public static async Task Main(string[] args)
     {
-        public static async Task Main(string[] args)
-        {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("#app");
-            if (builder.HostEnvironment.IsProduction())
-            {
-                builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://dakar-hightech.com:11443") });
-            }
-            else
-            {
-                //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-                builder.Services.AddScoped(c => new HttpClient { BaseAddress = new Uri(SettingApp.ServerUrl) });
-                
-            }
+      var builder = WebAssemblyHostBuilder.CreateDefault(args);
+      builder.RootComponents.Add<App>("#app");
+      if (builder.HostEnvironment.IsProduction())
+      {
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://dakar-hightech.com:11443") });
+      }
+      else
+      {
+        //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+        builder.Services.AddScoped(c => new HttpClient { BaseAddress = new Uri(SettingApp.ServerUrl) });
 
-            
-            builder.Services.AddBlazoredLocalStorage();
-            builder.Services.AddAuthorizationCore();
-            builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
-            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+      }
 
-            builder.Services.AddMudServices();
-            await builder.Build().RunAsync();
-        }
+
+      builder.Services.AddBlazoredLocalStorage();
+      builder.Services.AddAuthorizationCore();
+      builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+      builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+      //Include Radzen
+      builder.Services.AddScoped<DialogService>();
+      builder.Services.AddScoped<NotificationService>();
+      builder.Services.AddScoped<TooltipService>();
+      builder.Services.AddScoped<ContextMenuService>();
+
+      //Include MudBlazor
+      builder.Services.AddMudServices();
+
+      await builder.Build().RunAsync();
     }
+  }
 }

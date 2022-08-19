@@ -1,22 +1,33 @@
-﻿<MudCard Class="@($"{BgColor} mud-width-full")" Elevation="2" Style="@($"height: {Height}; color:{TextColor}; background:{BgColor};")">
-    <MudCardContent>
-        <div class="d-flex align-items-center flex-column py-4">
-            <div class="mx-auto p-2">
-               
-                    <MudIcon Icon="@CustomContentIcon" Class="@CustomColor" Size="Size.Large" />
-                
-            </div>
-            <div class="mx-auto p-2">
+﻿<MudCard class="" Elevation="2" Style="@($"height: {Height}; width: 100%; color:{TextColor}; background:{BgColor};")">
+    <MudCardContent Class="align-center">
+        <div class="d-flex my-3 align-items-center">
+            <div>
                 <MudText Typo="Typo.h6">@($"{Counter:N0} {Currency}")</MudText>
+                <p>@Description</p>
             </div>
-            <div class="mx-auto p-2">
-                <MudText Class="text-secondary">@Description</MudText>
+            <div class="ms-auto bg-light-transparent">
+                <MudIcon Icon="@CustomContentIcon" Class="@CustomColor" Size="Size.Large" />
             </div>
-
         </div>
     </MudCardContent>
 </MudCard>
-
+@*
+    <MudCard class="" Elevation="2" Style="@($"height: {Height}; width: 100%; color:{TextColor}; background:{BgColor};")">
+    <MudCardContent>
+    <div class="d-flex align-items-center flex-column">
+    <div class="mx-auto p-2">
+    <MudIcon Icon="@CustomContentIcon" Class="@CustomColor" Size="Size.Large" />
+    </div>
+    <div class="mx-auto p-2">
+    <MudText Typo="Typo.h6">@($"{Counter:N0} {Currency}")</MudText>
+    </div>
+    <div class="mx-auto p-2">
+    <MudText >@Description</MudText>
+    </div>
+    </div>
+    </MudCardContent>
+    </MudCard>
+*@
 
 @code {
     [Parameter] public decimal Counter { get; set; }
@@ -29,6 +40,6 @@
     [Parameter] public string TextColor { get; set; } = Colors.LightGreen.Accent3;
     [Parameter] public string Currency { get; set; }
     [Parameter] public string Width { get; set; }
-    [Parameter] public string Height { get; set; } = "160px";
+    [Parameter] public string Height { get; set; } = "130px";
 
 }

@@ -200,6 +200,53 @@ namespace Purchase.Controllers
       }
       return null;
     }
+
+    [HttpGet("{top}/{year}")]
+    public async Task<List<VendorStat>> GetAllTopVendorsAsync(int top, int year)
+    {
+      var vendors = await _vendorService.GetVendorsWithOrdersAsync();
+
+      try
+      {
+        var vendorStats = new List<VendorStat>();
+        var vendorsWithOrders = vendors.Where(v => v.OrderList is not null && v.OrderList.Any()).ToList();
+
+        if (vendorsWithOrders.Any())
+        {
+          foreach (var vo in vendorsWithOrders)
+          {
+            if (vo.OrderList.Where(o => o.DatePo.Value.Year == year).Count() > 0)
+            {
+              var amount = vo.OrderList.Where(o => o.DatePo.Value.Year == year).Sum(o => o.Amount);
+              //verify the currency and convert to dollars us
+              switch (vo.Type)
+              {
+
+                case "Locale":
+                  amount /= 630;
+                  break;
+                case "Europe":
+                  amount /= 0.974;
+                  break;
+                case "Asie":
+                  break;
+                case "Usa":
+                  break;
+
+              }
+              var vendorStat = new VendorStat(vo.Id, vo.Name, amount, vo.Type);
+              vendorStats.Add(vendorStat);
+            }
+          }
+        }
+        return vendorStats.OrderByDescending(vs => vs.TotalAmounts).Take(top).ToList();
+      }
+      catch (Exception ex)
+      {
+        _logger.LogCritical(ex.Message);
+      }
+      return null;
+    }
   }
 
 }

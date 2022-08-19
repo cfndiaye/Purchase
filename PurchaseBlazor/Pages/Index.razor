@@ -2,88 +2,67 @@
 @inject HttpClient _client
 @attribute [Authorize]
 
-<MudText Typo="Typo.h5">Tableau de bord</MudText>
-<MudText Typo="Typo.subtitle1">Suivi des demandes d'achat et commandes</MudText>
 <MudSpacer />
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
-
-<MudGrid Spacing="@spacing" Justify="Justify.Center"  Class="mb-4">
-    <MudItem xs="3">
-        <WidgetCounter Counter="@_totalCostLocal" Currency="XOF" Description="Commandes locales"
-                       CustomColor="@Colors.Grey.Lighten5" 
-                       BgColor="@Colors.LightGreen.Darken3" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess" />
-    </MudItem>
-    <MudItem xs="3">
-        <WidgetCounter Counter="@_totalCostEurope" Currency="€" Description="Commandes Europe"
-                       CustomColor="@Colors.Grey.Lighten5" 
-                       BgColor="@Colors.LightBlue.Darken3" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Material.Filled.Euro" />
-    </MudItem>
-    <MudItem xs="3">
-        <WidgetCounter Counter="@_totalCostUSD" Currency="$" Description="Commandes en ASIE"
-                       CustomColor="@Colors.Grey.Lighten5" 
-                       BgColor="@Colors.Yellow.Darken3" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Filled.AttachMoney" />
-    </MudItem>
-    <MudItem xs="3">
-        <WidgetCounter Counter="@_totalCostUSD_USA" Currency="$" Description="Commandes aux USA"
-                       CustomColor="@Colors.Grey.Lighten5" 
-                       BgColor="@Colors.Yellow.Darken3" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Filled.AttachMoney" />
-    </MudItem>
-</MudGrid>
-
+<div class="d-flex flex-grow-1 gap-4">
+        <MudPaper class="flex-1 d-flex">
+            <WidgetCounter Counter="@_totalCostLocal" Currency="XOF" Description="Commandes locales"
+                CustomColor="@Colors.Grey.Lighten5" BgColor="#5e72e4" TextColor="@Colors.Grey.Lighten5"
+                CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess" />
+        </MudPaper>
+        <MudPaper class="flex-1 d-flex">
+            <WidgetCounter Counter="@_totalCostEurope" Currency="€" Description="Commandes Europe"
+                CustomColor="@Colors.Grey.Lighten5" BgColor="#f5365c" TextColor="@Colors.Grey.Lighten5"
+                CustomContentIcon="@Icons.Material.Filled.Euro" />
+        </MudPaper>
+        <MudPaper class="flex-1 d-flex">
+            <WidgetCounter Counter="@_totalCostUSD" Currency="$" Description="Commandes en ASIE"
+                CustomColor="@Colors.Grey.Lighten5" BgColor="#2dce89" TextColor="@Colors.Grey.Lighten5"
+                CustomContentIcon="@Icons.Filled.AttachMoney" />
+        </MudPaper>
+        <MudPaper class="flex-1 d-flex">
+            <WidgetCounter Counter="@_totalCostUSD_USA" Currency="$" Description="Commandes aux USA"
+                CustomColor="@Colors.Grey.Lighten5" BgColor="#fb6340" TextColor="@Colors.Grey.Lighten5"
+                CustomContentIcon="@Icons.Filled.AttachMoney" />
+        </MudPaper>
+    
+</div>
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
 <MudGrid Spacing="@spacing" Justify="Justify.Center" Class="mb-4">
     <MudItem xs="3">
-        <TopVendor Title="Top Vendors Local" Client="_client" Count="_top" Type="@_LOCAL" UrlTopVendors="@_URITOPVENDORS"   TableHeight="@_heightTableTopVendor" Currency="F"/>
-      
+        <TopVendor Title="Top Vendors Local" Client="_client" Count="_top" Type="@_LOCAL"
+            UrlTopVendors="@_URITOPVENDORS" TableHeight="@_heightTableTopVendor" Currency="F" />
+ 
     </MudItem>
     <MudItem xs="3">
-        <TopVendor Title="Top Vendors Europe" Client="_client" Count="_top" Type="@_EUROPE" UrlTopVendors="@_URITOPVENDORS"   TableHeight="@_heightTableTopVendor" Currency="€" />
-       
+        <TopVendor Title="Top Vendors Europe" Client="_client" Count="_top" Type="@_EUROPE"
+            UrlTopVendors="@_URITOPVENDORS" TableHeight="@_heightTableTopVendor" Currency="€" />
+
     </MudItem>
     <MudItem xs="3">
-        <TopVendor Title="Top Vendors Asie" Client="_client" Count="_top" Type="@_ASIE" UrlTopVendors="@_URITOPVENDORS"  TableHeight="@_heightTableTopVendor" Currency="$" />
-        
+        <TopVendor Title="Top Vendors Asie" Client="_client" Count="_top" Type="@_ASIE" UrlTopVendors="@_URITOPVENDORS"
+            TableHeight="@_heightTableTopVendor" Currency="$" />
+
     </MudItem>
     <MudItem xs="3">
-        <TopVendor Title="Top Vendors Usa" Client="_client" Count="_top" Type="@_USA" UrlTopVendors="@_URITOPVENDORS"  TableHeight="@_heightTableTopVendor" Currency="$" />
-        
+        <TopVendor Title="Top Vendors Usa" Client="_client" Count="_top" Type="@_USA" UrlTopVendors="@_URITOPVENDORS"
+            TableHeight="@_heightTableTopVendor" Currency="$" />
+
     </MudItem>
 </MudGrid>
-<MudDivider DividerType="DividerType.FullWidth" Class="mb-4 mt-4" />
 
-<MudText Typo="Typo.h6">PR PENDING</MudText>
-<OrderTable @ref="_prPendingTable" Client="_client" Loading="_prPendingLoading"
-            MarginDense="Margin.Dense" Message="" SelectedOrder="_selectedOrder"  />
-<MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
-<MudText Typo="Typo.h6">PROFORMA PENDING</MudText>
-<OrderTable @ref="_poProformaPendingTable" Client="_client" Loading="_poProformaPendingLoading"
-            MarginDense="Margin.Dense" Message="" SelectedOrder="_selectedOrder" />
+
+
 
 
 @code {
 
     private const int _top = 5;
-    [CascadingParameter] public MainLayout Layout{get; set;}
+    [CascadingParameter] public MainLayout Layout { get; set; }
     private bool _isAuthenticate;
     private int spacing { get; set; } = 2;
-    private Order _selectedOrder;
-    private OrderTable _prPendingTable;
-    private OrderTable _poProformaPendingTable;
-    private List<Order> _prPending;
-    private List<Order> _poProformaPending;
-    private bool _prPendingLoading;
-    private bool _poProformaPendingLoading;
-    private const string _URIPRPENDING = "api/orders/GetOrdersByStatus/PR PENDING";
-    private const string _URIPOPROFORMAPENDING = "api/orders/GetOrdersByStatus/WAITING PROFORMA";
-    //private const string _URITOTALCOSTBYCURRENCY_XOF = "api/orders/GetTotalCostByCurrency/XOF";
     private const string _URITOTALCOSTBYCURRENCY_XOF = "api/orders/GetTotalCostByType/Locale";
-    //private const string _URITOTALCOSTBYCURRENCY_USD = "api/orders/GetTotalCostByCurrency/USD";
     private const string _URITOTALCOSTBYCURRENCY_USD = "api/orders/GetTotalCostByType/Asie";
-    //private const string _URITOTALCOSTBYCURRENCY_EUR = "api/orders/GetTotalCostByCurrency/EUR";
     private const string _URITOTALCOSTBYCURRENCY_EUR = "api/orders/GetTotalCostByType/Europe";
     private const string _URITOTALCOSTBYCURRENCY_USD_USA = "api/orders/GetTotalCostByType/Usa";
     private const string _LOCAL = "Locale";
@@ -94,7 +73,7 @@
 
     private int CountNumberOrderProformaPending;
     private int CountNumberPrPending;
-    private int _rowParPage = 5;
+
     private decimal _totalCostLocal;
     private decimal _totalCostEurope;
     private decimal _totalCostUSD;
@@ -105,35 +84,7 @@
 
 
 
-    private async Task LoadPrPending()
-    {
-        var orderspendingLoading = _client.GetFromJsonAsync<List<Order>>(_URIPRPENDING);
-        if (!orderspendingLoading.IsCompleted)
-        {
-            _prPendingLoading = true;
-        }
-        _prPending = await orderspendingLoading;
-        CountNumberPrPending = _prPending.Count;
-        _prPendingTable.DataLoaded(true, _prPending.Take(5).ToList());
-        _prPendingLoading = false;
 
-        StateHasChanged();
-    }
-
-    private async Task LoadProformaPending()
-    {
-        var ordersProformaPendingLoading = _client.GetFromJsonAsync<List<Order>>(_URIPOPROFORMAPENDING);
-        if (!ordersProformaPendingLoading.IsCompleted)
-        {
-            _poProformaPendingLoading = true;
-        }
-        _poProformaPending = await ordersProformaPendingLoading;
-        CountNumberOrderProformaPending = _poProformaPending.Count;
-        _poProformaPendingTable.DataLoaded(true, _poProformaPending.Take(5).ToList());
-        _poProformaPendingLoading = false;
-
-        StateHasChanged();
-    }
     private async Task LoadTotalXOFCost()
     {
         //Get total cost by cuurency XOF
@@ -156,8 +107,8 @@
     {
 
         //Get total cost by cuurency USD and Vendor in USA
-        var totalCostUsdLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD_USA);
-        _totalCostUSD = await totalCostUsdLoading;
+        var totalCostUsdUsaLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD_USA);
+        _totalCostUSD_USA = await totalCostUsdUsaLoading;
 
         StateHasChanged();
     }
@@ -176,13 +127,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+
         //Run All Tasks in Parallele
         var tasks = new List<Task>();
-        tasks.Add(LoadPrPending());
-        tasks.Add(LoadProformaPending());
         tasks.Add(LoadTotalUSDCost());
         tasks.Add(LoadTotalEURCost());
         tasks.Add(LoadTotalXOFCost());
+        tasks.Add(LoadTotalUSD_USACost());
         await Task.WhenAll(tasks);
 
 

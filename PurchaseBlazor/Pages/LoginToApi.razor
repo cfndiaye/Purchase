@@ -2,47 +2,46 @@
 
 @inject IAuthenticationService AuthService
 @inject NavigationManager NavigationManager
+ 
+            <div class="d-flex justify-center flex-wrap pa-8">
+                <MudPaper Class="d-flex align-content-center flex-wrap gap-4"  Height="400px"  Width="400px" Square="false">
 
-<MudSpacer />
-<div class="d-flex justify-center flex-wrap pa-8">
-    <MudPaper Class="d-flex align-content-center flex-wrap gap-4"  Height="400px"  Width="400px" Square="false">
+                    <MudContainer MaxWidth="MaxWidth.Medium">
+                        @if (_showAuthenticationError)
+                        {
+                            <MessageAlert Message="@_authenticationErrorText" Severity="@_severity" CloseAlert="CloseAlert" />
+                        }
+                        <MudText Typo="Typo.h6">Connexion</MudText>
+                        <EditForm @ref="_loginForm" Model="_model" OnValidSubmit="OnValidSubmit">
 
-        <MudContainer MaxWidth="MaxWidth.Medium">
-            @if (_showAuthenticationError)
-            {
-                <MessageAlert Message="@_authenticationErrorText" Severity="@_severity" CloseAlert="CloseAlert" />
-            }
-            <MudText Typo="Typo.h6">Connexion</MudText>
-            <EditForm @ref="_loginForm" Model="_model" OnValidSubmit="OnValidSubmit">
+                            <MudCard Elevation="0">
+                                
+                                <MudCardContent>
+                                    <DataAnnotationsValidator />
+                                    <ValidationSummary />
+                                    <MudTextField Label="Login" @bind-Value="_model.Email" Variant="Variant.Outlined" Class="py-2"
+                                                For="@(() => _model.Email)" />
+                                    <MudTextField Label="Mot de passe" @bind-Value="_model.Password" InputType="InputType.Password"
+                                                Variant="Variant.Outlined" For="@(() => _model.Password)" />
 
-                <MudCard Elevation="0">
-                    
-                    <MudCardContent>
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
-                        <MudTextField Label="Login" @bind-Value="_model.Email" Variant="Variant.Outlined" Class="py-2"
-                                      For="@(() => _model.Email)" />
-                        <MudTextField Label="Mot de passe" @bind-Value="_model.Password" InputType="InputType.Password"
-                                      Variant="Variant.Outlined" For="@(() => _model.Password)" />
-
-                    </MudCardContent>
-                    <MudSpacer />
-                    <MudCardActions class="d-flex px-6 justify-space-between py-6">
-                        <MudButton OnClick="GotoHomePage" Variant="Variant.Filled"
-                                   EndIcon="@Icons.Material.Filled.Cancel" Color="Color.Warning">
-                            Annuler
-                        </MudButton>
-                        <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit"
-                                   EndIcon="@Icons.Material.Filled.Login" Color="Color.Success">
-                            Login
-                        </MudButton>
-                    </MudCardActions>
-                </MudCard>
-            </EditForm>
-        </MudContainer>
-    </MudPaper>
-</div>
-
+                                </MudCardContent>
+                                <MudSpacer />
+                                <MudCardActions class="d-flex px-6 justify-space-between py-6">
+                                    <MudButton OnClick="GotoHomePage" Variant="Variant.Filled"
+                                            EndIcon="@Icons.Material.Filled.Cancel" Color="Color.Warning">
+                                        Annuler
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit"
+                                            EndIcon="@Icons.Material.Filled.Login" Color="Color.Success">
+                                        Login
+                                    </MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        </EditForm>
+                    </MudContainer> 
+                </MudPaper>
+            </div>
+  
 @code {
     [CascadingParameter] public MainLayout Layout{get; set;}
     //[CascadingParameter] public string UserName { get; set; }
@@ -50,10 +49,10 @@
     private bool _showAuthenticationError = false;
     private string _authenticationErrorText = "";
 
-    [Parameter] public string returnUrl { get; set; } = "/home";
+    [Parameter] public string returnUrl { get; set; } = "/Dashboard";
     private EditForm _loginForm;
 
-    private const string _homePage = "home";
+    private const string _homePage = "Dashboard";
     private string _message = "";
     private Severity _severity;
 

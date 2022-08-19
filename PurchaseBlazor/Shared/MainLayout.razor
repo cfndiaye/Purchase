@@ -4,30 +4,38 @@
     <MudThemeProvider />
     <MudDialogProvider />
     <MudSnackbarProvider />
-    <MudLayout>
-        <MudAppBar>
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+    <!-- #region Radzen-->
+    <RadzenDialog />
+    <RadzenNotification />
+    <RadzenContextMenu />
+    <RadzenTooltip />
+    <!-- #region end Radzen-->
+    
+    <MudLayout style="height: 100vh;">
+        <MudAppBar Color="Color.Default">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" ButtonType="ButtonType.Button" Color="Color.Inherit" Edge="Edge.Start"
                 OnClick="@(DrawerToggle)" />
+            
             @_pageTitlePrincipal @TitlePlus
             <MudSpacer />
 
             <LoginDisplay @ref="LoginDisplay" />
         </MudAppBar>
-        <MudDrawer @bind-Open="@_drawerOpen">
+        <MudDrawer @bind-Open="@_drawerOpen" Width="300px" Class="py-3" Elevation="0">
             <MudDrawerHeader>
                 <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Size="Size.Large" Color="Color.Primary"></MudIcon>
-
             </MudDrawerHeader>
             <NavMenu />
         </MudDrawer>
-        <MudMainContent>
-            <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
+
+        <MudMainContent style="background-color: #f4f4f4; height: 100vh;">
+            <MudContainer style="flex-grow: 1;" MaxWidth="MaxWidth.ExtraExtraLarge">
                 @Body
             </MudContainer>
-
+            
         </MudMainContent>
 
-        <MudAppBar Dense="true" Bottom="true" Elevation="1">
+        <MudAppBar Dense="true" Fixed="false" Bottom="true" Color="Color.Default" Elevation="1">
             <MudSpacer />
             <MudText Color="Color.Inherit">Version: @_clientVersion</MudText>
         </MudAppBar>
@@ -49,8 +57,8 @@
         _drawerOpen = !_drawerOpen;
 
     }
-    
-    protected override void  OnInitialized()
+
+    protected override void OnInitialized()
     {
         _clientVersion = typeof(Program).Assembly.GetName().Version.ToString();
     }

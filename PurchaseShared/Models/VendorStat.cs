@@ -16,5 +16,7 @@ namespace PurchaseShared.Models
         public string Type { get; set; }
         public double TotalAmounts { get; set; }
 
+        public string ShortName => Name.Length > 5 ? Name.Substring(0,5) : Name;
+
     }
 }

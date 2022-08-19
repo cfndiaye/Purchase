@@ -1,17 +1,18 @@
-﻿
-<MudNavMenu>
-    <MudNavLink Icon="@Icons.Filled.Dashboard" IconColor="Color.Inherit" Href="home">
+﻿<MudNavMenu>
+    <MudNavLink Icon="@Icons.Filled.Dashboard" IconColor="Color.Inherit" Href="Dashboard">
         Tableau de Bord
     </MudNavLink>
-  
+
     <MudDivider />
     <AuthorizeView>
         <Authorized>
-            <MudNavGroup Expanded="true" Icon="@Icons.Material.Filled.List" IconColor="Color.Inherit" Title="Fournisseurs">
-                <MudNavLink Icon="@Icons.Filled.List" IconColor="Color.Inherit" Href="/vendors">Fournisseurs</MudNavLink>
+            <MudNavGroup Expanded="true" Icon="@Icons.Material.Filled.List" IconColor="Color.Inherit"
+                Title="Fournisseurs">
+                <MudNavLink Icon="@Icons.Filled.List" IconColor="Color.Inherit" Href="/vendors">Fournisseurs
+                </MudNavLink>
             </MudNavGroup>
             <MudNavGroup Expanded="true" Icon="@Icons.Material.Filled.List" IconColor="Color.Inherit" Title="Commandes">
-                
+
                 <MudNavLink Icon="@Icons.Filled.Checklist" IconColor="Color.Inherit" Href="ordersclean">
                     Toutes les
                     Commandes
@@ -40,7 +41,7 @@
                 </MudNavLink>
             </MudNavGroup>
             <MudDivider />
-           
+
         </Authorized>
         <NotAuthorized>
             <MudNavLink Icon="@Icons.Filled.Info" Href="/about">A propos</MudNavLink>
@@ -62,8 +63,6 @@
             </MudNavGroup>
         </Authorized>
     </AuthorizeView>
-   
+
 </MudNavMenu>
-   
-     
- 
+
