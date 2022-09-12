@@ -277,6 +277,7 @@
         _loading = true;
         try
         {
+            if (!(await IsUserOnline())) NavigationManager.NavigateTo("login");
             _vendorsLoading = _client.GetFromJsonAsync<List<Vendor>>("api/vendors/Get");
             _loading = !_vendorsLoading.IsCompleted;
             _vendorList = await _vendorsLoading;
@@ -387,6 +388,7 @@
 
     private async Task OpenAddMessageBox()
     {
+        if (!(await IsUserOnline())) NavigationManager.NavigateTo("login");
         _addVendor = new Vendor();
         _addMessageBox.Title = "Ajouter un fournisseur";
         bool? result = await _addMessageBox.Show();
@@ -405,6 +407,7 @@
 
     private async Task OpenDeleteMessageBox(Vendor vendor)
     {
+        if (!(await IsUserOnline())) NavigationManager.NavigateTo("login");
         _selectedVendor = vendor;
         _deleteMessageBox.Title = $"Supprimer le fournisseur {_selectedVendor.Name}";
         bool? result = await _deleteMessageBox.Show();
@@ -426,5 +429,14 @@
         return string.Empty;
     }
 
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState{ get; set; }
+
+    public async Task<bool> IsUserOnline()
+    {
+        var authState = await AuthState;
+        if (authState.User.Identity.IsAuthenticated) return true;
+        return false;
+    }
 
 }

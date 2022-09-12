@@ -24,7 +24,10 @@
     bool showDataLabels = false;
 
     [Parameter] public List<TypeVendorStat> VendorTypes { get; set; }
-   
 
+    public void WidgetHasChanged()
+    {
+        StateHasChanged();
+    }
 }
 

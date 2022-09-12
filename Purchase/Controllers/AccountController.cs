@@ -56,7 +56,7 @@ namespace Purchase.Controllers
             var token = new JwtSecurityToken(_configuration["Jwt:Issuer"],
                     _configuration["Jwt:Issuer"],
                     claims,//IEnumerable<Claim>
-                    expires: DateTime.UtcNow.AddMinutes(60),
+                    expires: DateTime.UtcNow.AddMinutes(180),
                     signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
