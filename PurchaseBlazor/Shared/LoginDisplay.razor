@@ -4,9 +4,9 @@
 
         <MudText>Welcome @UserName</MudText>
         <MudBadge Color="Color.Success" Overlap="true" Visible="false" Bordered="false">
-            <MudAvatar Color="Color.Dark" Variant="Variant.Outlined" Class="ml-2">
-                <MudIcon Color="Color.Inherit" Icon="@Icons.Material.Filled.Notifications" />
-            </MudAvatar>
+            
+                <MudIcon Color="Color.Inherit" Icon="@Icons.Material.Filled.Notifications" Class="ml-2" />
+            
         </MudBadge>
         <MudIconButton Color="Color.Inherit" Title="Déconnexion" Icon="@Icons.Material.Filled.Logout"
             OnClick="() => { NavigationManager.NavigateTo(_logout); }"></MudIconButton>
@@ -20,9 +20,11 @@
 @code {
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
+
     private bool isAuthenticated;
     private string _uriLogin = "login";
     private string _logout = "logout";
+
     [CascadingParameter]
     public string UserName { get; set; }
 

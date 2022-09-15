@@ -28,10 +28,10 @@
 </div>
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-4">
     <div class="col-sm-8">
-        <WidgetBarreChart Data="@_topVendorsCurrentYear"  />
+        <WidgetBarreChart Data="@_topVendorsCurrentYear" />
     </div>
     <div class="col-sm-4">
-        <WidgetDonutChart @ref="_widgetDonutChart" VendorTypes="@_typeVendorStats" />
+        <WidgetDonutChart @ref="_widgetDonutChart"  VendorTypes="@_typeVendorStats" />
     </div>
 </div>
 
@@ -122,7 +122,7 @@
 
         var typeVendorStat = new TypeVendorStat(_LOCAL, (_totalCostLocal /= (decimal)630));
         _typeVendorStats.Add(typeVendorStat);
-        _widgetDonutChart.WidgetHasChanged();
+        
 
         StateHasChanged();
     }
@@ -136,7 +136,7 @@
 
         var typeVendorStat = new TypeVendorStat(_EUROPE, (_totalCostEurope /= (decimal)0.974));
         _typeVendorStats.Add(typeVendorStat);
-        _widgetDonutChart.WidgetHasChanged();
+        
 
         StateHasChanged();
     }
@@ -150,7 +150,7 @@
 
         var typeVendorStat = new TypeVendorStat(_USA, _totalCostUSD_USA);
         _typeVendorStats.Add(typeVendorStat);
-        _widgetDonutChart.WidgetHasChanged();
+        
 
         StateHasChanged();
     }
@@ -165,7 +165,7 @@
         var typeVendorStat = new TypeVendorStat(_ASIE, _totalCostUSD);
         _typeVendorStats.Add(typeVendorStat);
 
-        _widgetDonutChart.WidgetHasChanged();
+        
         StateHasChanged();
     }
 

@@ -13,7 +13,7 @@
     
     <MudLayout style="height: 100vh;">
         <MudAppBar Color="Color.Default">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" ButtonType="ButtonType.Button" Color="Color.Inherit" Edge="Edge.Start"
+            <MudIconButton Icon="@Icons.Material.Filled.Menu"  Color="Color.Inherit" Edge="Edge.Start"
                 OnClick="@(DrawerToggle)" />
             
             @_pageTitlePrincipal @TitlePlus
@@ -32,10 +32,9 @@
             <MudContainer style="flex-grow: 1;" MaxWidth="MaxWidth.ExtraExtraLarge">
                 @Body
             </MudContainer>
-            
         </MudMainContent>
 
-        <MudAppBar Dense="true" Fixed="false" Bottom="true" Color="Color.Default" Elevation="1">
+        <MudAppBar Dense="true" Fixed="true" Bottom="true" Color="Color.Default" Elevation="1">
             <MudSpacer />
             <MudText Color="Color.Inherit">Version: @_clientVersion</MudText>
         </MudAppBar>

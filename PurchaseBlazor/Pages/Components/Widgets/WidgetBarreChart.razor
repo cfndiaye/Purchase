@@ -1,6 +1,4 @@
-﻿
-        
-            <RadzenCard Class="w-100">
+﻿            <RadzenCard Class="w-100">
                 <RadzenLabel For="dataLabels" Text="Top vendors année encours" Style="margin-left: 8px; vertical-align: middle;" />
                 <RadzenChart>
                     <RadzenColumnSeries Data="@Data" CategoryProperty="ShortName"  Title="@CurrentYear.ToString()" LineType="LineType.Dashed" ValueProperty="TotalAmounts">
@@ -9,7 +7,7 @@
                             
                             <div>
                                 Valeur pour <span>@data.Name</span> @CurrentYear:
-                                <strong>@data.TotalAmounts</strong>
+                                <strong>@FormatAsUSD(data.TotalAmounts)</strong>
                             </div>
                         </TooltipTemplate>
                        

@@ -6,7 +6,7 @@
     <RadzenChart>
         <RadzenDonutSeries Data="@VendorTypes" InnerRadius="80" Radius="100" CategoryProperty="VendorType" ValueProperty="Value">
             <ChildContent>
-                <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                <RadzenSeriesDataLabels  Visible="@showDataLabels" />
             </ChildContent>
             <TitleTemplate>
                 <div class="rz-donut-content">
@@ -15,19 +15,27 @@
                 </div>
             </TitleTemplate>
         </RadzenDonutSeries>
+        <RadzenValueAxis Formatter="FormatAsUSD" />
+        <RadzenLegend Position="LegendPosition.Right" />
     </RadzenChart>
 </RadzenCard>
 
 
 
 @code {
-    bool showDataLabels = false;
+    bool showDataLabels = true;
 
     [Parameter] public List<TypeVendorStat> VendorTypes { get; set; }
 
-    public void WidgetHasChanged()
+
+    string FormatAsUSD(object value)
     {
-        StateHasChanged();
+        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-US"));
+    }
+    
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
     }
 }
 
