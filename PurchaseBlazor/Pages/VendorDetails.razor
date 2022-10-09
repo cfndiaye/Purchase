@@ -1,7 +1,11 @@
 ﻿@page "/vendordetails/{Id}"
 @inject HttpClient _client
 @inject NavigationManager NavigationManager
+
 @attribute [Authorize]
+
+
+<VerifyIsAuthenticate />
 
 <MudText Typo="Typo.h5">Tableau de bord Vendor</MudText>
 <MudText Typo="Typo.subtitle1">Détails Vendor: @Vendor?.Name</MudText>
@@ -10,7 +14,7 @@
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-4">
     <div class="col-sm my-2">
         <WidgetCounter Description="Situation Année encours"
-                       Counter = "@_countOrdersCurrentYear"
+                       Counter = "@_totalCostCurrentYear"
                        Currency = "@_currency"
                        BgColor="#5e72e4" 
                        TextColor="@Colors.Grey.Lighten5"
@@ -19,7 +23,7 @@
     </div>
     <div class="col-sm my-2">
          <WidgetCounter Description="Situation Année précédente"
-                       Counter = "@_countOrdersLastYear"
+                       Counter = "@_totalCostLastYear"
                        Currency = "@_currency"
                        BgColor="#f5365c" 
                        TextColor="@Colors.Grey.Lighten5"
@@ -29,7 +33,7 @@
     <div class="col-sm my-2">
         <WidgetCounter Description="Situation totale"
                        Counter = "@_countOrders"
-                       Currency = "@_currency"
+                       Currency = "Commandes"
                        BgColor="#fb6340" 
                        TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess"

@@ -137,10 +137,14 @@ namespace Purchase.Services.Implementation
 
     public  async Task<double> GetTotalCostByVendorType(string type)
     {
-      var queryableOrder = _ordersCollection.AsQueryable();
-      var queryableVendor =  _vendorsCollection.AsQueryable();
-      var result = from order in queryableOrder
+            var queryableOrder = await _ordersCollection.AsQueryable().ToListAsync() ;
+            var queryableVendor = await _vendorsCollection.Find(v => v.Type == type).ToListAsync();
+
+            //var idList = (IList<string>)queryableVendor.Select(v => new { v.Id}).ToList();
+                                                
+      var result = from order in queryableOrder 
                    join vendor in queryableVendor on order.VendorId equals vendor.Id
+                   
                    select new Order
                    {
                      Id = order.Id,
@@ -166,7 +170,7 @@ namespace Purchase.Services.Implementation
 
                    }; 
 
-      return await Task.Run(() => result.Where(x => x.Vendor.Type == type).Sum(o => o.Amount));
+      return result.Sum(o => o.Amount);
 
     }
 

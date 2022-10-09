@@ -1,6 +1,9 @@
 ﻿@page "/Dashboard"
 @inject HttpClient _client
+@inject NavigationManager NavigationManager
 @attribute [Authorize]
+
+<VerifyIsAuthenticate/>
 
 <MudSpacer />
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-4">
@@ -64,6 +67,10 @@
 
 @code {
 
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+    private string _uriLogin = "login";
+
     private const int _top = 5;
     [CascadingParameter] public MainLayout Layout { get; set; }
 
@@ -116,15 +123,19 @@
 
     private async Task LoadTotalXOFCost()
     {
-        //Get total cost by cuurency XOF
+        
+        
+        //Get total cost by currency XOF
         var totalCostLocalLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_XOF);
         _totalCostLocal = await totalCostLocalLoading;
 
-        var typeVendorStat = new TypeVendorStat(_LOCAL, (_totalCostLocal /= (decimal)630));
+        var localCoastToUsd = _totalCostLocal / (decimal)630;
+        var typeVendorStat = new TypeVendorStat(_LOCAL, localCoastToUsd);
         _typeVendorStats.Add(typeVendorStat);
-        
+
 
         StateHasChanged();
+
     }
 
     private async Task LoadTotalEURCost()
@@ -134,9 +145,10 @@
 
         _totalCostEurope = await totalCostEuropeLoading;
 
-        var typeVendorStat = new TypeVendorStat(_EUROPE, (_totalCostEurope /= (decimal)0.974));
+        var europeCostToUsd = _totalCostEurope / (decimal)0.974;
+        var typeVendorStat = new TypeVendorStat(_EUROPE, europeCostToUsd);
         _typeVendorStats.Add(typeVendorStat);
-        
+
 
         StateHasChanged();
     }
@@ -150,7 +162,7 @@
 
         var typeVendorStat = new TypeVendorStat(_USA, _totalCostUSD_USA);
         _typeVendorStats.Add(typeVendorStat);
-        
+
 
         StateHasChanged();
     }
@@ -165,16 +177,16 @@
         var typeVendorStat = new TypeVendorStat(_ASIE, _totalCostUSD);
         _typeVendorStats.Add(typeVendorStat);
 
-        
+
         StateHasChanged();
     }
 
     private async Task LoadTopVendors()
     {
         var uriCurrentYear = new StringBuilder(_URIALLTOPVENDORS).Append($"/{_top}/{_currentYear}");
-        //var uriLastYear = new StringBuilder(_URIALLTOPVENDORS).Append($"/{_top}/{_lastYear}");
+
         _topVendorsCurrentYear = await _client.GetFromJsonAsync<List<VendorStat>>(uriCurrentYear.ToString());
-        //_topVendorsLastYear = await _client.GetFromJsonAsync<List<VendorStat>>(uriLastYear.ToString());
+
 
         StateHasChanged();
     }
@@ -184,21 +196,24 @@
     protected override async Task OnInitializedAsync()
     {
 
+
         //Run All Tasks in Parallele
         var tasks = new List<Task>();
+        tasks.Add(LoadTotalXOFCost());
         tasks.Add(LoadTotalUSDCost());
         tasks.Add(LoadTotalEURCost());
-        tasks.Add(LoadTotalXOFCost());
         tasks.Add(LoadTotalUSD_USACost());
         tasks.Add(LoadTopVendors());
 
         await Task.WhenAll(tasks);
-        
+
 
         Layout.TitlePlus = "Tableau de bord";
         StateHasChanged();
 
     }
+
+
 
 
 

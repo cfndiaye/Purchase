@@ -37,11 +37,12 @@
             var claim = authState.User.Claims.FirstOrDefault();
             UserName = claim.Value;
             isAuthenticated = true;
-            Console.WriteLine($"Number of claims: {authState.User.Claims.Count()}");
+            /*Console.WriteLine($"Number of claims: {authState.User.Claims.Count()}");
             foreach (var cl in authState.User.Claims)
             {
                 Console.WriteLine($"claim => Type: {cl.Type} : Value: {cl.Value}");
             }
+            */
         }
         StateHasChanged();
         
