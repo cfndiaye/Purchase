@@ -7,8 +7,9 @@
     <AuthorizeView>
         <Authorized>
             <MudNavGroup Expanded="true" Icon="@Icons.Material.Filled.List" IconColor="Color.Inherit"
-                Title="Fournisseurs">
-                <MudNavLink Icon="@Icons.Filled.List" IconColor="Color.Inherit" Href="/vendors">Fournisseurs
+                         Title="Fournisseurs">
+                <MudNavLink Icon="@Icons.Filled.List" IconColor="Color.Inherit" Href="/vendors">
+                    Fournisseurs
                 </MudNavLink>
             </MudNavGroup>
             <MudNavGroup Expanded="true" Icon="@Icons.Material.Filled.List" IconColor="Color.Inherit" Title="Commandes">
@@ -63,6 +64,15 @@
             </MudNavGroup>
         </Authorized>
     </AuthorizeView>
+    @*<MudAppBar Dense="true" Fixed="true" Bottom="true" Color="Color.Default" Elevation="1">
+        <MudSpacer />
+        <MudText Color="Color.Inherit">Version: @_clientVersion</MudText>
+    </MudAppBar>*@
+    
 
+   
 </MudNavMenu>
 
+@code {
+    private string _clientVersion = "1.0.0";
+}

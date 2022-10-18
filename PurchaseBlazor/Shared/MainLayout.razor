@@ -13,19 +13,21 @@
     
     <MudLayout style="height: 100vh;">
         <MudAppBar Color="Color.Default">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu"  Color="Color.Inherit" Edge="Edge.Start"
-                OnClick="@(DrawerToggle)" />
-            
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                           OnClick="@(DrawerToggle)" />
+
             @_pageTitlePrincipal @TitlePlus
             <MudSpacer />
 
             <LoginDisplay @ref="LoginDisplay" />
+            
         </MudAppBar>
         <MudDrawer @bind-Open="@_drawerOpen" Width="300px" Class="py-3" Elevation="0">
             <MudDrawerHeader>
                 <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Size="Size.Large" Color="Color.Primary"></MudIcon>
             </MudDrawerHeader>
             <NavMenu />
+            
         </MudDrawer>
 
         <MudMainContent style="background-color: #f4f4f4; height: 100vh;">
@@ -34,16 +36,13 @@
             </MudContainer>
         </MudMainContent>
 
-        <MudAppBar Dense="true" Fixed="true" Bottom="true" Color="Color.Default" Elevation="1">
-            <MudSpacer />
-            <MudText Color="Color.Inherit">Version: @_clientVersion</MudText>
-        </MudAppBar>
+       
 
     </MudLayout>
 </CascadingValue>
 @code
 {
-    private string _clientVersion = "";
+
 
     public LoginDisplay LoginDisplay { get; set; }
     public string TitlePlus { get; set; } = "";
@@ -59,7 +58,7 @@
 
     protected override void OnInitialized()
     {
-        _clientVersion = typeof(Program).Assembly.GetName().Version.ToString();
+        //_clientVersion = typeof(Program).Assembly.GetName().Version.ToString();
     }
 
 

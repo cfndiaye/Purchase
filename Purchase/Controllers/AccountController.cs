@@ -65,5 +65,22 @@ namespace Purchase.Controllers
         {
             return await _userService.AuthenticateUserAsync(login.UserName, login.Password);
         }
+
+        private bool IsAuthenticate()
+        {
+            return User.Identity.IsAuthenticated;
+            
+        }
+
+        [HttpGet]
+        public  IActionResult VerifyAuthentication()
+        {
+            if (IsAuthenticate())
+                return Ok();
+            else
+                return BadRequest();
+        }
+
+
     }
 }

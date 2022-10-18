@@ -9,22 +9,27 @@
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-4">
     <div class="col-sm my-2">
         <WidgetCounter Counter="@_totalCostLocal" Currency="XOF" Description="Commandes locales"
-                       CustomColor="@Colors.Grey.Lighten5" BgColor="#5e72e4" TextColor="@Colors.Grey.Lighten5"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="#E4572E" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess" />
     </div>
     <div class="col-sm my-2">
         <WidgetCounter Counter="@_totalCostEurope" Currency="€" Description="Commandes Europe"
-                       CustomColor="@Colors.Grey.Lighten5" BgColor="#f5365c" TextColor="@Colors.Grey.Lighten5"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="#29335C" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Material.Filled.Euro" />
     </div>
     <div class="col-sm my-2">
         <WidgetCounter Counter="@_totalCostUSD" Currency="$" Description="Commandes en ASIE"
-                       CustomColor="@Colors.Grey.Lighten5" BgColor="#2dce89" TextColor="@Colors.Grey.Lighten5"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="#F3A712" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Filled.AttachMoney" />
     </div>
     <div class="col-sm my-2">
         <WidgetCounter Counter="@_totalCostUSD_USA" Currency="$" Description="Commandes aux USA"
-                       CustomColor="@Colors.Grey.Lighten5" BgColor="#fb6340" TextColor="@Colors.Grey.Lighten5"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="#A8C686" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Filled.AttachMoney" />
+    </div>
+    <div class="col-sm my-2">
+        <WidgetCounter Counter="@_totalCost_In_Usd" Currency="$" Description="Commandes Total"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="#669BBC" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Filled.AttachMoney" />
     </div>
 
@@ -103,6 +108,9 @@
     //cout total commande Usa
     private decimal _totalCostUSD_USA;
 
+    //Cout total des commandes en dollars
+    private decimal _totalCost_In_Usd;
+
     //hauteur des tables
     private string _heightTableTopVendor = "210px";
 
@@ -121,10 +129,11 @@
 
 
 
+
     private async Task LoadTotalXOFCost()
     {
-        
-        
+
+
         //Get total cost by currency XOF
         var totalCostLocalLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_XOF);
         _totalCostLocal = await totalCostLocalLoading;
@@ -206,6 +215,8 @@
         tasks.Add(LoadTopVendors());
 
         await Task.WhenAll(tasks);
+        _totalCost_In_Usd = _totalCostUSD_USA + _totalCostUSD + (_totalCostLocal / 630) + (_totalCostEurope/ (decimal)0.974);
+
 
 
         Layout.TitlePlus = "Tableau de bord";
