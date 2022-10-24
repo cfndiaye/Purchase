@@ -67,7 +67,6 @@ namespace Purchase.Services.Implementation
           if (vendor.Orders.Count > 0)
           {
             vendor.OrderList = new List<Order>();
-            //vendor.OrderList = (await _orderService.GetOrdersByVendorIdAsync(id)).ToList();
 
             vendor.Orders.ForEach(o => vendor.OrderList.Add(_ordersCollection.Find(s => s.Id == o).FirstOrDefault()));
 

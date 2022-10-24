@@ -208,6 +208,16 @@ namespace Purchase.Controllers
             return cost;
         }
 
+        /// <summary>
+        /// Get All orders by vendor Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<List<Order>> GetOrdersByVendorIdAsync(string id)
+        {
+            return (await _orderService.GetOrdersAsync()).Where(o => o.VendorId == id).ToList();
+        }
         
 
     }

@@ -174,6 +174,7 @@ namespace Purchase.Controllers
 
       return Ok(vendors);
     }
+
     [HttpGet("{top}/{type}")]
     public async Task<List<VendorStat>> GetTopVendorsAsync(int top, string type)
     {
@@ -182,18 +183,23 @@ namespace Purchase.Controllers
       try
       {
         var vendorStats = new List<VendorStat>();
-        var vendorsWithOrders = vendors.Where(v => v.OrderList is not null && v.OrderList.Any()).Where(v => v.Type == type).ToList();
+
+        var vendorsWithOrders = vendors.Where(v => v.OrderList is not null && v.OrderList.Any())
+                                       .Where(v => v.Type == type)
+                                       .ToList();
 
         if (vendorsWithOrders.Any())
         {
           foreach (var vo in vendorsWithOrders)
           {
-            var amount = vo.OrderList.Sum(o => o.Amount);
+            var amount = (decimal)vo.OrderList.Sum(o => o.Amount);
             var vendorStat = new VendorStat(vo.Id, vo.Name, amount, vo.Type);
             vendorStats.Add(vendorStat);
           }
         }
-        return vendorStats.OrderByDescending(vs => vs.TotalAmounts).Take(top).ToList();
+        return vendorStats.OrderByDescending(vs => vs.TotalAmounts)
+                          .Take(top)
+                          .ToList();
       }
       catch (Exception ex)
       {
@@ -210,7 +216,8 @@ namespace Purchase.Controllers
       try
       {
         var vendorStats = new List<VendorStat>();
-        var vendorsWithOrders = vendors.Where(v => v.OrderList is not null && v.OrderList.Any()).ToList();
+        var vendorsWithOrders = vendors.Where(v => v.OrderList is not null && v.OrderList.Any())
+                                       .ToList();
 
         if (vendorsWithOrders.Any())
         {
@@ -218,16 +225,20 @@ namespace Purchase.Controllers
           {
             if (vo.OrderList.Where(o => o.DatePo.Value.Year == year).Count() > 0)
             {
-              var amount = vo.OrderList.Where(o => o.DatePo.Value.Year == year).Sum(o => o.Amount);
-              //verify the currency and convert to dollars us
+              decimal amount = (decimal)vo.OrderList.Where(o => o.DatePo.Value.Year == year)
+                                                    .Sum(o => o.Amount);
+
+               //verify the currency and convert to dollars us
+               decimal amountToConvert = amount;
               switch (vo.Type)
               {
 
                 case "Locale":
-                  amount /= 630;
+                  //amount /= 630;
+                  amountToConvert = Devise.ConvertCfaToUsd(amount);
                   break;
                 case "Europe":
-                  amount /= 0.974;
+                  amountToConvert = Devise.ConvertEuroToUsd(amount) ;
                   break;
                 case "Asie":
                   break;
@@ -235,7 +246,7 @@ namespace Purchase.Controllers
                   break;
 
               }
-              var vendorStat = new VendorStat(vo.Id, vo.Name, amount, vo.Type);
+              var vendorStat = new VendorStat(vo.Id, vo.Name, amountToConvert, vo.Type);
               vendorStats.Add(vendorStat);
             }
           }

@@ -7,7 +7,7 @@
     <MudTable @ref="_mudTable" Items="@OrdersFiltered" Dense="@Dense"
               Striped="true" Hover="false" Breakpoint="Breakpoint.Sm"
               @bind-SelectedItem="SelectedOrder" Loading="@Loading" 
-              RowClassFunc="@SelectedRowClassFunc" T="Order"
+              RowClassFunc="@SelectedRowClassFunc" T="Order" 
               
               LoadingProgressColor="Color.Success">
         <ToolBarContent>
@@ -40,7 +40,7 @@
             <MudTd DataLabel="Date PO">@context.DatePo.Value.ToString(format: "dd/MM/yyyy")</MudTd>
             
             <MudTd DataLabel="Age">@CalculeAge(DateTime.Now, context.ApprovedDate.Value).ToString()</MudTd>
-            <MudTd DataLabel="Status">@context.Status</MudTd>
+            <MudTd DataLabel="Status"><MudChip Variant="Variant.Filled" Color="@GetColor(context)" >@context.Status</MudChip></MudTd>
             <MudTd>
                 <MudIconButton Class="pa-0" OnClick="() => OpenUpdateDialog(context)" Icon="@Icons.Material.Filled.Edit" aria-label="Modifier" Color="Color.Inherit" />
             </MudTd>
@@ -119,6 +119,40 @@
     private int Age(DateTime dateDebut, DateTime dateFin)
     {
         return (dateFin - dateDebut).Days;
+    }
+
+    private Color GetColor(Order order)
+    {
+        var color = Color.Transparent;
+
+        switch (order.Status)
+        {
+            case "PO APPROVAL":
+                color = Color.Info;
+                break;
+            case "PO RELEASED":
+                color = Color.Success;
+                break;
+            case "TECHNICAL CLEARANCE":
+                color = Color.Primary;
+                break;
+            case "PR PENDING":
+                color = Color.Secondary;
+                break;
+            case "WAITING PROFORMA":
+                color = Color.Warning;
+                break;
+            case "DPI-AC":
+                color = Color.Dark;
+                break;
+            case "PO CANCELED":
+                color = Color.Error;
+                break;
+
+            default:
+                break;
+        }
+        return color;
     }
 
 

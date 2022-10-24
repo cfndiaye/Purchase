@@ -139,11 +139,13 @@
     protected override async Task OnInitializedAsync()
     {
         var URL = $"api/vendors/Get/{Id}/true";
+        var URLOrder = $"api/orders/GetOrdersByVendorId/{Id}";
 
         try
         {
             _loading = true;
             var vendor = await _client.GetFromJsonAsync<Vendor>(URL);
+            var orders = await _client.GetFromJsonAsync<List<Order>>(URLOrder);
 
             if (vendor != null)
             {
@@ -167,17 +169,32 @@
                             _currency = "XOF";
                             break;
                     }
-                    _totalCost = (decimal)vendor.OrderList.Sum(o => o.Amount);
-                    _totalCostCurrentYear = (decimal)vendor.OrderList.Where(o => o.DatePo.Value.Year == DateTime.Now.Year).Sum(o => o.Amount);
-                    _totalCostLastYear = (decimal)vendor.OrderList.Where(o => o.DatePo.Value.Year == DateTime.Now.Year - 1).Sum(o => o.Amount);
-                    _countOrders = vendor.OrderList.Count;
-                    _countOrdersCurrentYear = vendor.OrderList.Where(o => o.DatePo.Value.Year == DateTime.Now.Year).Count();
-                    _countOrdersLastYear = vendor.OrderList.Where(o => o.DatePo.Value.Year == DateTime.Now.Year - 1).Count();
+                    //_totalCost = (decimal)vendor.OrderList.Distinct().Sum(o => o.Amount);
+                    _totalCost = (decimal)orders.Sum(o => o.Amount);
+
+                    //_totalCostCurrentYear = (decimal)vendor.OrderList.Where(o => o.DatePo.Value.Year == DateTime.Now.Year).Sum(o => o.Amount);
+
+                    _totalCostCurrentYear = (decimal)orders.Where(o => o.DatePo.Value.Year == DateTime.Now.Year)
+                                                           .Sum(o => o.Amount);
+
+                    //_totalCostLastYear = (decimal)vendor.OrderList.Where(o => o.DatePo.Value.Year == DateTime.Now.Year - 1).Sum(o => o.Amount);
+
+                    _totalCostLastYear = (decimal)orders.Where(o => o.DatePo.Value.Year == DateTime.Now.Year - 1)
+                                                           .Sum(o => o.Amount);
+                    //_countOrders = vendor.OrderList.Count;
+
+                    _countOrders = orders.Count;
+
+                    _countOrdersCurrentYear = orders.Where(o => o.DatePo.Value.Year == DateTime.Now.Year)
+                                                    .Count();
+
+                    _countOrdersLastYear = orders.Where(o => o.DatePo.Value.Year == DateTime.Now.Year - 1)
+                                                 .Count();
 
                     //include vendor name
-                    var orders = vendor.OrderList;
+                    //var orders = vendor.OrderList;
                     orders.ForEach(o => o.Vendor = new Vendor { Id = vendor.Id, Name = vendor.Name });
-                    _orderTable.DataLoaded(true, Vendor.OrderList);
+                    _orderTable.DataLoaded(true, orders);
                 }
             }
             _loading = false;

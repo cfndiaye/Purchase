@@ -7,7 +7,7 @@
                             
                             <div>
                                 Valeur pour <span>@data.Name</span> @CurrentYear:
-                                <strong>@FormatAsUSD(data.TotalAmounts)</strong>
+                                <strong>@FormatAsUSD((double)data.TotalAmounts)</strong>
                             </div>
                         </TooltipTemplate>
                        
@@ -15,11 +15,12 @@
                    
                     <RadzenColumnOptions Radius="5" />
                     <RadzenValueAxis Formatter="@FormatAsUSD">
-                        <RadzenGridLines Visible="true" />
-                        <RadzenAxisTitle Text="Value in USD" />
-                    </RadzenValueAxis>
+                        
+                            <RadzenGridLines Visible="true" />
+                            <RadzenAxisTitle Text="Value in USD" />
+                        </RadzenValueAxis>
 
-                </RadzenChart>
+</RadzenChart>
             </RadzenCard>
 
 

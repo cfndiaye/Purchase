@@ -1,0 +1,42 @@
+﻿@inject NavigationManager NavigationManager
+@inject HttpClient Client
+
+@code {
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+
+    private const string _uriLogin = "login";
+    private const string _uriApi = "api/Account/VerifyAuthentication";
+
+    public async Task<bool> IsAuthenticatedAsync()
+    {
+        var authState = await AuthState;
+        var result = await Client.GetAsync(_uriApi);
+
+
+        if (authState.User.Identity.IsAuthenticated is true && result.IsSuccessStatusCode)
+        {
+            System.Diagnostics.Debug.Print("Api and client authenticated true.");
+            return true;
+        }
+        else
+        {
+            System.Diagnostics.Debug.Print("Api and client authenticated false.");
+            return false;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState;
+
+        if (await IsAuthenticatedAsync() is false)
+        {
+            NavigationManager.NavigateTo(_uriLogin);
+
+        }
+    }
+
+}
+

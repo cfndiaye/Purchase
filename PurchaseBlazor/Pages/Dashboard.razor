@@ -37,6 +37,7 @@
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-4">
     <div class="col-sm-8">
         <WidgetBarreChart Data="@_topVendorsCurrentYear" />
+        
     </div>
     <div class="col-sm-4">
         <WidgetDonutChart @ref="_widgetDonutChart"  VendorTypes="@_typeVendorStats" />
@@ -138,7 +139,7 @@
         var totalCostLocalLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_XOF);
         _totalCostLocal = await totalCostLocalLoading;
 
-        var localCoastToUsd = _totalCostLocal / (decimal)630;
+        var localCoastToUsd = Devise.ConvertCfaToUsd(_totalCostLocal); //_totalCostLocal / (decimal)630;
         var typeVendorStat = new TypeVendorStat(_LOCAL, localCoastToUsd);
         _typeVendorStats.Add(typeVendorStat);
 
@@ -154,7 +155,7 @@
 
         _totalCostEurope = await totalCostEuropeLoading;
 
-        var europeCostToUsd = _totalCostEurope / (decimal)0.974;
+        var europeCostToUsd = Devise.ConvertEuroToUsd(_totalCostEurope); //_totalCostEurope / (decimal)0.974;
         var typeVendorStat = new TypeVendorStat(_EUROPE, europeCostToUsd);
         _typeVendorStats.Add(typeVendorStat);
 
@@ -215,7 +216,7 @@
         tasks.Add(LoadTopVendors());
 
         await Task.WhenAll(tasks);
-        _totalCost_In_Usd = _totalCostUSD_USA + _totalCostUSD + (_totalCostLocal / 630) + (_totalCostEurope/ (decimal)0.974);
+        _totalCost_In_Usd = _totalCostUSD_USA + _totalCostUSD + Devise.ConvertCfaToUsd(_totalCostLocal)  + Devise.ConvertEuroToUsd(_totalCostEurope);
 
 
 

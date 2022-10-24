@@ -14,4 +14,17 @@ namespace PurchaseShared.Models
             "WAITING PROFORMA", "DPI-AC", "COMPLETED"
         };
     }
+
+    public enum OrderStatus
+    {
+        PR_PENDING ,
+        PO_CANCELED,
+        INQUERY_SEND,
+        TECHNICAL_CLEARANCE,
+        PO_APPROVAL,
+        PO_RELEASED,
+        WAITING_PROFORMA,
+        DPI_AC,
+        COMPLETED
+    }
 }
