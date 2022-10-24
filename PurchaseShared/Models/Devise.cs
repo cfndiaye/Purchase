@@ -9,8 +9,8 @@ namespace PurchaseShared.Models
     public static string GBP = "GBP";
     public static string INR = "INR";
 
-        public const decimal USD_CFA_Ratio = 1 / 630;
-        public const decimal USD_EURO_Ration = (decimal)0.98618097;
+        public const decimal USD_CFA_Ratio = 1m / 630m;
+        public const decimal USD_EURO_Ration = 0.98618097m;
 
     public static decimal ConvertCfaToUsd(decimal target)
         {

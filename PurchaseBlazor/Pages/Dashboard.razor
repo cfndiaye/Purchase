@@ -209,14 +209,19 @@
 
         //Run All Tasks in Parallele
         var tasks = new List<Task>();
+        tasks.Add(LoadTopVendors());
         tasks.Add(LoadTotalXOFCost());
         tasks.Add(LoadTotalUSDCost());
         tasks.Add(LoadTotalEURCost());
         tasks.Add(LoadTotalUSD_USACost());
-        tasks.Add(LoadTopVendors());
+
 
         await Task.WhenAll(tasks);
-        _totalCost_In_Usd = _totalCostUSD_USA + _totalCostUSD + Devise.ConvertCfaToUsd(_totalCostLocal)  + Devise.ConvertEuroToUsd(_totalCostEurope);
+
+        _totalCost_In_Usd = _totalCostUSD_USA +
+                            _totalCostUSD +
+                            Devise.ConvertCfaToUsd(_totalCostLocal)  +
+                            Devise.ConvertEuroToUsd(_totalCostEurope);
 
 
 

@@ -234,7 +234,7 @@ namespace Purchase.Controllers
               {
 
                 case "Locale":
-                  //amount /= 630;
+                  
                   amountToConvert = Devise.ConvertCfaToUsd(amount);
                   break;
                 case "Europe":
