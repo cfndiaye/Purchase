@@ -5,8 +5,10 @@
 
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
+    
+    [Parameter] public string ReturnUrl { get; set; }="";
 
-    private const string _uriLogin = "login";
+    private  string _uriLogin = "login";
     private const string _uriApi = "api/Account/VerifyAuthentication";
 
     public async Task<bool> IsAuthenticatedAsync()
@@ -33,7 +35,7 @@
 
         if (await IsAuthenticatedAsync() is false)
         {
-            NavigationManager.NavigateTo(_uriLogin);
+            NavigationManager.NavigateTo($"{_uriLogin}/{ReturnUrl}");
 
         }
     }

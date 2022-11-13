@@ -97,5 +97,10 @@ namespace PurchaseShared.Models
         [JsonProperty(PropertyName = "livree")]
         [BsonElement("livree")]
         public bool Livree { get; set; }
+
+        public Order Clone()
+        {
+            return (Order)this.MemberwiseClone();
+        }
     }
 }

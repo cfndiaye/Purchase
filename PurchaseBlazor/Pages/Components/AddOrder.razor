@@ -74,7 +74,8 @@
         _addOrder = new Order();
         // _addMudDialog.ClassActions = "d-flex px-6 justify-space-between py-6";
 
-        _addMudDialog.Show("Ajouter une commande");
+        DialogOptions dialogOptions = new DialogOptions { DisableBackdropClick = true };
+        _addMudDialog.Show("Ajouter une commande", dialogOptions);
 
     }
 
@@ -93,13 +94,18 @@
 
             if (statusMessage.IsSuccessStatusCode)
             {
+                var freshOrder = await statusMessage.Content.ReadFromJsonAsync<Order>();
                 Message = "Commande ajoutée avec succés. ";
                 await MessageChanged.InvokeAsync(Message);
                 Severity = Severity.Success;
                 await SeverityChanged.InvokeAsync(Severity);
                 //Récupération du nom du vendor
-                order.Vendor = await Client.GetFromJsonAsync<Vendor>(URLGETVENDOR + order.VendorId);
-                OrdersList.Add(order);
+                //order.Vendor = await Client.GetFromJsonAsync<Vendor>(URLGETVENDOR + order.VendorId);
+                //OrdersList.Add(order);
+
+                freshOrder.Vendor = await Client.GetFromJsonAsync<Vendor>(URLGETVENDOR + order.VendorId);
+                OrdersList.Add(freshOrder);
+
                 await OrdersListChanged.InvokeAsync(OrdersList);
 
             }

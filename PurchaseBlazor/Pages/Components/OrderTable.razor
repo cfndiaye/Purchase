@@ -1,4 +1,9 @@
-﻿<MudCardContent>
+﻿@inject NavigationManager NavigationManager
+@inject HttpClient _client
+@using System.Globalization
+@inject IDialogService DialogService
+
+<MudCardContent>
     @if (!string.IsNullOrWhiteSpace(Message))
     {
         <MessageAlert Message="@Message" Severity="@Severity" CloseAlert="CloseAlert" />
@@ -6,9 +11,8 @@
 
     <MudTable @ref="_mudTable" Items="@OrdersFiltered" Dense="@Dense"
               Striped="true" Hover="false" Breakpoint="Breakpoint.Sm"
-              @bind-SelectedItem="SelectedOrder" Loading="@Loading" 
-              RowClassFunc="@SelectedRowClassFunc" T="Order" 
-              
+              @bind-SelectedItem="SelectedOrder" Loading="@Loading"
+              RowClassFunc="@SelectedRowClassFunc" T="Order"
               LoadingProgressColor="Color.Success">
         <ToolBarContent>
             <MudText Inline="true" Typo="Typo.h6">@TitreTable</MudText>
@@ -16,9 +20,9 @@
             <MudTextField @bind-Value="SearchTexte" Placeholder="Recherche..." TextChanged="() => OnFilter()"
                           Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search"
-                          IconSize="Size.Medium" 
+                          IconSize="Size.Medium"
                           Class="mt-0" />
-           
+
         </ToolBarContent>
         <HeaderContent>
             <MudTh>PO</MudTh>
@@ -26,26 +30,42 @@
             <MudTh>Vendor</MudTh>
             <MudTh>Description</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.ApprovedDate)">Date PO</MudTableSortLabel></MudTh>
-            
+
             <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.DatePo)">Age</MudTableSortLabel></MudTh>
             <MudTh>Status</MudTh>
+            <MudTh></MudTh>
             <MudTh></MudTh>
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="PO">@context.PurchaseOrder</MudTd>
             <MudTd DataLabel="DA">@context.ReqNumber.ToString()</MudTd>
-            <MudTd HideSmall="true" DataLabel="Vendor">@context.Vendor?.Name</MudTd>
+            <MudTd HideSmall="true" DataLabel="Vendor">@context.Vendor?.Name <MudButton Color="Color.Inherit" Size="Size.Small" OnClick="() => GotoPage(context.VendorId)">...</MudButton></MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
             <MudTd DataLabel="Date PO">@context.DatePo.Value.ToString(format: "dd/MM/yyyy")</MudTd>
-            
+
             <MudTd DataLabel="Age">@CalculeAge(DateTime.Now, context.ApprovedDate.Value).ToString()</MudTd>
-            <MudTd DataLabel="Status"><MudChip Variant="Variant.Filled" Color="@GetColor(context)" >@context.Status</MudChip></MudTd>
-            <MudTd>
-                <MudIconButton Class="pa-0" OnClick="() => OpenUpdateDialog(context)" Icon="@Icons.Material.Filled.Edit" aria-label="Modifier" Color="Color.Inherit" />
+            <MudTd DataLabel="Status">
+                <MudChip Size="Size.Small" Variant="Variant.Filled" Color="@GetColor(context)" OnClick="() => _OpenDialogStatus()">
+                    @context.Status
+                </MudChip>
+
+
             </MudTd>
             <MudTd>
-                <MudIconButton Class="pa-0" OnClick="() => OpenDeleteDialog(context)" Icon="@Icons.Material.Filled.Delete" aria-label="Supprimer" Color="Color.Inherit" />
+                <MudTooltip Text="Dupliquer" Color="Color.Tertiary" Placement="Placement.Left">
+                    <MudIconButton Class="pa-0" OnClick="() => DuplicateOrder(context, OrdersList.IndexOf(context))" Icon="@Icons.Material.Filled.ContentCopy" aria-label="Dupliquer" Color="Color.Inherit" />
+                </MudTooltip>
+            </MudTd>
+            <MudTd>
+                <MudTooltip Text="Modifier" Color="Color.Tertiary" Placement="Placement.Left">
+                    <MudIconButton Class="pa-0" OnClick="() => OpenUpdateDialog(context)" Icon="@Icons.Material.Filled.Edit" aria-label="Modifier" Color="Color.Inherit" />
+                </MudTooltip>
+            </MudTd>
+            <MudTd>
+                <MudTooltip Text="Supprimer" Color="Color.Tertiary" Placement="Placement.Left">
+                    <MudIconButton Class="pa-0" OnClick="() => OpenDeleteDialog(context)" Icon="@Icons.Material.Filled.Delete" aria-label="Supprimer" Color="Color.Inherit" />
+                </MudTooltip>
             </MudTd>
         </RowTemplate>
         <PagerContent>
@@ -53,9 +73,33 @@
         </PagerContent>
 
     </MudTable>
+
 </MudCardContent>
 
+@* Dialog update order status*@
+<MudDialog @ref="_dialogUpdateStatus">
+    <DialogContent>
 
+        <MudPaper>
+            <MudList Clickable="true">
+                <MudListSubheader>Change Order status</MudListSubheader>
+                <MudListItem><MudButton Variant="Variant.Filled" FullWidth="true" OnClick="async () => await ChangeOrederStatus(OrderStatus.PO_INQUERY_SEND)" Color="Color.Info">INQUERY SEND</MudButton></MudListItem>
+                <MudListItem><MudButton Variant="Variant.Filled" FullWidth="true" OnClick="async () => await ChangeOrederStatus(OrderStatus.PO_APPROVAL)" Color="Color.Info">PO APPROVAL</MudButton></MudListItem>
+                <MudListItem><MudButton Variant="Variant.Filled" FullWidth="true" OnClick="async () => await ChangeOrederStatus(OrderStatus.PO_RELEASED)" Color="Color.Success">PO RELEASED</MudButton></MudListItem>
+                <MudListItem><MudButton Variant="Variant.Filled" FullWidth="true" OnClick="async () => await ChangeOrederStatus(OrderStatus.TECHNICAL_CLEARANCE)" Color="Color.Primary">IN TECHNICAL CLEARANCE</MudButton></MudListItem>
+                <MudListItem><MudButton Variant="Variant.Filled" FullWidth="true" OnClick="async () => await ChangeOrederStatus(OrderStatus.PR_PENDING)" Color="Color.Secondary">PR PENDING</MudButton></MudListItem>
+                <MudListItem><MudButton Variant="Variant.Filled" FullWidth="true" OnClick="async () => await ChangeOrederStatus(OrderStatus.WAITING_PROFORMA)" Color="Color.Warning">WAITING PROFORMA</MudButton></MudListItem>
+                <MudListItem><MudButton Variant="Variant.Filled" FullWidth="true" OnClick="async () => await ChangeOrederStatus(OrderStatus.DPI_AC)" Color="Color.Dark">DPI&AC</MudButton></MudListItem>
+                <MudListItem><MudButton Variant="Variant.Filled" FullWidth="true" OnClick="async () => await ChangeOrederStatus(OrderStatus.PO_CANCELED)" Color="Color.Error">PO CANCELLED</MudButton></MudListItem>
+                <MudListItem><MudButton Variant="Variant.Filled" FullWidth="true" OnClick="async () => await ChangeOrederStatus(OrderStatus.PO_COMPLETED)" Color="Color.Success">PO COMPLETED</MudButton></MudListItem>
+            </MudList>
+        </MudPaper>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => _dialogUpdateStatus.Close()">Annuler</MudButton>
+        <MudButton Color="Color.Primary" OnClick="() => _dialogUpdateStatus.Close(DialogResult.Ok(true))">Fermer</MudButton>
+    </DialogActions>
+</MudDialog>
 
 @* Dialog update order*@
 <UpdateOrder @ref="_updateOrder" @bind-Message="@Message"
@@ -66,13 +110,13 @@
 @* Dialog delete order*@
 <DeleteOrder @ref="_deleteOrder" OrdersList="OrdersFiltered"
              Client="Client"
-             @bind-Message="@Message" 
+             @bind-Message="@Message"
              @bind-Severity="@Severity"
              @bind-Loading="@Loading" />
 
 @code {
 
-    [Parameter] public int[] SizeOptions{ get; set; } = { 5, 10, 15, 20, 30, 40, 50 };
+    [Parameter] public int[] SizeOptions { get; set; } = { 5, 10, 15, 20, 30, 40, 50 };
     private UpdateOrder _updateOrder;
     private DeleteOrder _deleteOrder;
     [Parameter] public string TitreTable { get; set; } = "Liste des commandes";
@@ -111,6 +155,34 @@
     [Parameter]
     public bool Loading { get; set; }
 
+    private void _OpenDialogStatus()
+    {
+        DialogOptions dialogOptions = new DialogOptions { DisableBackdropClick = true };
+        _dialogUpdateStatus.Show("Changer le status de la commande", dialogOptions);
+    }
+
+    private async Task ChangeOrederStatus(string status)
+    {
+        var urlApi = $"api/orders/Put/{SelectedOrder.Id}";
+
+        SelectedOrder.Status = status;
+
+        var request = await Client.PutAsJsonAsync(urlApi, SelectedOrder);
+        if(request.IsSuccessStatusCode)
+        {
+            Message = "Status modifié avec succès";
+            Severity = Severity.Success;
+        }
+        else
+        {
+                Message = "Error lors de la mise à jour";
+                Severity = Severity.Error;
+        }
+
+        _dialogUpdateStatus.Close();
+    }
+
+    private MudDialog _dialogUpdateStatus;
 
 
     private int CalculeAge(DateTime d2, DateTime d1) => Age(d1, d2);
@@ -208,7 +280,34 @@
         return rowClass;
     }
 
+    //Dupliquer la ligne de command selectionnée
+    private async Task DuplicateOrder(Order order, int index)
+    {
+        //copy order information
+        Order orderCopy = order.Clone();
+        orderCopy.Id = null;
+        orderCopy.PurchaseOrder += " - COPIE";
 
+
+        //Enregistrement de la commande au niveau de l'Api
+        var url = "api/orders/Post";
+        var request = await _client.PostAsJsonAsync<Order>(url, orderCopy);
+
+        if (request.IsSuccessStatusCode)
+        {
+            //Récupération de la commande après son enregistrement
+            var freshOrder = await request.Content.ReadFromJsonAsync<Order>();
+            OrdersList.Insert(index + 1, freshOrder);
+
+            Message = "Commande dupliquée avec succés. ";
+            Severity = Severity.Success;
+        }
+        else
+        {
+            Message = "Erreur lors de la copie. ";
+            Severity = Severity.Error;
+        }
+    }
 
     //delegate pour le filtrage
     private bool FilterInAction(Order order) => Filters.FilterFunction(order, SearchTexte);
@@ -231,6 +330,11 @@
             OrdersList = orders;
             OrdersFiltered = orders;
         }
+    }
+
+    private void GotoPage(string id)
+    {
+        NavigationManager.NavigateTo($"vendordetails/{id}");
     }
 
 

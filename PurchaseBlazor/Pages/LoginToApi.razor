@@ -1,4 +1,4 @@
-﻿@page "/login"
+﻿@page "/login/{returnUrl?}"
 
 @inject IAuthenticationService AuthService
 @inject NavigationManager NavigationManager
@@ -49,6 +49,7 @@
     private bool _showAuthenticationError = false;
     private string _authenticationErrorText = "";
 
+
     [Parameter] public string returnUrl { get; set; } = "/Dashboard";
     private EditForm _loginForm;
 
@@ -64,7 +65,15 @@
         if (result is not null)
         {
             await Layout.LoginDisplay.GetUsername();
-            NavigationManager.NavigateTo(returnUrl);
+            if(string.IsNullOrEmpty(returnUrl))
+            {
+                GotoHomePage();
+            }
+            else
+            {
+                NavigationManager.NavigateTo(returnUrl);
+            }
+
         }
         else
         {
@@ -91,7 +100,7 @@
         await ExecuteLogin();
     }
 
-    
+
 
 
 }

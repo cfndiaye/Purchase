@@ -108,7 +108,9 @@
 
         _selectedOrder = order;
         //_updateMudDialog.ClassActions = "d-flex px-6 justify-space-between py-6";
-        _updateMudDialog.Show($"Modifier une commande PR:{_selectedOrder.ReqNumber.ToString()} ");
+        DialogOptions dialogOptions = new DialogOptions { DisableBackdropClick = true };
+        
+        _updateMudDialog.Show($"Modifier une commande PR:{_selectedOrder.ReqNumber.ToString()} ", dialogOptions);
 
     }
     //Close update Dialog

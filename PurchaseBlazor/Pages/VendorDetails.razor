@@ -5,12 +5,13 @@
 @attribute [Authorize]
 
 
-<VerifyIsAuthenticate />
+<VerifyIsAuthenticate ReturnUrl = "@_returnUrl"/>
 
 <MudText Typo="Typo.h5">Tableau de bord Vendor</MudText>
 <MudText Typo="Typo.subtitle1">Détails Vendor: @Vendor?.Name</MudText>
 <MudSpacer />
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
+
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-4">
     <div class="col-sm my-2">
         <WidgetCounter Description="Situation Année encours"
@@ -41,40 +42,6 @@
     </div>
 
 </div>
-@*<MudGrid Spacing="@spacing" Justify="Justify.Center" Class="mb-4">
-    <MudItem xs="4">
-        <OrderWidget Title="Situation Année encours" Amount="@_totalCostCurrentYear"
-                     Counter="_countOrdersCurrentYear" Currency="@_currency"
-                     DescriptionCounter="Total commandes"
-                     DescriptionAmount="Cout Total"
-                     CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.Blue.Darken1" TextColor="@Colors.BlueGrey.Lighten5"
-                     CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess"
-                     CustomContentCounterIcon="@Icons.Material.Outlined.AddShoppingCart"
-                      Height="@Height" />
-    </MudItem>
-    <MudItem xs="4">
-        <OrderWidget Title="Situation Année Précédente" Amount="@_totalCostLastYear"
-                     Counter="_countOrdersLastYear" Currency="@_currency"
-                     DescriptionCounter="Total commandes"
-                     DescriptionAmount="Cout Total"
-                     CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.Yellow.Darken3" TextColor="@Colors.BlueGrey.Lighten5"
-                     CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess"
-                     CustomContentCounterIcon="@Icons.Material.Outlined.AddShoppingCart"
-                      Height="@Height" />
-    </MudItem>
-    <MudItem xs="4">
-        <OrderWidget Title="Situation Totale" Amount="@_totalCost"
-                     Counter="_countOrders" Currency="@_currency"
-                     DescriptionCounter="Total commandes"
-                     DescriptionAmount="Cout Total"
-                     CustomColor="@Colors.Grey.Lighten5" BgColor="@Colors.LightGreen.Darken3" TextColor="@Colors.BlueGrey.Lighten5"
-                     CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess"
-                     CustomContentCounterIcon="@Icons.Material.Outlined.AddShoppingCart"
-                      Height="@Height" />
-    </MudItem>
-
-
-</MudGrid>*@
 <MudDivider DividerType="DividerType.FullWidth" Class="mb-4" />
 
 
@@ -136,10 +103,14 @@
     private string Width = "400px";
     private string Height = "180px";
 
+    private string _returnUrl = "";
+
     protected override async Task OnInitializedAsync()
     {
         var URL = $"api/vendors/Get/{Id}/true";
         var URLOrder = $"api/orders/GetOrdersByVendorId/{Id}";
+
+        _returnUrl = $"vendordetails/{Id}";
 
         try
         {
