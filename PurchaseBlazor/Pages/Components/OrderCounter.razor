@@ -1,5 +1,5 @@
 ﻿@using System.Threading;
-@inject HttpClient HttpClient
+@inject HttpClient _client
 @attribute [Authorize]
 
 <span>@Counter</span>
@@ -13,7 +13,7 @@
     {
         Url = $"api/Orders/GetOrderCounter/{UrlParam}";
 
-        Counter = await HttpClient.GetFromJsonAsync<int>(Url, new CancellationToken());
+        Counter = await _client.GetFromJsonAsync<int>(Url);
         
     }
 
