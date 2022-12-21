@@ -42,8 +42,8 @@
                 </MudNavLink>
             </MudNavGroup>
             <MudDivider />
-            <MudPaper>
-                <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await OnInitializedAsync()"/>
+            <MudPaper Elevation="0">
+                <MudIconButton Title="Actualiser" Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await OnInitializedAsync()"/>
             </MudPaper>
         </Authorized>
         <NotAuthorized>
