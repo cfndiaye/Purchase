@@ -19,30 +19,32 @@
                     Commandes
                 </MudNavLink>
                 <MudNavLink Icon="@Icons.Filled.FilterList" IconColor="Color.Inherit" Href="orderspending">
-                    PR pending
+                    PR pending (<OrderCounter UrlParam="@OrderStatus.PR_PENDING"/>)
                 </MudNavLink>
                 <MudNavLink Icon="@Icons.Filled.SettingsOverscan" IconColor="Color.Inherit" Href="orderspendingtech">
-                    Validation Technique
+                    Validation Technique (<OrderCounter UrlParam="@OrderStatus.TECHNICAL_CLEARANCE" />)
                 </MudNavLink>
                 <MudNavLink Icon="@Icons.Filled.Inventory" IconColor="Color.Inherit" Href="orderspendingproforma">
                     Attente
-                    Proforma
+                    Proforma (<OrderCounter UrlParam="@OrderStatus.WAITING_PROFORMA" />)
                 </MudNavLink>
                 <MudNavLink Icon="@Icons.Filled.PanTool" IconColor="Color.Inherit" Href="orderspendingdpi">
                     Attente
-                    DPI&AC
+                    DPI&AC (<OrderCounter UrlParam="@OrderStatus.DPI_AC" />)
                 </MudNavLink>
                 <MudNavLink Icon="@Icons.Filled.Approval" IconColor="Color.Inherit" Href="orderspendingapprobation">
                     Attente
-                    Approbation
+                    Approbation (<OrderCounter UrlParam="@OrderStatus.PO_APPROVAL" />)
                 </MudNavLink>
                 <MudNavLink Icon="@Icons.Filled.DoneAll" IconColor="Color.Inherit" Href="orderscompletes">
                     Commandes
-                    completes
+                    completes (<OrderCounter UrlParam="@OrderStatus.PO_RELEASED" />)
                 </MudNavLink>
             </MudNavGroup>
             <MudDivider />
-
+            <MudPaper>
+                <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await OnInitializedAsync()"/>
+            </MudPaper>
         </Authorized>
         <NotAuthorized>
             <MudNavLink Icon="@Icons.Filled.Info" Href="/about">A propos</MudNavLink>
@@ -75,4 +77,9 @@
 
 @code {
     private string _clientVersion = "1.0.0";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
 }

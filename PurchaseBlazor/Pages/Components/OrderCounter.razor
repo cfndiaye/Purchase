@@ -1,0 +1,19 @@
+﻿@using System.Threading;
+@inject HttpClient HttpClient
+
+<span>@Counter</span>
+
+@code {
+    public int Counter { get; set; }
+    [Parameter] public string UrlParam{ get; set; }
+    public string Url { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Url = $"api/Orders/GetOrderCounter/{UrlParam}";
+
+        Counter = await HttpClient.GetFromJsonAsync<int>(Url, new CancellationToken());
+        
+    }
+
+}

@@ -218,7 +218,14 @@ namespace Purchase.Controllers
         {
             return (await _orderService.GetOrdersAsync()).Where(o => o.VendorId == id).ToList();
         }
-        
+
+        [HttpGet("{status}")]
+        public async Task<int> GetOrderCounter(string status)
+        {
+            return (await _orderService.GetOrdersByStatusAsync(status)).Count();
+        }
+
+
 
     }
 }

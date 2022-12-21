@@ -29,7 +29,7 @@
             <MudTh>DA</MudTh>
             <MudTh>Vendor</MudTh>
             <MudTh>Description</MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.ApprovedDate)">Date PO</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.DatePo)">Date PO</MudTableSortLabel></MudTh>
 
             <MudTh><MudTableSortLabel SortBy="new Func<Order, object>(o => o.DatePo)">Age</MudTableSortLabel></MudTh>
             <MudTh>Status</MudTh>
@@ -44,7 +44,7 @@
             <MudTd DataLabel="Description">@context.Description</MudTd>
             <MudTd DataLabel="Date PO">@context.DatePo.Value.ToString(format: "dd/MM/yyyy")</MudTd>
 
-            <MudTd DataLabel="Age">@CalculeAge(DateTime.Now, context.ApprovedDate.Value).ToString()</MudTd>
+            <MudTd DataLabel="Age">@CalculeAge(context.DatePo.Value, context.ApprovedDate.Value).ToString()</MudTd>
             <MudTd DataLabel="Status">
                 <MudChip Size="Size.Small" Variant="Variant.Filled" Color="@GetColor(context)" OnClick="() => _OpenDialogStatus()">
                     @context.Status
