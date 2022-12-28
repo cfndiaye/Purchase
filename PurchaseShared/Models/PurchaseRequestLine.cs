@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace PurchaseShared.Models
 {
     public class PurchaseRequestLine
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+
         public int RequestNumber { get; set; }
         public int LineNumber { get; set; }
         public string ItemCode { get; set; }
@@ -29,6 +35,8 @@ namespace PurchaseShared.Models
         public string LastPoVendor { get; set; }
         public string LastPurchaseCurrency { get; set; }
         public decimal LastPurchaseUnitePrice { get; set; }
+        public bool Closed { get; set; }
+
 
 
     }

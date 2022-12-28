@@ -25,8 +25,9 @@
         <MudDrawer @bind-Open="@_drawerOpen" Width="300px" Class="py-3" Elevation="0">
             <MudDrawerHeader>
                 <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Size="Size.Large" Color="Color.Primary"></MudIcon>
+                
             </MudDrawerHeader>
-            <NavMenu />
+            <NavMenu @ref="NavMenu" />
             
         </MudDrawer>
 
@@ -43,7 +44,7 @@
 @code
 {
 
-
+    public NavMenu NavMenu { get; set; }
     public LoginDisplay LoginDisplay { get; set; }
     public string TitlePlus { get; set; } = "";
     bool _drawerOpen = true;

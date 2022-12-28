@@ -72,7 +72,7 @@
     {
         _loading = true;
         try
-        {
+        { 
 
             _ordersLoading = _client.GetFromJsonAsync<List<Order>>(Url);
             _loading = !_ordersLoading.IsCompleted;

@@ -5,16 +5,5 @@
 <span>@Counter</span>
 
 @code {
-    public int Counter { get; set; }
-    [Parameter] public string UrlParam{ get; set; }
-    public string Url { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        Url = $"api/Orders/GetOrderCounter/{UrlParam}";
-
-        Counter = await _client.GetFromJsonAsync<int>(Url);
-        
-    }
-
+    [Parameter] public int Counter { get; set; }
 }

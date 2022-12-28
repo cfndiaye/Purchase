@@ -43,7 +43,9 @@
             </div>
   
 @code {
-    [CascadingParameter] public MainLayout Layout{get; set;}
+    [CascadingParameter] public MainLayout Layout {get; set;}
+    
+
     //[CascadingParameter] public string UserName { get; set; }
     private AuthenticationUserModel _model = new();
     private bool _showAuthenticationError = false;
@@ -64,7 +66,12 @@
         var result = await AuthService.Login(_model);
         if (result is not null)
         {
+            //Change Title
             await Layout.LoginDisplay.GetUsername();
+
+            //LoadCouter Orders
+            await Layout.NavMenu.LoadCounter();
+
             if(string.IsNullOrEmpty(returnUrl))
             {
                 GotoHomePage();
