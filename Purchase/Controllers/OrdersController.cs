@@ -208,6 +208,15 @@ namespace Purchase.Controllers
             return cost;
         }
 
+        // GET total cost orders by Vendor type by year
+        [HttpGet("{type}/{year}")]
+        public async Task<double> GetTotalCostByType(string type, int year)
+        {
+            var cost = await _orderService.GetTotalCostByVendorType(type, year);
+
+            return cost;
+        }
+
         /// <summary>
         /// Get All orders by vendor Id
         /// </summary>
@@ -217,6 +226,18 @@ namespace Purchase.Controllers
         public async Task<List<Order>> GetOrdersByVendorIdAsync(string id)
         {
             return (await _orderService.GetOrdersAsync()).Where(o => o.VendorId == id).ToList();
+        }
+
+        /// <summary>
+        /// Get All orders by vendor Id by year
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>  
+        [HttpGet("{id}/{year}")]
+        public async Task<List<Order>> GetOrdersByVendorIdAsync(string id, int year)
+        {
+            return (await _orderService.GetOrdersAsync()).Where(o => o.VendorId == id && o.DatePo.Value.Year == year).ToList();
         }
 
         [HttpGet("{status}")]

@@ -1,36 +1,24 @@
 ﻿<MudCard class="" Elevation="2" Style="@($"height: {Height}; width: 100%; color:{TextColor}; background:{BgColor};")">
     <MudCardContent Class="align-center">
-        <div class="d-flex my-3 align-items-center">
+        <div class="d-flex  align-items-center">
             <div>
-                <MudText Typo="Typo.h6">@($"{Counter:N0} {Currency}")</MudText>
+                <MudText Typo="Typo.h6">@($"{CounterThisYear:N0} {Currency}")</MudText>
                 <p>@Description</p>
             </div>
             <div class="ms-auto bg-light-transparent">
                 <MudIcon Icon="@CustomContentIcon" Class="@CustomColor" Size="Size.Large" />
             </div>
         </div>
+        <div>
+            <MudText Typo="Typo.body1">@($"{Counter:N0} {Currency} (Total)")</MudText>
+        </div>
     </MudCardContent>
 </MudCard>
-@*
-    <MudCard class="" Elevation="2" Style="@($"height: {Height}; width: 100%; color:{TextColor}; background:{BgColor};")">
-    <MudCardContent>
-    <div class="d-flex align-items-center flex-column">
-    <div class="mx-auto p-2">
-    <MudIcon Icon="@CustomContentIcon" Class="@CustomColor" Size="Size.Large" />
-    </div>
-    <div class="mx-auto p-2">
-    <MudText Typo="Typo.h6">@($"{Counter:N0} {Currency}")</MudText>
-    </div>
-    <div class="mx-auto p-2">
-    <MudText >@Description</MudText>
-    </div>
-    </div>
-    </MudCardContent>
-    </MudCard>
-*@
+
 
 @code {
     [Parameter] public decimal Counter { get; set; }
+    [Parameter] public decimal CounterThisYear { get; set; }
     [Parameter] public string Description { get; set; }
     //[Parameter] public string CustomIcon { get; set; }
     [Parameter] public string CustomContentIcon { get; set; }

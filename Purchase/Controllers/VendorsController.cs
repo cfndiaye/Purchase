@@ -178,6 +178,7 @@ namespace Purchase.Controllers
     [HttpGet("{top}/{type}")]
     public async Task<List<VendorStat>> GetTopVendorsAsync(int top, string type)
     {
+      var _thisYear = DateTime.Now.Year;
       var vendors = await _vendorService.GetVendorsWithOrdersAsync();
 
       try
@@ -192,7 +193,7 @@ namespace Purchase.Controllers
         {
           foreach (var vo in vendorsWithOrders)
           {
-            var amount = (decimal)vo.OrderList.Sum(o => o.Amount);
+            var amount = (decimal)vo.OrderList.Where(o => o.DatePo.Value.Year == _thisYear).Sum(o => o.Amount);
             var vendorStat = new VendorStat(vo.Id, vo.Name, amount, vo.Type);
             vendorStats.Add(vendorStat);
           }

@@ -174,6 +174,45 @@ namespace Purchase.Services.Implementation
 
     }
 
+    public  async Task<double> GetTotalCostByVendorType(string type, int year)
+    {
+            var queryableOrder = await _ordersCollection.AsQueryable().ToListAsync() ;
+            var queryableVendor = await _vendorsCollection.Find(v => v.Type == type).ToListAsync();
+
+            //var idList = (IList<string>)queryableVendor.Select(v => new { v.Id}).ToList();
+                                                
+      var result = from order in queryableOrder where order.DatePo.Value.Year == year
+                   join vendor in queryableVendor on order.VendorId equals vendor.Id
+                   
+                   select new Order
+                   {
+                     Id = order.Id,
+                     AgentName = order.AgentName,
+                     NoLigne = order.NoLigne,
+                     UnitName = order.UnitName,
+                     ReqNumber = order.ReqNumber,
+                     Description = order.Description,
+                     Localisation = order.Localisation,
+                     Type = order.Type,
+                     PrDate = order.PrDate,
+                     ApprovedDate = order.ApprovedDate,
+                     Status = order.Status,
+                     PurchaseOrder = order.PurchaseOrder,
+                     DatePo = order.DatePo,
+                     DateLivraison = order.DateLivraison,
+                     Amount = order.Amount,
+                     VendorId = order.VendorId, 
+                     Vendor = vendor,
+                     Devise = order.Devise,
+                     Commentaires = order.Commentaires,
+                     Livree = order.Livree
+
+                   }; 
+
+      return result.Sum(o => o.Amount);
+
+    }
+
     
 
   }
