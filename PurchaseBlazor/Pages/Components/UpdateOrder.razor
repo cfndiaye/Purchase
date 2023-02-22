@@ -1,4 +1,6 @@
-﻿@*Update order*@
+﻿@using System.Globalization
+@inject IDialogService DialogService
+@*Update order*@
 <MudDialog @ref="_updateMudDialog">
 
     <DialogContent>
@@ -14,8 +16,7 @@
 </MudDialog>
 
 @code {
-    @using System.Globalization
-    @inject IDialogService DialogService
+    
 
     //public string _selectedVendor { get; set; } = "";
 

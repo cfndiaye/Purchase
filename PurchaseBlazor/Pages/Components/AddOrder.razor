@@ -1,4 +1,7 @@
 ﻿@using System.ComponentModel.DataAnnotations
+@using System.Globalization
+@inject IDialogService DialogService
+
 <MudDialog @ref="_addMudDialog">
 
     <DialogContent>
@@ -15,9 +18,7 @@
 
 </MudDialog>
 @code {
-    @using System.Globalization
-
-    @inject IDialogService DialogService
+    
 
 
 
