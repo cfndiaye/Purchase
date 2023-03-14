@@ -10,7 +10,7 @@ using PurchaseShared.Models;
 
 namespace Purchase.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class IndexController : ControllerBase
     {
@@ -25,10 +25,17 @@ namespace Purchase.Controllers
         }
 
         protected Vendor _vendor;
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             return await Task.Run(() => Ok(_vendor));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> IsAvailable()
+        {
+            return await Task.Run(() => Ok(true));
         }
     }
 }

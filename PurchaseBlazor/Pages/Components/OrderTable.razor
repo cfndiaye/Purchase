@@ -1,6 +1,7 @@
 ﻿@inject NavigationManager NavigationManager
 @inject HttpClient _client
 @using System.Globalization
+@using PurchaseShared.Helpers
 @inject IDialogService DialogService
 
 <MudCardContent>
@@ -289,10 +290,12 @@
         orderCopy.PurchaseOrder += " - COPIE";
 
 
+
         //Enregistrement de la commande au niveau de l'Api
         var url = "api/orders/Post";
         var request = await _client.PostAsJsonAsync<Order>(url, orderCopy);
 
+           
         if (request.IsSuccessStatusCode)
         {
             //Récupération de la commande après son enregistrement
@@ -337,6 +340,7 @@
         NavigationManager.NavigateTo($"vendordetails/{id}");
     }
 
+    
 
 
 }

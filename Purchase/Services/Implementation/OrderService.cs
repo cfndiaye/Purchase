@@ -54,8 +54,8 @@ namespace Purchase.Services.Implementation
       return order;
     }
 
-    public async Task<IEnumerable<Order>> GetOrdersAsync(string query) =>
-        (await _ordersCollection.Find(_ => true).ToListAsync()).Where(o => o.Vendor.Name.Contains(query));
+    public async Task<IEnumerable<Order>> GetOrdersAsync(string vendorName) =>
+        (await _ordersCollection.Find(_ => true).ToListAsync()).Where(o => o.Vendor.Name.Contains(vendorName));
 
     public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(string status)
     {

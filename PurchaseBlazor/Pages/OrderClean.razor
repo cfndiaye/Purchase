@@ -1,4 +1,5 @@
 ﻿@page "/ordersclean"
+@using PurchaseShared.Helpers
 @inject NavigationManager NavigationManager
 @inject HttpClient _client
 @attribute [Authorize]
@@ -73,6 +74,7 @@
         _loading = true;
         try
         { 
+            
 
             _ordersLoading = _client.GetFromJsonAsync<List<Order>>(Url);
             _loading = !_ordersLoading.IsCompleted;

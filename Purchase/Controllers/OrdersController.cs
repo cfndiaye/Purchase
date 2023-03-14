@@ -27,7 +27,14 @@ namespace Purchase.Controllers
             _logger = logger;
            _vendorService = vendorService;
         }
+        
         // GET: api/<OrdersController>
+        //Ce code permet d'obtenir une liste d'objets Order triés par date d'approbation décroissante. 
+        //Il fait appel à la méthode GetOrdersAsync() de l'objet _orderService pour obtenir une liste d'objets Order. 
+        //La variable includeVendor est utilisée pour indiquer si les fournisseurs doivent être inclus ou non. 
+        //Une fois la liste obtenue, elle est triée par date d'approbation décroissante et retournée.
+        ///
+
         [HttpGet]
         public async Task<IEnumerable<Order>> Get()
         {
