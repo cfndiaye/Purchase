@@ -176,14 +176,11 @@ namespace Purchase.Services.Implementation
 
     public  async Task<double> GetTotalCostByVendorType(string type, int year)
     {
-            var queryableOrder = await _ordersCollection.AsQueryable().ToListAsync() ;
+            var queryableOrder = await _ordersCollection.Find(o => o.DatePo.Value.Year == year).ToListAsync() ;
             var queryableVendor = await _vendorsCollection.Find(v => v.Type == type).ToListAsync();
-
-            //var idList = (IList<string>)queryableVendor.Select(v => new { v.Id}).ToList();
                                                 
-      var result = from order in queryableOrder where order.DatePo.Value.Year == year
+      var result = from order in queryableOrder 
                    join vendor in queryableVendor on order.VendorId equals vendor.Id
-                   
                    select new Order
                    {
                      Id = order.Id,
