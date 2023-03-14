@@ -12,9 +12,15 @@ namespace Purchase.Infrastructure.Models
                 purchaseOption.Value.User,
                 purchaseOption.Value.Password
                 );
-                
+
+            ///
             _mongoConnectionString = purchaseOption.Value.ConnectionString;
-            _mongoClient = new MongoClient(_mongoConnectionString);
+
+            var settings = MongoClientSettings.FromConnectionString(_mongoConnectionString);
+            settings.ServerApi = new ServerApi(ServerApiVersion.V1);
+                
+            
+            _mongoClient = new MongoClient(settings);
             _mongoDatabase = _mongoClient.GetDatabase(purchaseOption.Value.DatabaseName);
 
         }
