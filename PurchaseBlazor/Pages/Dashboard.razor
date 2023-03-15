@@ -8,29 +8,34 @@
 <MudSpacer />
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-4">
     <div class="col-sm my-2">
-        <WidgetCounter Counter="@_totalCostLocal" Amount="@_totalCostLocalThisYear" Currency="XOF" Description="Commandes locales"
+        <WidgetCounter TotalAmount="@_totalCostLocal" CurrentAmount="@_totalCostLocalThisYear" Currency="XOF" Description="Commandes locales"
                        CustomColor="@Colors.Grey.Lighten5" BgColor="#E4572E" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess" />
+                       CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess"
+                       Counter="@_counterLocalThisYear"/>
     </div>
     <div class="col-sm my-2">
-        <WidgetCounter Counter="@_totalCostEurope" Amount="@_totalCostEuropeThisYear" Currency="€" Description="Commandes Europe"
+        <WidgetCounter TotalAmount="@_totalCostEurope" CurrentAmount="@_totalCostEuropeThisYear" Currency="€" Description="Commandes Europe"
                        CustomColor="@Colors.Grey.Lighten5" BgColor="#29335C" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Material.Filled.Euro" />
+                       CustomContentIcon="@Icons.Material.Filled.Euro" 
+                       Counter="@_counterEuropeThisYear"/>
     </div>
     <div class="col-sm my-2">
-        <WidgetCounter Counter="@_totalCostUSD" Amount="@_totalCostUSDThisYear" Currency="$" Description="Commandes en ASIE"
+        <WidgetCounter TotalAmount="@_totalCostUSD" CurrentAmount="@_totalCostUSDThisYear" Currency="$" Description="Commandes en ASIE"
                        CustomColor="@Colors.Grey.Lighten5" BgColor="#F3A712" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Filled.AttachMoney" />
+                       CustomContentIcon="@Icons.Filled.AttachMoney" 
+                       Counter="@_counterUSDThisYear"/>
     </div>
     <div class="col-sm my-2">
-        <WidgetCounter Counter="@_totalCostUSD_USA" Amount="@_totalCostUSD_USAThisYear" Currency="$" Description="Commandes aux USA"
+        <WidgetCounter TotalAmount="@_totalCostUSD_USA" CurrentAmount="@_totalCostUSD_USAThisYear" Currency="$" Description="Commandes aux USA"
                        CustomColor="@Colors.Grey.Lighten5" BgColor="#A8C686" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Filled.AttachMoney" />
+                       CustomContentIcon="@Icons.Filled.AttachMoney" 
+                       Counter="@_counterUSD_USAThisYear"/>
     </div>
     <div class="col-sm my-2">
-        <WidgetCounter Counter="@_totalCost_In_Usd" Amount="@_totalCost_In_UsdThisYear"  Currency="$" Description="Commandes Total"
+        <WidgetCounter TotalAmount="@_totalCost_In_Usd" CurrentAmount="@_totalCost_In_UsdThisYear"  Currency="$" Description="Commandes Total"
                        CustomColor="@Colors.Grey.Lighten5" BgColor="#669BBC" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Filled.AttachMoney" />
+                       CustomContentIcon="@Icons.Filled.AttachMoney" 
+                       Counter="@_counterTotalThisYear"/>
     </div>
 
 </div>
@@ -98,6 +103,10 @@
     private const string _USA = "Usa";
     private string _URITOPVENDORS = "api/Vendors/GetTopVendors";
     private string _URIALLTOPVENDORS = "api/Vendors/GetAllTopVendors";
+    private const string _URITOTALCOUNTERBYVENDORTYPE_XOF = "api/orders/GetTotalCounterByVendorType/Locale";
+    private const string _URITOTALCOUNTERBYVENDORTYPE_USD = "api/orders/GetTotalCounterByVendorType/Asie";
+    private const string _URITOTALCOUNTERBYVENDORTYPE_EUR = "api/orders/GetTotalCounterByVendorType/Europe";
+    private const string _URITOTALCOUNTERBYVENDORTYPE_USD_USA = "api/orders/GetTotalCounterByVendorType/Locale";
 
     private int CountNumberOrderProformaPending;
     private int CountNumberPrPending;
@@ -105,19 +114,24 @@
     //cout total commande locale
     private decimal _totalCostLocal;
     private decimal _totalCostLocalThisYear;
+    private int _counterLocalThisYear;
     //cout total commande Europe
     private decimal _totalCostEurope;
-    private decimal _totalCostEuropeThisYear; 
+    private decimal _totalCostEuropeThisYear;
+    private int _counterEuropeThisYear;
     //cout total commande Asie
     private decimal _totalCostUSD;
     private decimal _totalCostUSDThisYear;
+    private int _counterUSDThisYear;
     //cout total commande Usa
     private decimal _totalCostUSD_USA;
     private decimal _totalCostUSD_USAThisYear;
+    private int _counterUSD_USAThisYear;
 
     //Cout total des commandes en dollars
     private decimal _totalCost_In_Usd;
     private decimal _totalCost_In_UsdThisYear;
+    private int _counterTotalThisYear;
 
     //hauteur des tables
     private string _heightTableTopVendor = "210px";
@@ -136,7 +150,10 @@
     private int _lastYear => DateTime.UtcNow.Year - 1;
 
 
-
+    private async Task<int> LoadTotalCountCurrentYear(string url)
+    {
+        return await _client.GetFromJsonAsync<int>($"{url}/{_currentYear}", default);
+    }
 
     private async Task LoadTotalXOFCost()
     {
@@ -163,10 +180,10 @@
     {
         //Get total cost by cuurency EUR
         var totalCostEuropeLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_EUR);
-        
+
         //Get total cost by currency EUR and year
         _totalCostEuropeThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_EUR}/{_currentYear}");
-        
+
         _totalCostEurope = await totalCostEuropeLoading;
 
         var europeCostToUsd = Devise.ConvertEuroToUsd(_totalCostEuropeThisYear); //_totalCostEurope / (decimal)0.974;
@@ -182,7 +199,7 @@
 
         //Get total cost by cuurency USD and Vendor in USA
         var totalCostUsdUsaLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD_USA);
-        
+
         //Get total cost by cuurency USD and Vendor in USA and this year
         _totalCostUSD_USAThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_USD_USA}/{_currentYear}");
 
@@ -200,7 +217,7 @@
 
         //Get total cost by cuurency USD
         var totalCostUsdLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD);
-        
+
         //Get total cost by cuurency USD and this year
         _totalCostUSDThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_USD}/{_currentYear}");
 
@@ -236,7 +253,22 @@
         tasks.Add(LoadTotalUSDCost());
         tasks.Add(LoadTotalEURCost());
         tasks.Add(LoadTotalUSD_USACost());
-        tasks.Add(Layout.NavMenu.LoadCounter());
+
+        tasks.Add(Task.Run(async () => 
+            _counterLocalThisYear = await LoadTotalCountCurrentYear(_URITOTALCOUNTERBYVENDORTYPE_XOF))
+        );
+
+        tasks.Add(Task.Run(async () =>
+            _counterEuropeThisYear = await LoadTotalCountCurrentYear(_URITOTALCOUNTERBYVENDORTYPE_EUR))
+        );
+
+        tasks.Add(Task.Run(async () =>
+            _counterUSDThisYear = await LoadTotalCountCurrentYear(_URITOTALCOUNTERBYVENDORTYPE_USD))
+        );
+
+        tasks.Add(Task.Run(async () =>
+            _counterUSD_USAThisYear = await LoadTotalCountCurrentYear(_URITOTALCOUNTERBYVENDORTYPE_USD_USA))
+        );
 
 
         await Task.WhenAll(tasks);
@@ -245,17 +277,24 @@
                             _totalCostUSD +
                             Devise.ConvertCfaToUsd(_totalCostLocal)  +
                             Devise.ConvertEuroToUsd(_totalCostEurope);
+
+        _totalCost_In_UsdThisYear = _totalCostUSD_USAThisYear +
+                           _totalCostUSDThisYear +
+                           Devise.ConvertCfaToUsd(_totalCostLocalThisYear)  +
+                           Devise.ConvertEuroToUsd(_totalCostEuropeThisYear);
         
-         _totalCost_In_UsdThisYear = _totalCostUSD_USAThisYear +
-                            _totalCostUSDThisYear +
-                            Devise.ConvertCfaToUsd(_totalCostLocalThisYear)  +
-                            Devise.ConvertEuroToUsd(_totalCostEuropeThisYear);
+                           
+        _counterTotalThisYear = _counterEuropeThisYear + 
+                                _counterLocalThisYear + 
+                                _counterUSDThisYear + 
+                                _counterUSD_USAThisYear;
 
 
         Layout.TitlePlus = "Tableau de bord";
 
         //refresh counter
-        Layout.NavMenu.CheckAPIAvailability();
+        //Layout.NavMenu.CheckAPIAvailability();
+         await Layout.NavMenu.LoadCounter();
     
         StateHasChanged();
 

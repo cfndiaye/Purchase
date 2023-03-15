@@ -225,6 +225,19 @@ namespace Purchase.Controllers
         }
 
         /// <summary>
+        /// Get total count orders by vendor type and year
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="year"></param>
+        /// <returns>int</returns>
+        [HttpGet("{type}/{year}")]
+        public async Task<int> GetTotalCounterByVendorType(string type, int year)
+        {
+            var counter = await _orderService.GetTotalCounterByVendorType(type, year);
+            return counter;
+        }
+
+        /// <summary>
         /// Get All orders by vendor Id
         /// </summary>
         /// <param name="id"></param>

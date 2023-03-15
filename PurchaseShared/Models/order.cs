@@ -31,6 +31,7 @@ namespace PurchaseShared.Models
         [BsonElement("reqnumber")]
         public int ReqNumber { get; set; }
 
+        [Required(ErrorMessage = "Description est requise")]
         [JsonProperty(PropertyName = "description")]
         [BsonElement("description")]
         public string Description { get; set; }
@@ -58,10 +59,12 @@ namespace PurchaseShared.Models
         [BsonElement("status")]
         public string Status { get; set; }
 
+        [Required(ErrorMessage = "Order est requis")]
         [JsonProperty(PropertyName = "purchaseorder")]
         [BsonElement("purchaseorder")]
         public string PurchaseOrder { get; set; }
 
+        [Required(ErrorMessage = "Date order est requise")]
         [JsonProperty(PropertyName = "datepo")]
         [BsonElement("datepo")]
         public DateTime? DatePo { get; set; }

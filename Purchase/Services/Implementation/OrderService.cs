@@ -72,11 +72,9 @@ namespace Purchase.Services.Implementation
 
     public async Task<IEnumerable<Order>> GetOrdersAsync(bool includeVendor)
     {
-      /*var orders = (await _ordersCollection.Find(_ => true).ToListAsync());
-      if (includeVendor)
-        orders.ForEach(async o => o.Vendor = await _vendorService.GetVendorByIdAsync(o.VendorId));*/
+      
 
-        var queryableOrder = _ordersCollection.AsQueryable();
+      var queryableOrder = _ordersCollection.AsQueryable();
       var queryableVendor =  _vendorsCollection.AsQueryable();
       var result = from order in queryableOrder
                    join vendor in queryableVendor on order.VendorId equals vendor.Id
@@ -210,7 +208,19 @@ namespace Purchase.Services.Implementation
 
     }
 
-    
+        public async Task<int> GetTotalCounterByVendorType(string type, int year)
+        {
+            var queryableOrder = await _ordersCollection.Find(o => o.DatePo.Value.Year == year).ToListAsync();
+            var queryableVendor = await _vendorsCollection.Find(v => v.Type == type).ToListAsync();
 
-  }
+            var result = from order in queryableOrder
+                         join vendor in queryableVendor on order.VendorId equals vendor.Id
+                         select new 
+                         {
+                             order.Id   
+                         };
+
+            return result.Count();
+        }
+    }
 }

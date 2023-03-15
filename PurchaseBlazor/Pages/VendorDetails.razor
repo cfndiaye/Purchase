@@ -13,7 +13,8 @@
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-4">
     <div class="col-sm my-2">
         <WidgetCounter Description="Situation Année encours"
-                       Amount = "@_totalCostCurrentYear"
+                       CurrentAmount = "@_totalCostCurrentYear"
+                       TotalAmount="@_totalCostCurrentYear"
                        Counter = "@_countOrdersCurrentYear"
                        Currency = "@_currency"
                        BgColor="#5e72e4" 
@@ -23,7 +24,8 @@
     </div>
     <div class="col-sm my-2">
          <WidgetCounter Description="Situation Année précédente"
-                        Amount = "@_totalCostLastYear"
+                        CurrentAmount = "@_totalCostLastYear"
+                        TotalAmount="@_totalCostLastYear"
                         Counter="@_countOrdersLastYear"
                        Currency = "@_currency"
                        BgColor="#f5365c" 
@@ -33,7 +35,8 @@
     </div>
     <div class="col-sm my-2">
         <WidgetCounter Description="Situation totale"
-                       Amount="@_totalCost"
+                       CurrentAmount="@_totalCost"
+                       TotalAmount="@_totalCost"
                        Counter = "@_countOrders"
                        Currency = "@_currency"
                        BgColor="#fb6340" 

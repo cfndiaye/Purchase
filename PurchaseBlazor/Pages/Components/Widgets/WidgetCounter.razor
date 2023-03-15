@@ -2,15 +2,15 @@
     <MudCardContent Class="align-center">
         <div class="d-flex  align-items-center">
             <div>
-                <MudText Typo="Typo.h6">@($"{Amount:N0} {Currency}")</MudText>
-                <p>@Description</p>
+                <MudText Typo="Typo.h6">@($"{CurrentAmount:N0} {Currency}")</MudText>
+                    <p>@($"{Counter} - {Description}")</p>
             </div>
             <div class="ms-auto bg-light-transparent">
                 <MudIcon Icon="@CustomContentIcon" Class="@CustomColor" Size="Size.Large" />
             </div>
         </div>
         <div>
-            <MudText Typo="Typo.body1">@($"{Counter:N0} {Currency} (Total)")</MudText>
+                <MudText Typo="Typo.body1">@($"{TotalAmount:N0} {Currency} / {Counter} (Total)")</MudText>
         </div>
     </MudCardContent>
 </MudCard>
@@ -18,7 +18,8 @@
 
 @code {
     [Parameter] public decimal Counter { get; set; }
-    [Parameter] public decimal Amount { get; set; }
+    [Parameter] public decimal CurrentAmount { get; set; }
+    [Parameter] public decimal TotalAmount { get; set; }
     [Parameter] public string Description { get; set; }
     [Parameter] public string CustomContentIcon { get; set; }
     [Parameter] public string CustomColor { get; set; }

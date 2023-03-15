@@ -3,8 +3,6 @@
     <DataAnnotationsValidator />
     <MudCard>
         <MudCardContent>
-            @* <MudTextField Class="d-flex mb-2" @bind-Value="OrderModel.AgentName" Label="Nom agent"
-                For="@(() => OrderModel.AgentName)" Margin="MarginDense" Variant="Variant.Outlined" /> *@
             <MudSelect @bind-Value="OrderModel.AgentName"  Label="Agent"
                 For="@(() => OrderModel.AgentName)" T="string" Variant="Variant.Outlined" Margin="MarginDense">
                 @foreach (var agent in Agents)
@@ -58,7 +56,7 @@
                     For="@(() => OrderModel.DatePo)" Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />
             </div>
             <div class="d-flex justify-space-between py-2">
-                <MudTextField @bind-Value="OrderModel.Amount" TextChanged="@(() => {OrderModel.Commentaires = "M"+Math.Round(OrderModel.Amount*0.05);})" Format="n2" Culture="CultureInfo.CurrentCulture" Label="Montant" For="@(() => OrderModel.Amount)"
+                <MudTextField @bind-Value="OrderModel.Amount"  Format="n2" Culture="CultureInfo.CurrentCulture" Label="Montant" For="@(() => OrderModel.Amount)"
                     Margin="MarginDense" Class="mr-2" Variant="Variant.Outlined" />
                 <MudSelect @bind-Value="OrderModel.Devise" T="string" Label="Devise" For="@(() => OrderModel.Devise)" T="string" Variant="Variant.Outlined" Margin="MarginDense">
                     <MudSelectItem Value="@(Devise.XOF)">XOF</MudSelectItem>
@@ -66,8 +64,7 @@
                     <MudSelectItem Value="@(Devise.USD)">USD</MudSelectItem>
                     <MudSelectItem Value="@(Devise.GBP)">GBP</MudSelectItem>
                 </MudSelect>
-                @**<MudTextField @bind-Value="OrderModel.Devise" Label="Devise" For="@(() => OrderModel.Devise)"
-                    Margin="MarginDense" Class="ml-2" Variant="Variant.Outlined" />*@
+                
             </div>
             <div class="d-flex justify-space-between py-2">
                 <MudDatePicker @bind-Date="OrderModel.DateLivraison" Culture="CultureInfo.CurrentCulture"
@@ -79,10 +76,10 @@
             <MudAutocomplete @bind-Value="OrderModel.VendorId" Label="Fournisseur" Margin="MarginDense"
                 Variant="Variant.Outlined" For="@(() => OrderModel.VendorId)" Class="d-flex py-2"
                 ToStringFunc="FindDescription" SearchFunc="FindVendorsAsync" />
-            @*TODO: Enlever l'id de l'affichage*@
+           
             <MudChip>@OrderModel.Vendor?.Name</MudChip>
 
-            @*TODO: Enlever l'id de l'affichage*@
+            
             <MudHidden @bind-Value="OrderModel.VendorId"></MudHidden>
             <MudTextField @bind-Value="OrderModel.Commentaires" Label="Commentaires" Margin="MarginDense"
                 For="@(() => OrderModel.Commentaires)" Class="d-flex mb-2" Variant="Variant.Outlined" />
