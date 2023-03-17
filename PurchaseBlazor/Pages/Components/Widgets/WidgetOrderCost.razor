@@ -2,23 +2,23 @@
     <MudCardContent Class="align-center">
         <div class="d-flex  align-items-center">
             <div>
-                <MudText Typo="Typo.h6">@($"{CurrentAmount:N0} {Currency}")</MudText>
-                    <p>@($"{TotalOrderCounterCurrentYear} - {Description}")</p>
+                <MudText  Typo="Typo.h6">@($"{CurrentAmount:N0} {Currency}")</MudText>
+                    <p>@($"{Description}")</p>
             </div>
             <div class="ms-auto bg-light-transparent">
                 <MudIcon Icon="@CustomContentIcon" Class="@CustomColor" Size="Size.Large" />
             </div>
         </div>
         <div>
-                <MudText Typo="Typo.body1">@($"{TotalAmount:N0} {Currency} / {TotalOrderCounter} (Commandes)")</MudText>
+                <MudText Typo="Typo.body1">@($"{TotalAmount:N0} {Currency}")</MudText>
         </div>
     </MudCardContent>
 </MudCard>
 
 
 @code {
-    [Parameter] public decimal TotalOrderCounter { get; set; }
-    [Parameter] public decimal TotalOrderCounterCurrentYear { get; set; }
+    
+   
     [Parameter] public decimal CurrentAmount { get; set; }
     [Parameter] public decimal TotalAmount { get; set; }
     [Parameter] public string Description { get; set; }

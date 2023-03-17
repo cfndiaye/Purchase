@@ -2,16 +2,14 @@
     <MudCardContent Class="align-center">
         <div class="d-flex  align-items-center">
             <div>
-                <MudText Typo="Typo.h6">@($"{CurrentAmount:N0} {Currency}")</MudText>
-                    <p>@($"{TotalOrderCounterCurrentYear} - {Description}")</p>
+                <MudText Typo="Typo.h6">@($"{TotalOrderCounterCurrentYear} - {Description}")</MudText>
+                    <p>@($"{TotalOrderCounter} (Totale Commandes)")</p>
             </div>
             <div class="ms-auto bg-light-transparent">
                 <MudIcon Icon="@CustomContentIcon" Class="@CustomColor" Size="Size.Large" />
             </div>
         </div>
-        <div>
-                <MudText Typo="Typo.body1">@($"{TotalAmount:N0} {Currency} / {TotalOrderCounter} (Commandes)")</MudText>
-        </div>
+        
     </MudCardContent>
 </MudCard>
 
@@ -19,15 +17,14 @@
 @code {
     [Parameter] public decimal TotalOrderCounter { get; set; }
     [Parameter] public decimal TotalOrderCounterCurrentYear { get; set; }
-    [Parameter] public decimal CurrentAmount { get; set; }
-    [Parameter] public decimal TotalAmount { get; set; }
+   
     [Parameter] public string Description { get; set; }
     [Parameter] public string CustomContentIcon { get; set; }
     [Parameter] public string CustomColor { get; set; }
     [Parameter] public string BgColor { get; set; } = Colors.BlueGrey.Darken4;
     [Parameter] public string TextColor { get; set; } = Colors.LightGreen.Accent3;
-    [Parameter] public string Currency { get; set; }
+    
     [Parameter] public string Width { get; set; }
-    [Parameter] public string Height { get; set; } = "130px";
+    [Parameter] public string Height { get; set; } = "80px";
 
 }

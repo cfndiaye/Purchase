@@ -32,22 +32,16 @@ namespace Purchase
                 Log.CloseAndFlush();
             }
 
-            
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-            .UseSerilog() //Use Serilog instead of default .Net Logger
-            /*.ConfigureLogging(logBuilder => {
-                logBuilder.ClearProviders(); // removes all providers from LoggerFactory
-                logBuilder.AddConsole();
-                logBuilder.AddTraceSource("Information, ActivityTracing"); // Add Trace listener provider
-
-            })*/
+            .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-                
+
     }
 }

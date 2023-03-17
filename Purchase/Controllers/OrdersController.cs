@@ -40,7 +40,7 @@ namespace Purchase.Controllers
         {
             var includeVendor = true;
             List<Order> orders = (await _orderService.GetOrdersAsync(includeVendor)).ToList();
-            return orders.OrderByDescending(o => o.ApprovedDate);
+            return orders.OrderByDescending(o => o.DatePo);
         }
 
         // GET api/<OrdersController>/5
@@ -234,6 +234,18 @@ namespace Purchase.Controllers
         public async Task<int> GetTotalCounterByVendorType(string type, int year)
         {
             var counter = await _orderService.GetTotalCounterByVendorType(type, year);
+            return counter;
+        }
+
+        /// <summary>
+        /// Get total count orders by vendor type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>int</returns>
+        [HttpGet("{type}")]
+        public async Task<int> GetTotalCounterByVendorType(string type)
+        {
+            var counter = await _orderService.GetTotalCounterByVendorType(type);
             return counter;
         }
 

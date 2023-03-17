@@ -74,8 +74,8 @@ namespace Purchase.Services.Implementation
     {
       
 
-      var queryableOrder = _ordersCollection.AsQueryable();
-      var queryableVendor =  _vendorsCollection.AsQueryable();
+      var queryableOrder = await _ordersCollection.AsQueryable().ToListAsync();
+      var queryableVendor =  await _vendorsCollection.AsQueryable().ToListAsync();
       var result = from order in queryableOrder
                    join vendor in queryableVendor on order.VendorId equals vendor.Id
                    select new Order
@@ -211,6 +211,21 @@ namespace Purchase.Services.Implementation
         public async Task<int> GetTotalCounterByVendorType(string type, int year)
         {
             var queryableOrder = await _ordersCollection.Find(o => o.DatePo.Value.Year == year).ToListAsync();
+            var queryableVendor = await _vendorsCollection.Find(v => v.Type == type).ToListAsync();
+
+            var result = from order in queryableOrder
+                         join vendor in queryableVendor on order.VendorId equals vendor.Id
+                         select new 
+                         {
+                             order.Id   
+                         };
+
+            return result.Count();
+        }
+
+         public async Task<int> GetTotalCounterByVendorType(string type)
+        {
+            var queryableOrder = await _ordersCollection.Find(_ => true).ToListAsync();
             var queryableVendor = await _vendorsCollection.Find(v => v.Type == type).ToListAsync();
 
             var result = from order in queryableOrder
