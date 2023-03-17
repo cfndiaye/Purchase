@@ -37,7 +37,7 @@
         }
 
         <MudTable Items="@_vendorList" Dense="@_dense" Striped="true" Hover="true" Breakpoint="Breakpoint.Sm"
-                  @bind-SelectedItem="_selectedVendor" @ref="_mudTable" Filter="FilterFuncInAction" @*Filter="new Func<Vendor, bool>(FilterFuncInAction)"*@
+                  @bind-SelectedItem="_selectedVendor" @ref="_mudTable" Filter="FilterFuncInAction" 
                   RowClassFunc="@SelectedRowClassFunc" T="Vendor" Loading="@_loading" LoadingProgressColor="Color.Info">
             <ToolBarContent>
                 <MudText Inline="true" Typo="Typo.h6">Liste des fournisseurs</MudText>
@@ -273,6 +273,8 @@
     private MudTable<Vendor> _mudTable = new MudTable<Vendor>();
     private HashSet<Vendor> selectedItems = new HashSet<Vendor>();
     private List<string> Types = new List<string> { "Locale", "Europe", "Asie", "Usa" };
+
+        //@*Filter="new Func<Vendor, bool>(FilterFuncInAction)"*@
 
     protected override async Task OnInitializedAsync()
     {
