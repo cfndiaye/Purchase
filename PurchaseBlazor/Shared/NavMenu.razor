@@ -1,4 +1,4 @@
-﻿@using System.Timers
+﻿@using System.Threading
 @inject HttpClient _client
 
 
@@ -54,6 +54,11 @@
             </MudNavGroup>
             <MudDivider />
             <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await LoadCounter()" />
+            
+                <MudCheckBox  @bind-Checked="@api_Radio" Color="Color.Success" UnCheckedColor="Color.Danger" Label="@apiAvailable" />
+            
+
+            
         </Authorized>
         <NotAuthorized>
             <MudNavLink Icon="@Icons.Filled.Info" Href="/about">A propos</MudNavLink>
@@ -76,9 +81,9 @@
         </Authorized>
     </AuthorizeView>
     @*<MudAppBar Dense="true" Fixed="true" Bottom="true" Color="Color.Default" Elevation="1">
-        <MudSpacer />
-        <MudText Color="Color.Inherit">Version: @_clientVersion</MudText>
-        </MudAppBar>*@
+    <MudSpacer />
+    <MudText Color="Color.Inherit">Version: @_clientVersion</MudText>
+    </MudAppBar>*@
 </MudNavMenu>
 
 
@@ -90,6 +95,10 @@
     private int CountPoDpiAc = 0;
     private int CountPoApproval = 0;
     private int CountPoRelease = 0;
+    private bool api_Radio = false;
+    private string apiAvailable = string.Empty;
+
+    private Timer _timer;
 
 
     private async Task<int> GetOrderCounter(string param)
@@ -118,33 +127,45 @@
     //TODO: Make timer to check API avalaibility
     public void CheckAPIAvailability()
     {
-        System.Timers.Timer timer = new System.Timers.Timer(30000);
 
 
-        //refrech Po counter
-        timer.Elapsed += Checker;
+        _timer = new Timer(async state =>
+        {
+            await LoadCounter();
+            await CheckAPI();
+            StateHasChanged();
+
+        }, null, 0, 30000);
 
 
     }
 
-    public void Checker(object sender, ElapsedEventArgs e)
+    public void Dispose()
     {
-        LoadCounter();
-        CheckAPI();
+        _timer?.Dispose();
+    }
+
+    protected override void OnInitialized()
+    {
+        CheckAPIAvailability();
     }
 
     private async Task<bool> CheckAPI()
     {
-        var url = $"api/Index/IsAvalaible";
+        var url = $"api/Index/IsAvailable";
 
         var result = await _client.GetFromJsonAsync<bool>(url);
         if (result)
         {
-            System.Console.WriteLine("API avalaible");
+            api_Radio = true;
+            apiAvailable = "Api Disponible";
+            System.Console.WriteLine("API available");
         }
         else
         {
-            System.Console.WriteLine("No API avalaible");
+            api_Radio = false;
+            apiAvailable = "Api non Disponible";
+            System.Console.WriteLine("No API available");
         }
         return result;
 

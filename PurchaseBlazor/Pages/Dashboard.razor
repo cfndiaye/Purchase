@@ -8,71 +8,39 @@
 <MudSpacer />
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-2">
     <div class="col-sm my-2">
-        <WidgetOrderCost TotalAmount="@_totalCostLocal" CurrentAmount="@_totalCostLocalThisYear" Currency="XOF" Description="Commandes locales"
+        <WidgetOrderCost TotalAmount="@_totalCostLocal" CurrentAmount="@_totalCostLocalThisYear" Currency="XOF" Description="locales"
                        CustomColor="@Colors.Grey.Lighten5" BgColor="#E4572E" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Custom.Uncategorized.AlertSuccess"
                        />
     </div>
     <div class="col-sm my-2">
-        <WidgetOrderCost TotalAmount="@_totalCostEurope" CurrentAmount="@_totalCostEuropeThisYear" Currency="€" Description="Commandes Europe"
+        <WidgetOrderCost TotalAmount="@_totalCostEurope" CurrentAmount="@_totalCostEuropeThisYear" Currency="€" Description="Europe"
                        CustomColor="@Colors.Grey.Lighten5" BgColor="#29335C" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Material.Filled.Euro" 
                        />
     </div>
     <div class="col-sm my-2">
-        <WidgetOrderCost TotalAmount="@_totalCostUSD" CurrentAmount="@_totalCostUSDThisYear" Currency="$" Description="Commandes ASIE"
+        <WidgetOrderCost TotalAmount="@_totalCostUSD" CurrentAmount="@_totalCostUSDThisYear" Currency="$" Description="ASIE"
                        CustomColor="@Colors.Grey.Lighten5" BgColor="#F3A712" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Filled.AttachMoney" 
                        
                        />
     </div>
     <div class="col-sm my-2">
-        <WidgetOrderCost TotalAmount="@_totalCostUSD_USA" CurrentAmount="@_totalCostUSD_USAThisYear" Currency="$" Description="Commandes USA"
+        <WidgetOrderCost TotalAmount="@_totalCostUSD_USA" CurrentAmount="@_totalCostUSD_USAThisYear" Currency="$" Description="USA"
                        CustomColor="@Colors.Grey.Lighten5" BgColor="#A8C686" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Filled.AttachMoney" 
                        />
     </div>
     <div class="col-sm my-2">
-        <WidgetOrderCost TotalAmount="@_totalCost_In_Usd" CurrentAmount="@_totalCost_In_UsdThisYear"  Currency="$" Description="Commandes Total"
+        <WidgetOrderCost TotalAmount="@_totalCost_In_Usd" CurrentAmount="@_totalCost_In_UsdThisYear"  Currency="$" Description="Total"
                        CustomColor="@Colors.Grey.Lighten5" BgColor="#669BBC" TextColor="@Colors.Grey.Lighten5"
                        CustomContentIcon="@Icons.Filled.AttachMoney" 
                        />
     </div>
 
 </div>
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-2">
-    <div class="col-sm my-2">
-        <WidgetOrderCounter TotalOrderCounter="@_counterTotalLocal" TotalOrderCounterCurrentYear="_counterLocalThisYear" Description="Locales"
-                       CustomColor="@Colors.Grey.Lighten5" BgColor="#E4572E" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Filled.ArrowLeft"
-                       />
-    </div>
-    <div class="col-sm my-2">
-        <WidgetOrderCounter  TotalOrderCounter="@_counterTotalEurope" TotalOrderCounterCurrentYear="_counterEuropeThisYear" Description="Europe"
-                       CustomColor="@Colors.Grey.Lighten5" BgColor="#29335C" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Filled.ArrowUpward" 
-                       />
-    </div>
-    <div class="col-sm my-2">
-        <WidgetOrderCounter TotalOrderCounter="@_counterTotalUSD" TotalOrderCounterCurrentYear="_counterUSDThisYear" Description="ASIE"
-                       CustomColor="@Colors.Grey.Lighten5" BgColor="#F3A712" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Filled.ArrowDownward" 
-                       
-                       />
-    </div>
-    <div class="col-sm my-2">
-        <WidgetOrderCounter TotalOrderCounter="@_counterTotalUSD_USA" TotalOrderCounterCurrentYear="_counterUSD_USAThisYear" Description="USA"
-                       CustomColor="@Colors.Grey.Lighten5" BgColor="#A8C686" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Filled.ArrowRight" 
-                       />
-    </div>
-    <div class="col-sm my-2">
-        <WidgetOrderCounter TotalOrderCounter="@_counterTotal" TotalOrderCounterCurrentYear="_counterTotalThisYear" Description="Total"
-                       CustomColor="@Colors.Grey.Lighten5" BgColor="#669BBC" TextColor="@Colors.Grey.Lighten5"
-                       CustomContentIcon="@Icons.Filled.Countertops" 
-                       />
-    </div>
-</div>
+
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-4">
     <div class="col-sm-8">
         <WidgetBarreChart Data="@_topVendorsCurrentYear" />
@@ -80,6 +48,40 @@
     </div>
     <div class="col-sm-4">
         <WidgetDonutChart @ref="_widgetDonutChart"  VendorTypes="@_typeVendorStats" />
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 my-2">
+    <div class="col-sm my-2">
+        <WidgetOrderCounter TotalOrderCounter="@_counterTotalLocal" TotalOrderCounterCurrentYear="_counterLocalThisYear" Description="Locales"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="#E4572E" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Filled.ConfirmationNumber"
+                       />
+    </div>
+    <div class="col-sm my-2">
+        <WidgetOrderCounter  TotalOrderCounter="@_counterTotalEurope" TotalOrderCounterCurrentYear="_counterEuropeThisYear" Description="Europe"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="#29335C" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Filled.ConfirmationNumber" 
+                       />
+    </div>
+    <div class="col-sm my-2">
+        <WidgetOrderCounter TotalOrderCounter="@_counterTotalUSD" TotalOrderCounterCurrentYear="_counterUSDThisYear" Description="ASIE"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="#F3A712" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Filled.ConfirmationNumber" 
+                       
+                       />
+    </div>
+    <div class="col-sm my-2">
+        <WidgetOrderCounter TotalOrderCounter="@_counterTotalUSD_USA" TotalOrderCounterCurrentYear="_counterUSD_USAThisYear" Description="USA"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="#A8C686" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Filled.ConfirmationNumber" 
+                       />
+    </div>
+    <div class="col-sm my-2">
+        <WidgetOrderCounter TotalOrderCounter="@_counterTotal" TotalOrderCounterCurrentYear="_counterTotalThisYear" Description="Total"
+                       CustomColor="@Colors.Grey.Lighten5" BgColor="#669BBC" TextColor="@Colors.Grey.Lighten5"
+                       CustomContentIcon="@Icons.Material.Filled.ConfirmationNumber" 
+                       />
     </div>
 </div>
 
@@ -138,16 +140,12 @@
     private string _URITOPVENDORS = "api/Vendors/GetTopVendors";
     private string _URIALLTOPVENDORS = "api/Vendors/GetAllTopVendors";
 
-/*
-    private const string _URITOTALCOUNTERBYVENDORTYPECURRENTYEAR_XOF = "api/orders/GetTotalCounterByVendorType/Locale";
-    private const string _URITOTALCOUNTERBYVENDORTYPECURRENTYEAR_USD = "api/orders/GetTotalCounterByVendorType/Asie";
-    private const string _URITOTALCOUNTERBYVENDORTYPECURRENTYEAR_EUR = "api/orders/GetTotalCounterByVendorType/Europe";
-    private const string _URITOTALCOUNTERBYVENDORTYPECURRENTYEAR_USD_USA = "api/orders/GetTotalCounterByVendorType/Locale";*/
+
 
     private const string _URITOTALCOUNTERBYVENDORTYPE_XOF = "api/orders/GetTotalCounterByVendorType/Locale";
     private const string _URITOTALCOUNTERBYVENDORTYPE_USD = "api/orders/GetTotalCounterByVendorType/Asie";
     private const string _URITOTALCOUNTERBYVENDORTYPE_EUR = "api/orders/GetTotalCounterByVendorType/Europe";
-    private const string _URITOTALCOUNTERBYVENDORTYPE_USD_USA = "api/orders/GetTotalCounterByVendorType/Locale";
+    private const string _URITOTALCOUNTERBYVENDORTYPE_USD_USA = "api/orders/GetTotalCounterByVendorType/Usa";
 
 
     private int CountNumberOrderProformaPending;
