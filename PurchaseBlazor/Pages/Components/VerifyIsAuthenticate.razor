@@ -14,17 +14,17 @@
     public async Task<bool> IsAuthenticatedAsync()
     {
         var authState = await AuthState;
-        var result = await Client.GetAsync(_uriApi);
+        var result = await Client.GetFromJsonAsync<bool>(_uriApi);
 
 
-        if (authState.User.Identity.IsAuthenticated is true && result.IsSuccessStatusCode)
+        if (authState.User.Identity.IsAuthenticated is true && result)
         {
-            System.Diagnostics.Debug.Print("Api and client authenticated true.");
+            Console.WriteLine("Api and client authenticated true.");
             return true;
         }
         else
         {
-            System.Diagnostics.Debug.Print("Api and client authenticated false.");
+            Console.WriteLine("Api and client authenticated false.");
             return false;
         }
     }

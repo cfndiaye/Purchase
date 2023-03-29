@@ -73,12 +73,12 @@ namespace Purchase.Controllers
         }
 
         [HttpGet]
-        public  IActionResult VerifyAuthentication()
+        public  bool VerifyAuthentication()
         {
             if (IsAuthenticate())
-                return Ok();
+                return true;
             else
-                return BadRequest();
+                return false;
         }
 
 

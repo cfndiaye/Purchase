@@ -1,5 +1,6 @@
 ﻿@using System.Threading
 @inject HttpClient _client
+@inject NavigationManager NavigationManager
 
 
 <MudNavMenu>
@@ -85,6 +86,7 @@
     <MudText Color="Color.Inherit">Version: @_clientVersion</MudText>
     </MudAppBar>*@
 </MudNavMenu>
+<VerifyIsAuthenticate ReturnUrl="" @ref="@_verifyIsAuthenticate"/>
 
 
 @code {
@@ -97,6 +99,9 @@
     private int CountPoRelease = 0;
     private bool api_Radio = false;
     private string apiAvailable = string.Empty;
+    private VerifyIsAuthenticate _verifyIsAuthenticate;
+    private  string _uriLogin = "login";
+    public string ReturnUrl { get; set; }="";
 
     private Timer _timer;
 
@@ -131,9 +136,19 @@
 
         _timer = new Timer(async state =>
         {
-            await LoadCounter();
-            await CheckAPI();
-            StateHasChanged();
+            var result = await _verifyIsAuthenticate.IsAuthenticatedAsync();
+           
+            if(result)
+            {
+                await LoadCounter();
+                await CheckAPI();
+                StateHasChanged();
+            }
+            else
+            {
+                NavigationManager.NavigateTo($"{_uriLogin}/{ReturnUrl}");
+            }
+           
 
         }, null, 0, 30000);
 
