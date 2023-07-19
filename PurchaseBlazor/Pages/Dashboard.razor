@@ -1,6 +1,8 @@
 ﻿@page "/Dashboard"
 @inject HttpClient _client
 @inject NavigationManager NavigationManager
+@inject ILogger<Dashboard> Logger
+
 @attribute [Authorize]
 
 <VerifyIsAuthenticate ReturnUrl ="Dashboard"/>
@@ -208,86 +210,124 @@
     private async Task LoadTotalXOFCost()
     {
 
+        try
+        {
+            //Get total cost by currency XOF
+            var totalCostLocalLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_XOF);
 
-        //Get total cost by currency XOF
-        var totalCostLocalLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_XOF);
+            //Get total cost by currency XOF and current year
+            _totalCostLocalThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_XOF}/{_currentYear}");
 
-        //Get total cost by currency XOF and current year
-        _totalCostLocalThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_XOF}/{_currentYear}");
+            _totalCostLocal = await totalCostLocalLoading;
 
-        _totalCostLocal = await totalCostLocalLoading;
-
-        var localCoastToUsd = Devise.ConvertCfaToUsd(_totalCostLocalThisYear); //_totalCostLocal / (decimal)630;
-        var typeVendorStat = new TypeVendorStat(_LOCAL, localCoastToUsd);
-        _typeVendorStats.Add(typeVendorStat);
+            var localCoastToUsd = Devise.ConvertCfaToUsd(_totalCostLocalThisYear); //_totalCostLocal / (decimal)630;
+            var typeVendorStat = new TypeVendorStat(_LOCAL, localCoastToUsd);
+            _typeVendorStats.Add(typeVendorStat);
 
 
-        StateHasChanged();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message);
+        }
+
 
     }
 
     private async Task LoadTotalEURCost()
     {
-        //Get total cost by cuurency EUR
-        var totalCostEuropeLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_EUR);
+        try
+        {
+            //Get total cost by cuurency EUR
+            var totalCostEuropeLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_EUR);
 
-        //Get total cost by currency EUR and year
-        _totalCostEuropeThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_EUR}/{_currentYear}");
+            //Get total cost by currency EUR and year
+            _totalCostEuropeThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_EUR}/{_currentYear}");
 
-        _totalCostEurope = await totalCostEuropeLoading;
+            _totalCostEurope = await totalCostEuropeLoading;
 
-        var europeCostToUsd = Devise.ConvertEuroToUsd(_totalCostEuropeThisYear); //_totalCostEurope / (decimal)0.974;
-        var typeVendorStat = new TypeVendorStat(_EUROPE, europeCostToUsd);
-        _typeVendorStats.Add(typeVendorStat);
+            var europeCostToUsd = Devise.ConvertEuroToUsd(_totalCostEuropeThisYear); //_totalCostEurope / (decimal)0.974;
+            var typeVendorStat = new TypeVendorStat(_EUROPE, europeCostToUsd);
+            _typeVendorStats.Add(typeVendorStat);
 
 
-        StateHasChanged();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message);
+        }
+
     }
 
     private async Task LoadTotalUSD_USACost()
     {
+        try
+        {
+            //Get total cost by cuurency USD and Vendor in USA
+            var totalCostUsdUsaLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD_USA);
 
-        //Get total cost by cuurency USD and Vendor in USA
-        var totalCostUsdUsaLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD_USA);
+            //Get total cost by cuurency USD and Vendor in USA and this year
+            _totalCostUSD_USAThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_USD_USA}/{_currentYear}");
 
-        //Get total cost by cuurency USD and Vendor in USA and this year
-        _totalCostUSD_USAThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_USD_USA}/{_currentYear}");
+            _totalCostUSD_USA = await totalCostUsdUsaLoading;
 
-        _totalCostUSD_USA = await totalCostUsdUsaLoading;
-
-        var typeVendorStat = new TypeVendorStat(_USA, _totalCostUSD_USAThisYear);
-        _typeVendorStats.Add(typeVendorStat);
+            var typeVendorStat = new TypeVendorStat(_USA, _totalCostUSD_USAThisYear);
+            _typeVendorStats.Add(typeVendorStat);
 
 
-        StateHasChanged();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message);
+        }
+
+
     }
 
     private async Task LoadTotalUSDCost()
     {
+        try
+        {
+            //Get total cost by cuurency USD
+            var totalCostUsdLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD);
 
-        //Get total cost by cuurency USD
-        var totalCostUsdLoading = _client.GetFromJsonAsync<decimal>(_URITOTALCOSTBYCURRENCY_USD);
+            //Get total cost by cuurency USD and this year
+            _totalCostUSDThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_USD}/{_currentYear}");
 
-        //Get total cost by cuurency USD and this year
-        _totalCostUSDThisYear = await _client.GetFromJsonAsync<decimal>($"{_URITOTALCOSTBYCURRENCY_USD}/{_currentYear}");
+            _totalCostUSD = await totalCostUsdLoading;
 
-        _totalCostUSD = await totalCostUsdLoading;
-
-        var typeVendorStat = new TypeVendorStat(_ASIE, _totalCostUSDThisYear);
-        _typeVendorStats.Add(typeVendorStat);
+            var typeVendorStat = new TypeVendorStat(_ASIE, _totalCostUSDThisYear);
+            _typeVendorStats.Add(typeVendorStat);
 
 
-        StateHasChanged();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message);
+        }
+
     }
 
     private async Task LoadTopVendors()
     {
-        var uriCurrentYear = new StringBuilder(_URIALLTOPVENDORS).Append($"/{_top}/{_currentYear}");
+        try
+        {
+            var uriCurrentYear = new StringBuilder(_URIALLTOPVENDORS).Append($"/{_top}/{_currentYear}");
 
-        _topVendorsCurrentYear = await _client.GetFromJsonAsync<List<VendorStat>>(uriCurrentYear.ToString());
+            _topVendorsCurrentYear = await _client.GetFromJsonAsync<List<VendorStat>>(uriCurrentYear.ToString());
 
 
-        StateHasChanged();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message);
+        }
+
     }
 
 
@@ -311,24 +351,24 @@
         );
 
         tasks.Add(Task.Run(async () =>
-            {
-                _counterEuropeThisYear = await LoadTotalOrderCountCurrentYear(_URITOTALCOUNTERBYVENDORTYPE_EUR);
-                _counterTotalEurope = await LoadTotalOrderCount(_URITOTALCOUNTERBYVENDORTYPE_EUR);
-            })
+        {
+            _counterEuropeThisYear = await LoadTotalOrderCountCurrentYear(_URITOTALCOUNTERBYVENDORTYPE_EUR);
+            _counterTotalEurope = await LoadTotalOrderCount(_URITOTALCOUNTERBYVENDORTYPE_EUR);
+        })
         );
 
         tasks.Add(Task.Run(async () =>
-            {
-                _counterUSDThisYear = await LoadTotalOrderCountCurrentYear(_URITOTALCOUNTERBYVENDORTYPE_USD);
-                _counterTotalUSD = await LoadTotalOrderCount(_URITOTALCOUNTERBYVENDORTYPE_USD);
-            })
+        {
+            _counterUSDThisYear = await LoadTotalOrderCountCurrentYear(_URITOTALCOUNTERBYVENDORTYPE_USD);
+            _counterTotalUSD = await LoadTotalOrderCount(_URITOTALCOUNTERBYVENDORTYPE_USD);
+        })
         );
 
         tasks.Add(Task.Run(async () =>
-            {
-                _counterUSD_USAThisYear = await LoadTotalOrderCountCurrentYear(_URITOTALCOUNTERBYVENDORTYPE_USD_USA);
-                _counterTotalUSD_USA = await LoadTotalOrderCount(_URITOTALCOUNTERBYVENDORTYPE_USD_USA);
-            })
+        {
+            _counterUSD_USAThisYear = await LoadTotalOrderCountCurrentYear(_URITOTALCOUNTERBYVENDORTYPE_USD_USA);
+            _counterTotalUSD_USA = await LoadTotalOrderCount(_URITOTALCOUNTERBYVENDORTYPE_USD_USA);
+        })
         );
 
 

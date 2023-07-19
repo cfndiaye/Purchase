@@ -95,7 +95,7 @@ namespace Purchase.Controllers
     {
       var vendor = await _vendorService.GetVendorByIdAsync(id);
       if (vendor is null) return NotFound();
-      //updatedVendor.Id = vendor.Id;
+      
 
       try
       {
@@ -193,7 +193,8 @@ namespace Purchase.Controllers
         {
           foreach (var vo in vendorsWithOrders)
           {
-            var amount = (decimal)vo.OrderList.Where(o => o.DatePo.Value.Year == _thisYear).Sum(o => o.Amount);
+            var amount = (decimal)vo.OrderList.Where(o => o.DatePo.Value.Year == _thisYear)
+                                              .Sum(o => o.Amount);
             var vendorStat = new VendorStat(vo.Id, vo.Name, amount, vo.Type);
             vendorStats.Add(vendorStat);
           }

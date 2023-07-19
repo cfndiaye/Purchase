@@ -15,6 +15,7 @@ using PurchaseBlazor.Pages.Authentication;
 using Blazored.LocalStorage;
 using Radzen;
 
+
 namespace PurchaseBlazor
 {
   public class Program
@@ -31,6 +32,7 @@ namespace PurchaseBlazor
       {
         //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
         builder.Services.AddScoped(c => new HttpClient { BaseAddress = new Uri(SettingApp.ServerUrl) });
+        
 
       }
 
@@ -39,6 +41,8 @@ namespace PurchaseBlazor
       builder.Services.AddAuthorizationCore();
       builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
       builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+      builder.Services.AddLogging(loggingBuilder => loggingBuilder.SetMinimumLevel(LogLevel.Information));
+           
 
       //Include Radzen
       builder.Services.AddScoped<DialogService>();
@@ -49,7 +53,12 @@ namespace PurchaseBlazor
       //Include MudBlazor
       builder.Services.AddMudServices();
 
-      await builder.Build().RunAsync();
+      //await builder.Build().RunAsync();
+
+      var app = builder.Build();
+      
+
+      await app.RunAsync();
     }
   }
 }
